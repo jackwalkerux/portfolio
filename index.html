@@ -270,6 +270,9 @@ main { padding-block: 56px 96px; }
 /* In light mode the brand page takes the brand's Offwhite as its page colour, so the Offwhite tiles sit on their own ground */
 :root[data-theme="light"] body.brand-mode { --bg: #FDFFF8; --wash: #F2F5EC; --line: #E1E5D9; background: var(--bg); }
 @media (prefers-color-scheme: light) { :root:not([data-theme]) body.brand-mode { --bg: #FDFFF8; --wash: #F2F5EC; --line: #E1E5D9; background: var(--bg); } }
+/* Quarters case study, light mode: the app's warm ground as the page background */
+:root[data-theme="light"] body.quarters-mode { --bg: #F4F3EF; --wash: #EBE9E4; --line: #E2DFD9; background: var(--bg); }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) body.quarters-mode { --bg: #F4F3EF; --wash: #EBE9E4; --line: #E2DFD9; background: var(--bg); } }
 .bh { display: grid; justify-items: start; gap: 16px; }
 .bh-wm { display: block; width: clamp(200px, 30vw, 330px); }
 .bh-wm .wm { display: block; }
@@ -840,7 +843,7 @@ const RESUME_PDF = "https://docs.google.com/document/d/1W2idFMJRs5636LlhtmxSSqJZ
    decision {h, p, todo, figs}, nums [value, label][] */
 const FEATURED = [
   { id: "quarters", title: "Quarters", highlight: true, proto: "quarters-prototype.html", summary: "An iPhone app and smart fridge magnet that help roommates split rent and chores.",
-    meta: "Project lead · Fall 2026", hero: "cover-quarters",
+    meta: "Project lead · Fall 2026", hero: "q-lookbook", thumb: "cover-quarters",
     facts: { Role: "Project lead", Team: "5-person multifaceted team", Timeline: "Fall 2026", Tools: "Figma, Illustrator, After Effects, Premiere Pro" },
     sections: [
       { h: "At a glance", blocks: [
@@ -887,7 +890,6 @@ const FEATURED = [
         { ba: { h: "Chores", before: "q-chores-before", after: "q-chores-after", notes: [["Progress by person", "The 8/15 banner became a pie of who did what."], ["One filter instead of tabs", "Everyone / Mine tabs became an Everyone's chores dropdown."], ["Week view", "Swipe the card to see which days chores are due."], ["Edit list", "Rotation moved into each chore, so the header link is just Edit list."]] } },
         { ba: { h: "Adding a chore", before: "q-add-before", after: "q-add-after", notes: [["More repeat options", "Daily, weekly, biweekly or monthly instead of only picking a due day."], ["Rotate", "New option that takes turns in house order."], ["Says who's next", "So nobody has to ask."]] } } ] },
       { h: "The final design", blocks: [
-        { figs: [["q-lookbook", "Lookbook"]], n: 1 },
         { figs: [["q-annotated", "Chores and finance, annotated"]], n: 1 },
         { figs: [["q-fridge-ui", "The Penny in use"]], n: 1 },
         { figs: [["q-poster", "Poster"], ["q-pennies", "Penny renders"]], kind: "lead" } ] },
@@ -2381,6 +2383,7 @@ function render() {
   else if (id === "brand") { html = viewBrand(); nav = "brand"; }
   else html = viewHome();
   document.body.classList.toggle("brand-mode", id === "brand");
+  document.body.classList.toggle("quarters-mode", id === "quarters");
   if (portraitWidget) { portraitWidget.destroy(); portraitWidget = null; }
   if (aboutTilt) { aboutTilt.destroy(); aboutTilt = null; }
   $("#app").innerHTML = html;
