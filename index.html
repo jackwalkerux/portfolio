@@ -742,7 +742,7 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .climb-rail .me { color: var(--link); animation: peakBlink .8s ease-in-out infinite; }
 .climb-rail .fl { color: color-mix(in srgb, var(--ink) 35%, var(--bg)); font-size: 15px; transition: color .3s; } .climb-rail .fl.on { color: #E0663A; }
 .climb-hits { position: absolute; inset: 0; }
-.climb-hits button { position: absolute; width: 22px; height: 22px; transform: translate(-50%, -50%); background: none; border: 0; padding: 0; cursor: pointer; pointer-events: auto; display: grid; place-items: center; transition: top .3s cubic-bezier(.2, .8, .2, 1); }
+.climb-hits button { position: absolute; width: 22px; height: 22px; transform: translate(-50%, -50%); background: none; border: 0; padding: 0; cursor: pointer; pointer-events: auto; display: grid; place-items: center; transition: top .35s cubic-bezier(.2, .8, .2, 1), left .35s cubic-bezier(.2, .8, .2, 1); }
 /* ahead: thin grey ring · passed: thick green ring, no fill · current: solid green. All the same size. */
 .climb-hits button::before { content: ""; width: 14px; height: 14px; border-radius: 50%; box-sizing: border-box; background: var(--bg); border: 1.5px solid color-mix(in srgb, var(--ink) 40%, var(--bg)); transition: background-color .25s, border-color .25s, border-width .25s; }
 .climb-hits button.past::before { border: 3px solid var(--link); }
@@ -2816,7 +2816,7 @@ function xpClimb(el) {
   page.addEventListener("scroll", draw, { passive: true }); draw();
 }
 function initClimbRail() {
-  if (climbRail) { removeEventListener("scroll", climbRail.on); removeEventListener("resize", climbRail.on); climbRail.el.remove(); climbRail = null; }
+  if (climbRail) { climbRail.stop(); climbRail = null; }
   // every page gets the trail; pages with sections (case studies, Beyond UX projects, Experiments) also get markers.
   // Pages without them just climb to the flag at the end.
   const secs = [...document.querySelectorAll("#app .xp-grid > .xp, #app .cs-body > .sec, #app .bux-panel .projs > .proj")];
@@ -2825,7 +2825,8 @@ function initClimbRail() {
   el.innerHTML = `<pre aria-hidden="true"></pre><div class="climb-hits">${names.map((n, i) => `<button type="button" data-i="${i}" aria-label="${esc(n)}"><span>${esc(n)}</span></button>`).join("")}</div>`;
   document.body.appendChild(el);
   const pre = el.querySelector("pre"), btns = [...el.querySelectorAll(".climb-hits button")], WD = 17, LH = 12;
-  let N = 0, xs = [], S = 0;
+  const tone = secs[0] || document.querySelector("#app > *") || document.body;
+  let N = 0, xs = [], S = 0, max = 1, secY = [], rows = [], drawn = "";
   // the climb takes the first 88% of the rail; the far side of the summit drops away below it, so the end is a real peak
   const profile = n => {
     const pr = peakProfile(PEAKS[1]), up = pr.r.slice(0, pr.pc + 1), sum = Math.round(n * .88), far = [...up].reverse();
@@ -2834,43 +2835,62 @@ function initClimbRail() {
       return Math.round((PK_H - 1 - r) / (PK_H - 1) * (WD - 5));
     });
   };
-  const tone = secs[0] || document.querySelector("#app > *") || document.body;
-  const on = () => {
-    el.style.setProperty("--link", getComputedStyle(tone).getPropertyValue("--link")); // the page's accent (blue on Quarters)
-    const top = document.querySelector(".top") ? document.querySelector(".top").getBoundingClientRect().bottom : 60;
+  const ridge = y => WD - 2 - xs[y];
+  // Measure once per layout change (not per scroll): where each section starts on the page.
+  const layout = () => {
+    const head = document.querySelector(".top"), top = head ? head.offsetHeight : 60;
     el.style.top = top + "px";
     const n = Math.max(20, Math.floor((innerHeight - top) / LH));
     if (n !== N) { N = n; xs = profile(N); S = Math.round(N * .88); }
-    const max = document.documentElement.scrollHeight - innerHeight, k = max > 0 ? Math.min(1, scrollY / max) : 0, me = Math.round(k * S);
-    const ticks = secs.map(s => Math.round(Math.min(1, Math.max(0, (s.getBoundingClientRect().top + scrollY - innerHeight * .3) / Math.max(1, max))) * S));
-    let cur = 0; ticks.forEach((t, i) => { if (me >= t) cur = i; });
-    const ridge = y => WD - 2 - xs[y];
+    max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    const off = bux ? bux.collapsedBottom() + 16 : innerHeight * .3;
+    secY = secs.map(s => Math.min(max, Math.max(0, s.getBoundingClientRect().top + scrollY - off)));
+    // markers sit evenly along the climb, so they never move as images load or projects open and close;
+    // the trail still reaches each one exactly when its section starts (see trailRow)
+    rows = secs.map((_, i) => Math.round(S * (i + 1) / (secs.length + 1)));
+    el.style.setProperty("--link", getComputedStyle(tone).getPropertyValue("--link")); // the page's accent (blue on Quarters)
+    const cw = pre.getBoundingClientRect().width / WD || 6.6, left = el.getBoundingClientRect().width - (pre.getBoundingClientRect().width || WD * 6.6);
+    btns.forEach((b, i) => { b.style.top = (rows[i] * LH + LH / 2) + "px"; b.style.left = (left + (ridge(rows[i]) - .5) * cw) + "px"; });
+    drawn = ""; draw();
+  };
+  // Scroll → trail row, piecewise between section starts, so the trail reaches each marker exactly when its section begins
+  const trailRow = y => {
+    const pts = [[0, 0], ...secY.map((sy, i) => [sy, rows[i]]), [max, S]];
+    for (let i = 1; i < pts.length; i++) if (y <= pts[i][0]) { const [y0, r0] = pts[i - 1], [y1, r1] = pts[i]; return y1 > y0 ? r0 + (r1 - r0) * (y - y0) / (y1 - y0) : r1; }
+    return S;
+  };
+  const draw = () => {
+    const y = Math.min(max, scrollY), me = Math.round(trailRow(y)), atEnd = y >= max - 2;
+    let cur = -1; secY.forEach((sy, i) => { if (y >= sy - 1) cur = i; });
+    const key = me + "|" + cur + "|" + atEnd + "|" + N;
+    if (key === drawn) return; drawn = key;
     let out = "";
-    for (let y = 0; y < N; y++) {
-      const x = ridge(y), prev = y ? ridge(y - 1) : x, ch = x < prev ? "/" : x > prev ? "\\" : "|", lit = y <= me;
+    for (let r = 0; r < N; r++) {
+      const x = ridge(r), prev = r ? ridge(r - 1) : x, ch = x < prev ? "/" : x > prev ? "\\" : "|";
       const row = Array(WD).fill(" ");
-      for (let c = x + 1; c < WD; c++) row[c] = (c + y) % 4 === 0 ? ":" : (c * 3 + y) % 7 === 0 ? "." : " ";
-      row[x] = `<span class="${lit ? "tr" : "rg"}">${ch}</span>`;
-      if (y === me && !ticks.includes(y) && y !== S) row[Math.max(0, x - 1)] = '<span class="me">●</span>';
-      if (y === S) row[Math.max(0, x - 2)] = `<span class="fl${k > .99 ? " on" : ""}">⚑</span>`; // the flag waits on the summit
-      out += row.join("") + (y < N - 1 ? "\n" : "");
+      for (let c = x + 1; c < WD; c++) row[c] = (c + r) % 4 === 0 ? ":" : (c * 3 + r) % 7 === 0 ? "." : " ";
+      row[x] = `<span class="${r <= me ? "tr" : "rg"}">${ch}</span>`;
+      if (r === me && !rows.includes(r) && r !== S) row[Math.max(0, x - 1)] = '<span class="me">●</span>';
+      if (r === S) row[Math.max(0, x - 2)] = `<span class="fl${atEnd ? " on" : ""}">⚑</span>`; // the flag waits on the summit
+      out += row.join("") + (r < N - 1 ? "\n" : "");
     }
     pre.innerHTML = out;
-    // section markers are real dots laid over the ridge, so they can be bigger than a character
-    const cw = pre.getBoundingClientRect().width / WD, left = el.getBoundingClientRect().width - pre.getBoundingClientRect().width;
-    btns.forEach((b, i) => {
-      b.style.top = (ticks[i] * LH + LH / 2) + "px"; b.style.left = (left + (ridge(ticks[i]) - .5) * cw) + "px";
-      b.classList.toggle("on", i === cur); b.classList.toggle("past", i < cur);
-    });
+    btns.forEach((b, i) => { b.classList.toggle("on", i === cur); b.classList.toggle("past", i < cur); });
   };
   el.querySelector(".climb-hits").addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return; const s = secs[+b.dataset.i];
     if (s.classList.contains("proj") && s.classList.contains("closed")) { setProj(s, true); syncProjAll(s.closest(".bux-piece")); }
     scrollTo({ top: s.getBoundingClientRect().top + scrollY - (bux ? bux.collapsedBottom() : 80) - 16, behavior: "smooth" });
   });
-  addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
-  climbRail = { el, on }; on();
+  // re-measure when the page's size changes: images loading, projects opening or closing, the window resizing
+  let pending = 0; const relayout = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(layout); };
+  const ro = new ResizeObserver(relayout); ro.observe(document.getElementById("app"));
+  const onScroll = () => draw();
+  addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", relayout);
+  climbRail = { el, stop: () => { ro.disconnect(); removeEventListener("scroll", onScroll); removeEventListener("resize", relayout); cancelAnimationFrame(pending); el.remove(); } };
+  layout();
 }
+
 // B. Weather on the mountain, refined: a deeper sky band, a sun with turning rays, a crescent moon, layered clouds,
 // angled rain with splashes, and snow that slowly caps the ridge.
 function xpWeather(el) {
