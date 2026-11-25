@@ -684,8 +684,9 @@ figure .img.fit img { cursor: zoom-in; }
 .proto-msg { gap: 14px; align-content: center; }
 .proto-msg .penny-spin { font-size: 8px; }
 /* Footer trail */
-.f-trail { padding-top: 8px; overflow: hidden; }
-.f-trail pre { margin: 0; font: 600 8px/1.1 ui-monospace, Menlo, Consolas, monospace; color: color-mix(in srgb, var(--muted) 55%, transparent); white-space: pre; }
+/* edge to edge along the very bottom of the footer: the font is sized so the whole trail spans the footer's width */
+.f-trail { container-type: inline-size; overflow: hidden; margin-top: 12px; }
+.f-trail pre { margin: 0; font: 600 10px/1.05 ui-monospace, Menlo, Consolas, monospace; font-size: calc(100cqw / var(--cols) / .6); color: color-mix(in srgb, var(--muted) 55%, transparent); white-space: pre; }
 .f-trail .tr { color: var(--link); } .f-trail .me { color: var(--link); animation: peakBlink .8s ease-in-out infinite; }
 /* 404 */
 .lost { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: center; min-height: 60vh; }
@@ -1011,7 +1012,6 @@ const FEATURED = [
         { figs: [["q-features", "The app tracks rent, manages chores and keeps the house's documents"]], n: 1 },
         { figs: [["q-penny-states", "Each roommate's quarter, and the all-done screen"]], kind: "cut" },
         { h: "Inside the Penny" },
-        { penny3d: true },
         { penny: "q-penny-parts", parts: [["Cover & screen", "One quarter per roommate on a 2.8-inch round touchscreen."], ["Main board", "Syncs with the app over Wi-Fi."], ["Battery", "Charges over USB-C."], ["Magnet ring", "Holds it on the fridge."], ["Housing", "Holds the device together."]] },
         { h: "How the Penny took shape" },
         { figs: [["q-sketches", "Early sketches"], ["q-concept-drawing", "Concept drawing"]], kind: "evo" },
@@ -2096,7 +2096,7 @@ function viewCase(p) {
   return `<article class="cs-split cs-${p.id}">
     <aside class="proto-col" aria-label="${esc(p.title)} interactive prototype">
       <h2 class="proto-h">Interactive Prototype</h2>
-      <div class="proto-msg" id="proto-slot"><pre class="penny-spin" data-cols="40" aria-hidden="true"></pre><span>Loading the prototype…</span></div>
+      <div class="proto-msg" id="proto-slot">Loading the prototype…</div>
     </aside>
     <div class="cs-main">${inner}</div>
   </article>`;
@@ -2131,11 +2131,9 @@ function mountProto(path) {
     slot.replaceWith(f);
   };
   if (protoCache[path]) return put(protoCache[path]);
-  // first load: keep the spinning Penny up for at least a moment so it reads as a loader, not a flash
-  const t0 = performance.now(), hold = h => setTimeout(() => put(h), Math.max(0, 1400 - (performance.now() - t0)));
   fetch(path)
     .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
-    .then(t => { protoCache[path] = t; hold(t); })
+    .then(t => { protoCache[path] = t; put(t); })
     .catch(() => { if (slot.isConnected) slot.textContent = "The prototype couldn’t load here."; });
 }
 
@@ -2362,9 +2360,10 @@ function brandPlate() {
 /* ---------- Experiments: ASCII ideas, each shown live with where it could go later ---------- */
 const XP = [
   { h: "Project cards that resolve from ASCII", where: "Undecided: not the project cards, which need to stay informational", d: "The cover is drawn in characters, cell for cell over the real image. Hover and it clears outward from your pointer.", demo: "card" },
+  { h: "A spinning Penny", where: "Undecided: see the placement ideas", d: "The Penny in characters, turning: progress quarters on the front, brushed metal on the back, the rim showing as it turns.", demo: "penny" },
   { h: "The logomark, built from characters", where: "My Brand · hovering the logomark tile", d: "The logomark as it is. Hover and the same shape is redrawn in characters, cell for cell, then snaps back when you move away.", demo: "mark" }
 ];
-const XP_LIVE = [["A spinning Penny", "Quarters: the prototype loader, and the top of Inside the Penny", "#quarters"], ["A trail along the footer", "The footer on every page", ""], ["You're off trail", "Any broken link, like this one", "#off-trail"], ["Scramble between pages", "Headings when you change page", ""], ["Numbers that count in", "Stats on the case studies", "#quarters"]];
+const XP_LIVE = [["A trail along the footer", "The footer on every page", ""], ["You're off trail", "Any broken link, like this one", "#off-trail"], ["Scramble between pages", "Headings when you change page", ""], ["Numbers that count in", "Stats on the case studies", "#quarters"]];
 const XP_REPLAY = new Set();
 function viewExperiments() {
   return `<section class="intro xp-intro">
@@ -2546,7 +2545,7 @@ function pennySpin(pre, { cols = 52, speed = 1 } = {}) {
 let pennyStops = [];
 function initPennies() {
   pennyStops.forEach(f => f()); pennyStops = [];
-  document.querySelectorAll("#app pre.penny-spin").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52 })));
+  document.querySelectorAll("#app pre.penny-spin:not(#xp-penny pre)").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52 })));
 }
 
 /* Footer trail: the three mountains side by side as one thin ridge. The green trail covers the climbs I've done
@@ -2572,9 +2571,10 @@ function footerTrail() {
     if (y < H - 1) out += "\n";
   }
   const el = document.createElement("div");
-  el.className = "wrap f-trail";
+  el.className = "f-trail";
   el.innerHTML = `<pre role="img" aria-label="My trail so far: ${order.filter(p => p.done).map(p => p.name).join(" and ")} done, ${order.filter(p => !p.done).map(p => p.name).join(", ")} in progress">${out}</pre>`;
-  foot.prepend(el);
+  el.style.setProperty("--cols", W);
+  foot.append(el);
 }
 
 /* 404: you're off trail. A mountain with a lost dot wandering along it, and the way back. */
@@ -2607,6 +2607,9 @@ function scrambleIn(root) {
   const nodes = [];
   targets.forEach(t => { const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (n.nodeValue.trim()) nodes.push([n, n.nodeValue]); });
   if (!nodes.length) return;
+  // random glyphs are wider or narrower than the real letters and could rewrap the line, so hold each block's height
+  targets.forEach(t => { t.style.height = t.offsetHeight + "px"; t.style.overflow = "hidden"; });
+  const release = () => targets.forEach(t => { t.style.height = ""; t.style.overflow = ""; });
   const t0 = performance.now(), D = 520;
   const step = now => {
     const k = Math.min(1, (now - t0) / D);
@@ -2615,27 +2618,31 @@ function scrambleIn(root) {
       const solved = Math.floor(to.length * Math.max(0, (k - .15) / .85));
       n.nodeValue = k >= 1 ? to : [...to].map((ch, j) => j < solved || ch === " " ? ch : SCRAMBLE_POOL[(Math.random() * SCRAMBLE_POOL.length) | 0]).join("");
     });
-    if (k < 1) requestAnimationFrame(step);
+    if (k < 1) requestAnimationFrame(step); else release();
   };
   requestAnimationFrame(step);
 }
 
-/* Stats count in: the first time a figure scrolls into view, its digits spin and settle left to right. */
+/* Stats count in: the first time a figure scrolls into view, it counts up from zero to its value,
+   keeping its prefix and suffix (+71, 87.5, 9/9, 72%, $612M). */
 function initCountIn() {
   const els = [...document.querySelectorAll("#app .nums b, #app .fs b, #app .impact b, #app .ins b")].filter(b => /\d/.test(b.textContent));
   if (!els.length || STILL() || !("IntersectionObserver" in window)) return;
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (!e.isIntersecting) return; io.unobserve(e.target);
-    const b = e.target, v = b.textContent, t0 = performance.now(), D = 800;
-    b.style.minWidth = b.offsetWidth + "px"; // hold the width so neighbours don't shift while digits change
+  const run = b => {
+    const v = b.textContent, m = v.match(/(\d[\d,]*\.?\d*)/); if (!m) return;
+    const num = parseFloat(m[1].replace(/,/g, "")), dec = (m[1].split(".")[1] || "").length, pre = v.slice(0, m.index), post = v.slice(m.index + m[1].length);
+    const fmt = n => pre + (dec ? n.toFixed(dec) : Math.round(n).toLocaleString("en-US")) + post;
+    b.style.minWidth = b.offsetWidth + "px"; // hold the width so neighbours don't shift
+    b.textContent = fmt(0);
+    const t0 = performance.now() + 120, D = 1300;
     const step = now => {
-      const k = (now - t0) / D;
-      if (k >= 1) { b.textContent = v; b.style.minWidth = ""; return; }
-      b.textContent = [...v].map((ch, j) => /\d/.test(ch) && k < (j + 1) / v.length ? String((Math.random() * 10) | 0) : ch).join("");
-      requestAnimationFrame(step);
+      const k = Math.min(1, Math.max(0, (now - t0) / D)), e = 1 - Math.pow(1 - k, 3);
+      b.textContent = k >= 1 ? v : fmt(num * e);
+      if (k < 1) requestAnimationFrame(step); else b.style.minWidth = "";
     };
     requestAnimationFrame(step);
-  }), { threshold: .8 });
+  };
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); run(e.target); } }), { threshold: .5, rootMargin: "0px 0px -10% 0px" });
   els.forEach(b => io.observe(b));
 }
 
@@ -2644,6 +2651,7 @@ function initExperiments() {
   if (!document.querySelector(".xp-grid")) return;
   const $x = id => document.getElementById("xp-" + id), replay = {};
   xpCard($x("card")); xpMark($x("mark"));
+  const pen = $x("penny"); if (pen) { pen.innerHTML = '<pre class="penny-spin" data-cols="56" role="img" aria-label="The Penny drawn in characters, turning slowly"></pre>'; xpStops.push(pennySpin(pen.firstChild, { cols: 56 })); }
   document.querySelectorAll(".xp-replay").forEach(b => b.addEventListener("click", () => replay[b.dataset.for] && replay[b.dataset.for]()));
 }
 
