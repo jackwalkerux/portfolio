@@ -259,7 +259,22 @@ main { padding-block: 56px 96px; }
 .pp-note { position: absolute; z-index: 2; left: 14px; top: -13px; rotate: -3deg; padding: 4px 10px; border-radius: 4px; background: var(--link); color: var(--bg); font: 700 12.5px/1.2 var(--font); white-space: nowrap; box-shadow: 0 3px 10px rgba(0, 0, 0, .12); transition: opacity .25s ease; }
 .pp-card[aria-hidden] .pp-note { opacity: 0; }
 .pp-stat { font-size: 12.5px; font-weight: 600; color: var(--muted); opacity: .8; font-variant-numeric: tabular-nums; }
-@media (max-width: 1000px) { .peak { grid-template-columns: 225px minmax(0, 1fr); } .peak-photos { grid-column: 1 / -1; } }
+@media (max-width: 1000px) { .peak { grid-template-columns: 225px minmax(0, 1fr); } .peak-pics { grid-column: 1 / -1; } }
+/* One rotating mountain card */
+.peak-side { display: grid; gap: 22px; align-content: center; align-self: stretch; }
+.peak-info, .peak-pics { transition: opacity .2s ease, transform .3s cubic-bezier(.2, .8, .2, 1); }
+.peak.swap .peak-info, .peak.swap .peak-pics { opacity: 0; transform: translateY(6px); }
+.peak-pics { min-width: 0; }
+.peak-nav { display: flex; align-items: center; gap: 10px; }
+.pk-go { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); cursor: pointer; transition: border-color .15s, color .15s, transform .15s; }
+.pk-go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pk-go:hover { border-color: var(--link); color: var(--link); }
+.pk-go:active { transform: scale(.94); }
+.pk-go:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.pk-count { font: 600 14px var(--font); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 3.2em; text-align: center; }
+.pk-count b { color: var(--ink); }
+.peak-art { touch-action: pan-y; }
+@media (prefers-reduced-motion: reduce) { .peak-info, .peak-pics { transition: none; } }
 .peak-art .dn { color: var(--ink); }
 .peaks.on .peak-art .dn { animation: peakDescend 2.8s ease-in-out infinite; animation-delay: calc(1.8s + var(--d) * 70ms); }
 @keyframes peakDescend { 0%, 55%, 100% { color: var(--ink); } 18% { color: var(--link); } }
@@ -1769,16 +1784,21 @@ const PK_W = 64, PK_H = 18, FT_ROW = 250, MI_COL = 7.5, PK_X0 = 1;
 const lerpPts = (P, x) => { for (let i = 1; i < P.length; i++) if (x <= P[i][0]) { const [x0, y0] = P[i - 1], [x1, y1] = P[i]; return y0 + (y1 - y0) * ((x - x0) / (x1 - x0 || 1)); } return P[P.length - 1][1]; };
 const trailMi = pk => pk.trail[pk.trail.length - 1][0];
 const trailGain = pk => Math.round((pk.trail[pk.trail.length - 1][1] - pk.trail[0][1]) / 10) * 10;
-function peakArt(pk) {
-  const W = PK_W, H = PK_H, TX = ".:;-=+*", base = pk.trail[0][1], miles = trailMi(pk);
+// A mountain's side profile: the ground row for every column, and the column where Jack is
+function peakProfile(pk) {
+  const W = PK_W, H = PK_H, base = pk.trail[0][1], miles = trailMi(pk);
   const sc = Math.round(PK_X0 + miles * MI_COL), far = [[0, pk.trail[pk.trail.length - 1][1]], ...pk.far];
   const ftAt = c => c <= sc ? lerpPts(pk.trail, Math.max(0, (c - PK_X0) / MI_COL)) : lerpPts(far, (c - sc) / (W - 1 - sc));
   const r = []; for (let c = 0; c < W; c++) r.push(Math.max(0, Math.min(H - 1, (H - 1) - Math.round((ftAt(c) - base) / FT_ROW))));
-  const pc = pk.done ? sc : Math.round(PK_X0 + (pk.atMi || 0) * MI_COL);
+  return { r, pc: pk.done ? sc : Math.round(PK_X0 + (pk.atMi || 0) * MI_COL), done: !!pk.done };
+}
+// Draw a profile as ASCII. plain = a frame mid-morph: no trail colouring, just ridge, texture and Jack.
+function peakGrid({ r, pc, done }, plain) {
+  const W = PK_W, H = PK_H, TX = ".:;-=+*";
   const G = Array.from({ length: H }, () => Array.from({ length: W }, () => ({ ch: " ", k: "" })));
   for (let c = 0; c < W; c++) {
     const prev = c ? r[c - 1] : r[c], next = c < W - 1 ? r[c + 1] : r[c];
-    const k = cc => cc <= pc ? "tr" : pk.done ? "dn" : "rg"; // done: the far side is the way back down
+    const k = cc => plain ? "rg" : cc <= pc ? "tr" : done ? "dn" : "rg"; // done: the far side is the way back down
     G[r[c]][c] = { ch: next < prev ? "/" : next > prev ? "\\" : "_", k: k(c) };
     if (c < W - 1 && r[c + 1] - r[c] >= 2) for (let y = r[c] + 1; y < r[c + 1]; y++) G[y][c + 1] = { ch: "|", k: k(c + 1) };
     if (c < W - 1 && r[c] - r[c + 1] >= 2) for (let y = r[c + 1] + 1; y < r[c]; y++) G[y][c] = { ch: "|", k: k(c) };
@@ -1787,16 +1807,17 @@ function peakArt(pk) {
       G[y][c] = { ch: d === 1 ? (hsh > .5 ? "." : " ") : TX[Math.min(TX.length - 1, Math.floor(d * .45 + hsh * 2))], k: "tx" };
     }
   }
-  G[r[pc] - 1][pc] = { ch: "●", k: "me" };
+  if (r[pc] > 0) G[r[pc] - 1][pc] = { ch: "●", k: "me" };
   // Emit rows, merging runs of the same class; trail cells carry their column so they light up in order
   return G.map(row => { let out = "", run = "", k0 = null;
     const flush = () => { if (run) out += k0 ? `<span class="${k0}">${esc(run)}</span>` : esc(run); run = ""; };
     row.forEach((cell, c) => {
-      if (cell.k === "tr" || cell.k === "me") { flush(); k0 = null; out += `<span class="${cell.k}" style="--d:${c}">${esc(cell.ch)}</span>`; return; }
+      if (cell.k === "tr" || cell.k === "me") { flush(); k0 = null; out += `<span class="${cell.k}" style="--d:${plain ? 0 : c}">${esc(cell.ch)}</span>`; return; }
       if (cell.k === "dn") { flush(); k0 = null; out += `<span class="dn" style="--d:${c - pc}">${esc(cell.ch)}</span>`; return; }
       if (cell.k !== k0) { flush(); k0 = cell.k; } run += cell.ch; });
     flush(); return out; }).join("\n");
 }
+const peakArt = pk => peakGrid(peakProfile(pk));
 const MOUNTAIN_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19l6.5-10 4 6 2.5-3.5L21 19z"/><circle cx="17" cy="6.5" r="1.6"/></svg>';
 const peakPics = pk => pk.photos && pk.photos.length ? pk.photos : [null, null, null, null];
 const TILT = [-4, 3, -2, 5, -5, 2];
@@ -1824,39 +1845,96 @@ function peakPhotos(pk) {
       <p class="pp-count" aria-live="polite"><b>1</b> / ${n}</p>
     </div>`;
 }
-const peakRow = pk => `<article class="peak ${pk.done ? "done" : "prog"}">
-    <div class="peak-info">
-      <h3>${esc(pk.name)}</h3>
+const peakInfo = pk => `<h3>${esc(pk.name)}</h3>
       <span class="peak-status">${pk.done ? '<b aria-hidden="true">[x]</b> Complete' : '<b aria-hidden="true">[<i>&gt;</i>]</b> In progress'}</span>
       <p>${esc(pk.where)}</p>
       <p class="peak-elev">${esc(pk.elev)}</p>
-      <p class="peak-trip">${trailMi(pk)} mi up · +${trailGain(pk).toLocaleString("en-US")} ft</p>
+      <p class="peak-trip">${trailMi(pk)} mi up · +${trailGain(pk).toLocaleString("en-US")} ft</p>`;
+const peakLabel = pk => `${pk.name} side profile, ${pk.done ? "trail complete to the summit" : "trail in progress"}`;
+const PK_ARROW = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d < 0 ? "M15 6l-6 6 6 6" : "M9 6l6 6-6 6"}"/></svg>`;
+// One card for every mountain: the arrows step through them, and the ASCII ridge morphs from one profile into the next
+const peakCard = (pk, i) => `<article class="peak ${pk.done ? "done" : "prog"}" data-i="${i}" aria-roledescription="carousel" aria-label="Mountains">
+    <div class="peak-side">
+      <div class="peak-info" aria-live="polite">${peakInfo(pk)}</div>
+      <div class="peak-nav">
+        <button class="pk-go" type="button" data-d="-1" aria-label="Previous mountain">${PK_ARROW(-1)}</button>
+        <span class="pk-count"><b>${i + 1}</b> / ${PEAKS.length}</span>
+        <button class="pk-go" type="button" data-d="1" aria-label="Next mountain">${PK_ARROW(1)}</button>
+      </div>
     </div>
-    <div class="peak-art" role="img" aria-label="${esc(pk.name)} side profile, ${pk.done ? "trail complete to the summit" : "trail in progress"}"><pre>${peakArt(pk)}</pre></div>
-    ${peakPhotos(pk)}
+    <div class="peak-art" role="img" aria-label="${esc(peakLabel(pk))}"><pre>${peakArt(pk)}</pre></div>
+    <div class="peak-pics">${peakPhotos(pk)}</div>
   </article>`;
+// A loose pile of photos: click (or arrow keys) tosses the top one to the back
+function initStack(box) {
+  if (!box || box.querySelector(".pp-empty")) return;
+  const cards = [...box.querySelectorAll(".pp-card")], n = cards.length;
+  const count = box.querySelector(".pp-count b"), stack = box.querySelector(".pp-stack");
+  let order = cards.map((_, i) => i), busy = false;
+  const lay = () => {
+    order.forEach((ci, pos) => { const c = cards[ci]; c.style.setProperty("--pos", pos); c.style.zIndex = n - pos; c.toggleAttribute("aria-hidden", pos > 0); c.classList.toggle("deep", pos >= 3); });
+    count.textContent = order[0] + 1;
+  };
+  const flip = () => {
+    if (busy || n < 2) return; busy = true;
+    const top = cards[order[0]]; top.classList.add("fly");
+    setTimeout(() => { order.push(order.shift()); top.classList.remove("fly"); lay(); busy = false; }, 280);
+  };
+  stack.addEventListener("click", flip);
+  stack.addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); flip(); } });
+  lay();
+}
+let peakTimer = 0;
 function initPeaks() {
+  clearInterval(peakTimer);
   const sec = document.querySelector(".peaks");
   if (!sec) return;
-  sec.querySelectorAll(".peak").forEach(card => {
-    const box = card.querySelector(".peak-photos"); if (!box || box.querySelector(".pp-empty")) return;
-    const cards = [...box.querySelectorAll(".pp-card")], n = cards.length;
-    const count = box.querySelector(".pp-count b"), stack = box.querySelector(".pp-stack");
-    let order = cards.map((_, i) => i), busy = false;
-    const lay = () => {
-      order.forEach((ci, pos) => { const c = cards[ci]; c.style.setProperty("--pos", pos); c.style.zIndex = n - pos; c.toggleAttribute("aria-hidden", pos > 0); c.classList.toggle("deep", pos >= 3); });
-      count.textContent = order[0] + 1;
+  const card = sec.querySelector(".peak"), pre = card.querySelector(".peak-art pre"), art = card.querySelector(".peak-art");
+  const info = card.querySelector(".peak-info"), pics = card.querySelector(".peak-pics"), count = card.querySelector(".pk-count b");
+  initStack(pics.querySelector(".peak-photos"));
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let i = 0, raf = 0, swapT = 0, auto = !still, hover = false;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const go = d => {
+    const from = peakProfile(PEAKS[i]);
+    i = (i + d + PEAKS.length) % PEAKS.length;
+    const pk = PEAKS[i], to = peakProfile(pk);
+    count.textContent = i + 1; card.dataset.i = i;
+    art.setAttribute("aria-label", peakLabel(pk));
+    // text and photos fade out, swap, fade back in
+    card.classList.add("swap"); clearTimeout(swapT);
+    swapT = setTimeout(() => {
+      info.innerHTML = peakInfo(pk); pics.innerHTML = peakPhotos(pk); initStack(pics.querySelector(".peak-photos"));
+      card.classList.toggle("done", !!pk.done); card.classList.toggle("prog", !pk.done);
+      card.classList.remove("swap");
+    }, 200);
+    // the ridge morphs column by column; the trail then lights up again from the trailhead
+    cancelAnimationFrame(raf);
+    const finish = () => { sec.classList.remove("on"); pre.innerHTML = peakArt(pk); pre.offsetWidth; sec.classList.add("on"); };
+    if (still) return finish();
+    const t0 = performance.now(), D = 720;
+    const frame = now => {
+      const t = Math.min(1, (now - t0) / D), e = ease(t);
+      if (t >= 1) return finish();
+      const r = from.r.map((y, c) => Math.round(y + (to.r[c] - y) * e));
+      pre.innerHTML = peakGrid({ r, pc: Math.round(from.pc + (to.pc - from.pc) * e), done: false }, true);
+      raf = requestAnimationFrame(frame);
     };
-    // Toss the top photo to the back of the pile
-    const flip = () => {
-      if (busy || n < 2) return; busy = true;
-      const top = cards[order[0]]; top.classList.add("fly");
-      setTimeout(() => { order.push(order.shift()); top.classList.remove("fly"); lay(); busy = false; }, 280);
-    };
-    stack.addEventListener("click", flip);
-    stack.addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); flip(); } });
-    lay();
+    raf = requestAnimationFrame(frame);
+  };
+  card.querySelectorAll(".pk-go").forEach(b => b.addEventListener("click", () => { auto = false; go(+b.dataset.d); }));
+  card.addEventListener("keydown", e => {
+    if (!e.target.closest(".peak-nav")) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); auto = false; go(1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); auto = false; go(-1); }
   });
+  // swipe the ridge on touch screens
+  let sx = null;
+  art.addEventListener("pointerdown", e => { sx = e.clientX; });
+  art.addEventListener("pointerup", e => { if (sx != null && Math.abs(e.clientX - sx) > 40) { auto = false; go(e.clientX < sx ? 1 : -1); } sx = null; });
+  // drifts to the next mountain on its own until someone takes over; pauses while hovered
+  card.addEventListener("pointerenter", () => hover = true); card.addEventListener("pointerleave", () => hover = false);
+  peakTimer = setInterval(() => { if (auto && !hover && sec.classList.contains("on") && !document.hidden && card.isConnected) go(1); }, 9000);
   if (!("IntersectionObserver" in window)) { sec.classList.add("on"); return; }
   const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { sec.classList.add("on"); io.disconnect(); } }, { threshold: .25 });
   io.observe(sec);
@@ -1892,7 +1970,7 @@ function viewHome(three = false) {
     <section class="more${three ? " four" : ""}"><h2>More work</h2><div class="cards">${rest.map(card).join("")}
       <a class="card" href="#beyond-ux"><div class="shot">${media("gd-type", "")}</div><h2>Beyond UX</h2><p>Graphic design, research, print and industrial design.</p><span class="meta">2023 to 2026</span></a>
     </div></section>
-    <section class="peaks" id="peaks"><h2>Where I'm Headed</h2><div class="peak-list">${PEAKS.map(peakRow).join("")}</div></section>`;
+    <section class="peaks" id="peaks"><h2>Where I'm Headed</h2><div class="peak-list">${peakCard(PEAKS[0], 0)}</div></section>`;
 }
 
 function viewCase(p) {
