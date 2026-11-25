@@ -584,6 +584,17 @@ figure .img.fit img { cursor: zoom-in; }
 .psplit .parts > div:last-child { border-bottom: 1px solid var(--line); }
 @media (max-width: 760px) { .psplit { grid-template-columns: 1fr; gap: 28px; } .psplit .pcut img { max-width: 260px; } }
 .cs-link { font-weight: 700; color: var(--link); text-decoration: none; font-size: 17px; } .cs-link:hover { text-decoration: underline; }
+/* Section dots */
+.dots { position: fixed; right: clamp(12px, 2vw, 28px); top: 50%; transform: translateY(-50%); z-index: 40; display: grid; gap: 10px; justify-items: center; }
+.dots button { position: relative; width: 18px; height: 18px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.dots button::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 45%, transparent); transition: height .25s ease, background .2s; }
+.dots button:hover::before { background: var(--muted); }
+.dots button.on::before { height: 22px; background: var(--link); }
+.dots button.on { height: 30px; }
+.dot-l { position: absolute; right: 26px; top: 50%; transform: translate(4px, -50%); white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; }
+.dots button:hover .dot-l, .dots button:focus-visible .dot-l { opacity: 1; transform: translate(0, -50%); }
+.dots button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 999px; }
+@media (max-width: 900px) { .dots { display: none; } }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
 .persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
 .persona > div { border-top: 2px solid var(--line); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
@@ -972,7 +983,7 @@ const MORE = [
         { todo: "This one needs a short case study: the problem, two decisions with screens, and the final design. The live parking map on the cover is a good lead image." } ] }
     ]},
   { id: "bandcamp-testing", title: "Bandcamp", sub: "Usability Research", summary: "Bandcamp makes new fans work too hard to find music and pay for it. I designed the redesign prototype and wrote the tests that proved it fixed three core problems.",
-    meta: "UX research · Fall 2026", hero: "bc-cover", thumb: "bc-card",
+    meta: "UX research · Fall 2026", hero: "bc-cover", thumb: "bc-card", href: "#beyond-ux/fridge-research", // the full study lives in Beyond UX › Research
     facts: { "My role": "Prototype designer, test writer, moderator", Team: "5 UX researchers", Timeline: "Fall 2026 · 10 weeks", Methods: "Heuristic review, moderated + unmoderated testing" },
     sections: [
       { h: "At a glance", blocks: [
@@ -1038,6 +1049,12 @@ const MORE = [
     ]}
 ];
 
+// A case study folded into a Beyond UX section: its title becomes the project, its sections become sub-heads
+function asProject(p) {
+  const out = [{ h: `${p.title}${p.sub ? " " + p.sub : ""}`, p: p.summary }, { facts: p.facts }, { figs: [[p.hero, ""]], n: 1 }];
+  p.sections.forEach(sc => { out.push({ t: sc.h }); out.push(...sc.blocks); });
+  return out;
+}
 const OTHER = [
   { id: "graphic-design", tab: "Graphic design", cover: "arc-cover", blurb: "Arc'teryx report book, posters and type", title: "Graphic design", lede: "A collection of various graphic design works I’ve made professionally and personally.",
     blocks: [
@@ -1089,14 +1106,7 @@ const OTHER = [
       { figs: [["gd-farm3", "Poster 3 - Color Allowed, Limited shape usage"], ["gd-farm4", "Poster 4 - No limits"]], kind: "posters2" } ] },
   { id: "fridge-research", tab: "Research", cover: "fr-front", blurb: "Bandcamp usability study and The Ideal Fridge", title: "Research", lede: "Research studies I've worked on, from usability testing to in-home observation.",
     blocks: [
-      { h: "Bandcamp Usability Research", p: "Bandcamp makes new fans work too hard to find music and pay for it. I designed the redesign prototype and wrote the tests that proved it fixed three core problems." },
-      { figs: [["bc-cover", ""]], n: 1 },
-      { nums: [["19", "participants tested"], ["3", "usability problems found"], ["9/9", "completed every key task on our redesign"]] },
-      { t: "Navigation, before and after" },
-      { figs: [["bc-nav-before", "Before: navigation changes with each section"], ["bc-nav-after", "After: one global navigation on every page"]] },
-      { t: "Checkout, before and after" },
-      { figs: [["bc-buy-before", "Before: no total in the purchase dialog"], ["bc-buy-after", "After: the full price up front"]] },
-      { link: ["Read the full Bandcamp case study", "#bandcamp-testing"] },
+      ...asProject(MORE.find(x => x.id === "bandcamp-testing")),
       { h: "The Ideal Fridge", p: "A team research study into how people use their refrigerators, published as a printed magazine. I designed the front and back covers." },
       { figs: [["fr-hero", "The finished magazine"]], n: 1 },
       { p: "We started with secondary research, then ran our own studies in four stages." },
@@ -1679,6 +1689,7 @@ function block(b) {
   if (b.t) return `<h4 class="piece-h">${esc(b.t)}</h4>` + (b.p ? `<p class="col piece-p">${esc(b.p)}</p>` : "");
   if (b.h) return `<h3 class="sub-h">${esc(b.h)}</h3>` + (b.p ? `<p class="col sub-p">${esc(b.p)}</p>` : "");
   if (b.p) return `<p class="col${b.cls ? " " + b.cls : ""}">${esc(b.p)}</p>`;
+  if (b.facts) return `<dl class="facts">${Object.entries(b.facts).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`;
   if (b.link) return `<p class="col"><a class="cs-link" href="${esc(b.link[1])}">${esc(b.link[0])} <span aria-hidden="true">&rarr;</span></a></p>`;
   if (b.qcols) return `<div class="persona">${b.qcols.map(c => `<div><h4>${esc(c.h)}</h4><p>${esc(c.d)}</p></div>`).join("")}</div>`;
   if (b.insights) return `<ol class="ins">${b.insights.map(([n, h, d]) => `<li><b>${esc(n)}</b><div><h4>${esc(h)}</h4><p>${esc(d)}</p></div></li>`).join("")}</ol>`;
@@ -1707,7 +1718,7 @@ function block(b) {
 }
 const LOCK = '<span class="lock" aria-hidden="true"><span><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2" fill="currentColor" stroke="none"/></svg></span></span>';
 function card(p) {
-  const tag = p.locked ? `div aria-disabled="true" title="Coming soon"` : `a href="#${p.id}"`; // locked work can't be opened for now
+  const tag = p.locked ? `div aria-disabled="true" title="Coming soon"` : `a href="${p.href || "#" + p.id}"`; // locked work can't be opened for now
   return `<${tag} class="card${p.highlight ? " hl" : ""}${p.locked ? " locked" : ""}">
     <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked ? LOCK : ""}</div>
     <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h2>
@@ -1882,7 +1893,7 @@ function viewHome(three = false) {
 }
 
 function viewCase(p) {
-  const OPEN = ALL.filter(x => !x.locked), i = OPEN.indexOf(p), next = OPEN[(i + 1) % OPEN.length];
+  const OPEN = ALL.filter(x => !x.locked && !x.href), i = OPEN.indexOf(p), next = OPEN[(i + 1) % OPEN.length];
   const inner = `
     <a class="back" href="#projects"><span aria-hidden="true">&larr;</span> All projects</a>
     <header class="cs-head">
@@ -2057,6 +2068,7 @@ function selectBux(id, focusTab) {
   });
   history.replaceState(null, "", "#beyond-ux/" + id);
   lastId = "beyond-ux/" + id;
+  initDots();
   // If we're already scrolled into the content, jump to the top of the new section (just under the squished cards)
   const top = panel.getBoundingClientRect().top, under = bux ? bux.collapsedBottom() : 140;
   if (top < under) window.scrollTo(0, window.scrollY + top - under - 16);
@@ -2395,10 +2407,12 @@ function initNameFx() {
 
 let lastId = "";
 function render() {
+  const moved = ALL.find(x => x.href && x.id === location.hash.slice(1));
+  if (moved) history.replaceState(null, "", moved.href);
   const id = location.hash.replace(/^#/, "");
   const [base, sub] = id.split("/");
   const isBux = base === "beyond-ux" || id === "other-work";
-  const p = ALL.find(x => x.id === id && !x.locked);
+  const p = ALL.find(x => x.id === id && !x.locked && !x.href);
   if (!p && ALL.some(x => x.id === id)) history.replaceState(null, "", location.pathname + location.search);
   const cameFrom = ALL.find(x => x.id === lastId);
   lastId = id;
@@ -2436,6 +2450,38 @@ function render() {
   initHomeLinks();
   initPeaks();
   initBrand();
+  initDots();
+}
+
+/* Section dots: a vertical stack on the right edge, one dot per section of the current page.
+   The current section's dot stretches into a pill; hover shows its name, click jumps there. */
+let dots = null;
+function initDots() {
+  if (dots) { dots.el.remove(); removeEventListener("scroll", dots.on); removeEventListener("resize", dots.on); dots = null; }
+  const secs = [...document.querySelectorAll("#app .cs-body > .sec, #app .bux-panel .projs > .proj")];
+  if (secs.length < 2) return;
+  const name = s => (s.querySelector(":scope > h2, .proj-title") || {}).textContent || "";
+  const el = document.createElement("nav");
+  el.className = "dots"; el.setAttribute("aria-label", "Sections on this page");
+  el.innerHTML = secs.map((s, i) => `<button type="button" data-i="${i}" aria-label="${esc(name(s).trim())}"><span class="dot-l">${esc(name(s).trim())}</span></button>`).join("");
+  document.body.appendChild(el);
+  const btns = [...el.children];
+  el.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const s = secs[+b.dataset.i];
+    if (s.classList.contains("proj") && s.classList.contains("closed")) { setProj(s, true); syncProjAll(s.closest(".bux-piece")); }
+    const y = s.getBoundingClientRect().top + scrollY - (bux ? bux.collapsedBottom() : 80) - 16;
+    scrollTo({ top: y, behavior: "smooth" });
+  });
+  const on = () => {
+    if (secs[0].isConnected) el.style.setProperty("--link", getComputedStyle(secs[0]).getPropertyValue("--link")); // match the page's accent (blue on Quarters)
+    const line = innerHeight * .35; let cur = 0;
+    secs.forEach((s, i) => { if (s.isConnected && s.getBoundingClientRect().top < line) cur = i; });
+    if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) cur = secs.length - 1;
+    btns.forEach((b, i) => { b.classList.toggle("on", i === cur); if (i === cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+  };
+  addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
+  dots = { el, on }; on();
 }
 
 document.body.classList.toggle("draft-off", !DRAFT);
