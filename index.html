@@ -535,9 +535,11 @@ figure .img.fit img { cursor: zoom-in; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cs-quarters { --link: #6B98DD; } }
 .cs-quarters .proto-h { color: var(--link); }
 .cs-quarters .cs-body { gap: 112px; margin-top: 96px; counter-reset: qsec; }
-.cs-quarters .sec { border-top: 1px solid var(--line); padding-top: 28px; gap: 28px; counter-increment: qsec; }
-.cs-quarters .sec > h2 { display: grid; justify-items: start; gap: 10px; font-size: clamp(30px, 3.2vw, 38px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 4px; }
-.cs-quarters .sec > h2::before { content: counter(qsec, decimal-leading-zero); font-size: 15px; font-weight: 700; letter-spacing: 0; line-height: 1; color: var(--link); }
+.cs-quarters .sec { border-top: 1px solid var(--line); padding-top: 36px; gap: 28px; counter-increment: qsec; }
+/* section headers match Beyond UX: grey index number on the title line, at the title's size and weight */
+.cs-quarters { --ts: clamp(28px, 3vw, 36px); }
+.cs-quarters .sec > h2 { display: grid; grid-template-columns: calc(var(--ts) * 1.7) minmax(0, 1fr); align-items: baseline; font-size: var(--ts); font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; margin-bottom: 4px; }
+.cs-quarters .sec > h2::before { content: counter(qsec, decimal-leading-zero); font-size: 1em; font-weight: 800; letter-spacing: -0.015em; color: color-mix(in srgb, var(--muted) 55%, transparent); }
 .cs-quarters .nums { gap: 24px 32px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cs-quarters .sec:first-child .nums { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 1280px) { .cs-quarters .sec:first-child .nums { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
