@@ -743,10 +743,10 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .climb-rail .fl { color: color-mix(in srgb, var(--ink) 35%, var(--bg)); font-size: 15px; transition: color .3s; } .climb-rail .fl.on { color: #E0663A; }
 .climb-hits { position: absolute; inset: 0; }
 .climb-hits button { position: absolute; width: 22px; height: 22px; transform: translate(-50%, -50%); background: none; border: 0; padding: 0; cursor: pointer; pointer-events: auto; display: grid; place-items: center; transition: top .3s cubic-bezier(.2, .8, .2, 1); }
-/* ahead: a hollow grey ring · passed: a small solid green dot · current: a bold green ring around a green centre */
-.climb-hits button::before { content: ""; width: 10px; height: 10px; border-radius: 50%; box-sizing: border-box; background: var(--bg); border: 2px solid color-mix(in srgb, var(--ink) 38%, var(--bg)); transition: width .25s cubic-bezier(.2, .8, .2, 1), height .25s cubic-bezier(.2, .8, .2, 1), background .25s, border-color .25s, border-width .25s; }
-.climb-hits button.past::before { width: 7px; height: 7px; border-width: 0; background: var(--link); }
-.climb-hits button.on::before { width: 16px; height: 16px; border: 3px solid var(--link); background: radial-gradient(circle, var(--link) 0 2.5px, var(--bg) 3px); }
+/* ahead: thin grey ring · passed: thick green ring, no fill · current: solid green. All the same size. */
+.climb-hits button::before { content: ""; width: 14px; height: 14px; border-radius: 50%; box-sizing: border-box; background: var(--bg); border: 1.5px solid color-mix(in srgb, var(--ink) 40%, var(--bg)); transition: background-color .25s, border-color .25s, border-width .25s; }
+.climb-hits button.past::before { border: 3px solid var(--link); }
+.climb-hits button.on::before { border: 3px solid var(--link); background: var(--link); }
 .climb-hits button:hover::before { border-color: var(--link); }
 .climb-hits button span { position: absolute; right: 26px; top: 50%; transform: translateY(-50%); white-space: nowrap; font: 600 12.5px var(--font); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; opacity: 0; transition: opacity .15s; pointer-events: none; }
 .climb-hits button:hover span, .climb-hits button:focus-visible span { opacity: 1; }
