@@ -671,6 +671,42 @@ figure .img.fit img { cursor: zoom-in; }
 .xp-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
 @media (max-width: 900px) { .xp-grid { grid-template-columns: 1fr; } .xp-lost { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .xp-demo .me { animation: none; } }
+/* Spinning Penny */
+.penny-spin { margin: 0; font: 700 10px/1 ui-monospace, Menlo, Consolas, monospace; white-space: pre; color: var(--muted); }
+.penny-spin .pe { color: var(--ink); } .penny-spin .pz { color: #D9D1C1; } .penny-spin .pb { color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.penny-spin .led { color: #3DBB6B; }
+.penny-spin .qa { color: #6F95DD; } .penny-spin .qn { color: #EE8E66; } .penny-spin .qy { color: #F2B92E; } .penny-spin .qm { color: #5DBB84; }
+.penny-spin .soft { opacity: .45; } .penny-spin .lt { color: #16181D; font-weight: 800; opacity: 1; }
+:root[data-theme="dark"] .penny-spin .pz { color: #8F897E; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .penny-spin .pz { color: #8F897E; } }
+.penny-fig { margin: 0 0 8px; display: grid; justify-items: center; }
+.penny-fig .penny-spin { font-size: clamp(7px, 1vw, 10px); }
+.proto-msg { gap: 14px; align-content: center; }
+.proto-msg .penny-spin { font-size: 8px; }
+/* Footer trail */
+.f-trail { padding-top: 8px; overflow: hidden; }
+.f-trail pre { margin: 0; font: 600 8px/1.1 ui-monospace, Menlo, Consolas, monospace; color: color-mix(in srgb, var(--muted) 55%, transparent); white-space: pre; }
+.f-trail .tr { color: var(--link); } .f-trail .me { color: var(--link); animation: peakBlink .8s ease-in-out infinite; }
+/* 404 */
+.lost { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: center; min-height: 60vh; }
+.lost-mtn { margin: 0; font: 600 10px/1.15 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); white-space: pre; }
+.lost-mtn .tx { opacity: .45; } .lost-mtn .rg { color: color-mix(in srgb, var(--ink) 50%, var(--bg)); }
+.lost-mtn .me { display: inline-block; color: var(--link); animation: peakBlink .8s ease-in-out infinite; }
+.lost-code { font: 800 14px ui-monospace, Menlo, monospace; color: var(--link); }
+.lost h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 800; letter-spacing: -0.02em; margin: 6px 0 10px; }
+.lost-copy p:not(.lost-code) { font-size: 18px; color: var(--muted); margin-bottom: 18px; }
+@media (max-width: 760px) { .lost { grid-template-columns: 1fr; gap: 24px; } .lost-mtn { font-size: 6px; } }
+@media (prefers-reduced-motion: reduce) { .f-trail .me, .lost-mtn .me { animation: none; } }
+/* Experiments: what's live */
+.xp-live { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 20px; }
+.xp-live h2 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+.xp-live ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.xp-live li { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; font-size: 15.5px; }
+.xp-live li span { color: var(--muted); }
+@media (max-width: 760px) { .xp-live li { grid-template-columns: 1fr; gap: 2px; } }
+.xp-markbox { color: var(--ink); }
+.xp-markbox canvas { position: absolute; opacity: 0; transition: opacity .12s ease; pointer-events: none; }
+.xp-markbox.on canvas { opacity: 1; }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
 .persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
 .persona > div { border-top: 2px solid var(--line); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
@@ -975,6 +1011,7 @@ const FEATURED = [
         { figs: [["q-features", "The app tracks rent, manages chores and keeps the house's documents"]], n: 1 },
         { figs: [["q-penny-states", "Each roommate's quarter, and the all-done screen"]], kind: "cut" },
         { h: "Inside the Penny" },
+        { penny3d: true },
         { penny: "q-penny-parts", parts: [["Cover & screen", "One quarter per roommate on a 2.8-inch round touchscreen."], ["Main board", "Syncs with the app over Wi-Fi."], ["Battery", "Charges over USB-C."], ["Magnet ring", "Holds it on the fridge."], ["Housing", "Holds the device together."]] },
         { h: "How the Penny took shape" },
         { figs: [["q-sketches", "Early sketches"], ["q-concept-drawing", "Concept drawing"]], kind: "evo" },
@@ -1770,6 +1807,7 @@ function block(b) {
   if (b.link) return `<p class="col"><a class="cs-link" href="${esc(b.link[1])}">${esc(b.link[0])} <span aria-hidden="true">&rarr;</span></a></p>`;
   if (b.qcols) return `<div class="persona">${b.qcols.map(c => `<div><h4>${esc(c.h)}</h4><p>${esc(c.d)}</p></div>`).join("")}</div>`;
   if (b.insights) return `<ol class="ins">${b.insights.map(([n, h, d]) => `<li><b>${esc(n)}</b><div><h4>${esc(h)}</h4><p>${esc(d)}</p></div></li>`).join("")}</ol>`;
+  if (b.penny3d) return `<figure class="penny-fig"><pre class="penny-spin" data-cols="60" role="img" aria-label="The Penny drawn in characters, turning slowly"></pre></figure>`;
   if (b.penny) return `<div class="psplit"><figure class="pcut">${media(b.penny, "The Penny, exploded into its parts")}</figure><dl class="parts">${b.parts.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("")}</dl></div>`;
   if (b.parts) return `<dl class="parts${b.cls ? " " + b.cls : ""}">${b.parts.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("")}</dl>`;
   if (b.ba) { const x = b.ba, ph = (k, l) => `<figure class="ph${l === "After" ? " after" : ""}"><div class="img fit">${media(k, x.h + ", " + l.toLowerCase())}</div><figcaption>${l}</figcaption></figure>`;
@@ -2058,7 +2096,7 @@ function viewCase(p) {
   return `<article class="cs-split cs-${p.id}">
     <aside class="proto-col" aria-label="${esc(p.title)} interactive prototype">
       <h2 class="proto-h">Interactive Prototype</h2>
-      <div class="proto-msg" id="proto-slot">Loading the prototype…</div>
+      <div class="proto-msg" id="proto-slot"><pre class="penny-spin" data-cols="40" aria-hidden="true"></pre><span>Loading the prototype…</span></div>
     </aside>
     <div class="cs-main">${inner}</div>
   </article>`;
@@ -2093,9 +2131,11 @@ function mountProto(path) {
     slot.replaceWith(f);
   };
   if (protoCache[path]) return put(protoCache[path]);
+  // first load: keep the spinning Penny up for at least a moment so it reads as a loader, not a flash
+  const t0 = performance.now(), hold = h => setTimeout(() => put(h), Math.max(0, 1400 - (performance.now() - t0)));
   fetch(path)
     .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
-    .then(t => { protoCache[path] = t; put(t); })
+    .then(t => { protoCache[path] = t; hold(t); })
     .catch(() => { if (slot.isConnected) slot.textContent = "The prototype couldn’t load here."; });
 }
 
@@ -2321,21 +2361,17 @@ function brandPlate() {
 }
 /* ---------- Experiments: ASCII ideas, each shown live with where it could go later ---------- */
 const XP = [
-  { h: "Project cards that resolve from ASCII", where: "Home · project cards", d: "The cover is drawn in characters, cell for cell over the real image. Hover and it clears outward from your pointer.", demo: "card" },
-  { h: "A spinning Penny", where: "Quarters · prototype loader or Inside the Penny", d: "The Penny drawn in characters, turning slowly, its four quarters in the app's colours.", demo: "penny" },
-  { h: "A trail along the footer", where: "Every page · footer", d: "A thin ridge across the bottom of the site, with my dot at the end of the trail so far.", demo: "trail" },
-  { h: "You're off trail", where: "Broken links · 404 page", d: "A mountain with a lost dot wandering around it, and a way back to the trailhead.", demo: "lost" },
-  { h: "Scramble between pages", where: "Every page · page transitions", d: "Text breaks into characters for a split second, then resolves into the next page.", demo: "scramble" },
-  { h: "Numbers that count in", where: "Case studies · stats", d: "Figures cycle through random characters before settling, the first time they scroll into view.", demo: "nums" },
-  { h: "The logomark, built from characters", where: "My Brand · hovering the logomark tile", d: "The logomark as it is. Hover and it breaks into characters; move away and it snaps back.", demo: "mark" },
-  { h: "Savannah in ASCII", where: "About · where I'm based", d: "The historic district's squares in their real rows and columns, from the river down to Forsyth Park. Hover a square for its name.", demo: "map" }
+  { h: "Project cards that resolve from ASCII", where: "Undecided: not the project cards, which need to stay informational", d: "The cover is drawn in characters, cell for cell over the real image. Hover and it clears outward from your pointer.", demo: "card" },
+  { h: "The logomark, built from characters", where: "My Brand · hovering the logomark tile", d: "The logomark as it is. Hover and the same shape is redrawn in characters, cell for cell, then snaps back when you move away.", demo: "mark" }
 ];
-const XP_REPLAY = new Set(["scramble", "nums"]);
+const XP_LIVE = [["A spinning Penny", "Quarters: the prototype loader, and the top of Inside the Penny", "#quarters"], ["A trail along the footer", "The footer on every page", ""], ["You're off trail", "Any broken link, like this one", "#off-trail"], ["Scramble between pages", "Headings when you change page", ""], ["Numbers that count in", "Stats on the case studies", "#quarters"]];
+const XP_REPLAY = new Set();
 function viewExperiments() {
   return `<section class="intro xp-intro">
       <h1>Experiments</h1>
       <p>Ideas for using ASCII art around the site. Each one runs live here, with where it could go later.</p>
     </section>
+    <div class="xp-live"><h2>Now live on the site</h2><ul>${XP_LIVE.map(([h, w, href]) => `<li><b>${esc(h)}</b><span>${href ? `<a href="${href}">${esc(w)}</a>` : esc(w)}</span></li>`).join("")}</ul></div>
     <div class="cs-body xp-grid">${XP.map((x, i) => `
       <section class="sec xp" data-xp="${x.demo}">
         <h2>${esc(x.h)}</h2>
@@ -2412,175 +2448,202 @@ async function xpCard(el) {
   build(); draw();
   const ro = new ResizeObserver(() => { build(); kick(); }); ro.observe(box); xpStops.push(() => ro.disconnect());
 }
-// 2. penny: a disc turning on its vertical axis; front shows the four quarters, back is plain
-function xpPenny(el) {
-  const W = 44, H = 22, Q = ["qa", "qn", "qy", "qm"], L = ["A", "N", "Y", "M"];
-  el.innerHTML = '<pre class="xp-penny" aria-label="A spinning ASCII Penny" role="img"></pre>';
-  const pre = el.firstChild, still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const draw = a => {
-    const ca = Math.cos(a), sa = Math.sin(a), w = Math.max(.04, Math.abs(ca)), out = [];
-    for (let y = 0; y < H; y++) {
-      let row = "", k0 = null, run = "";
-      const flush = () => { if (run) row += k0 ? `<span class="${k0}">${esc(run)}</span>` : esc(run); run = ""; };
-      for (let x = 0; x < W; x++) {
-        const nx = (x - (W - 1) / 2) / ((W - 1) / 2), ny = (y - (H - 1) / 2) / ((H - 1) / 2);
-        const rim = .16 * sa; // the edge shows on the side turning away
-        let ch = " ", k = null;
-        const inFace = (nx / w) ** 2 + ny ** 2 <= 1, inRim = ((nx - rim) / w) ** 2 + ny ** 2 <= 1;
-        if (inFace) {
-          const u = (ca >= 0 ? 1 : -1) * nx / w, v = ny, rr = u * u + v * v;
-          if (rr > .78) { ch = "@"; k = "pr"; } // bezel
-          else if (ca >= 0) {
-            const q = v < 0 ? (u < 0 ? 0 : 1) : (u < 0 ? 2 : 3);
-            const lx = Math.round((u < 0 ? -.38 : .38) * w * (W - 1) / 2 + (W - 1) / 2), ly = Math.round((v < 0 ? -.38 : .38) * (H - 1) / 2 + (H - 1) / 2);
-            ch = w > .55 && x === lx && y === ly ? L[q] : "+*#%%"[Math.min(4, Math.round(w * 4))]; k = Q[q];
-          } else { ch = XP_RAMP[3 + Math.round(w * 6)]; k = "pb"; }
-        } else if (inRim) { ch = "|"; k = "pr"; }
-        if (k !== k0) { flush(); k0 = k; } run += ch;
-      }
-      flush(); out.push(row);
-    }
-    pre.innerHTML = out.join("\n");
-  };
-  if (still) return draw(.5);
-  xpLoop(t => draw(t / 1400));
-}
-// 3. trail: a long ridge; the green trail runs up to my dot, which blinks
-function xpTrail(el) {
-  const W = 120, H = 5, prog = .62, r = [];
-  for (let c = 0; c < W; c++) r.push(Math.max(0, Math.min(H - 1, Math.round(2 + Math.sin(c * .11) * 1.3 + Math.sin(c * .37 + 1) * .7))));
-  const me = Math.round(W * prog); let out = "";
-  for (let y = 0; y < H; y++) {
-    for (let c = 0; c < W; c++) {
-      const nx = c < W - 1 ? r[c + 1] : r[c], pv = c ? r[c - 1] : r[c];
-      if (c === me && y === r[c] - 1) { out += '<span class="me">●</span>'; continue; }
-      if (y === r[c]) { const ch = nx < pv ? "/" : nx > pv ? "\\" : "_"; out += c <= me ? `<span class="tr">${ch}</span>` : `<span class="rg">${ch}</span>`; }
-      else out += y > r[c] ? (Math.random() > .82 ? "." : " ") : " ";
-    }
-    out += "\n";
-  }
-  el.innerHTML = `<pre class="xp-trail" role="img" aria-label="A thin ASCII trail with a dot two thirds of the way along">${out}</pre>`;
-}
-// 4. lost: the mountain with the dot wandering off the trail
-function xpLost(el) {
-  const pk = PEAKS[1], prof = peakProfile(pk);
-  el.innerHTML = `<div class="xp-lost"><pre class="xp-mtn" aria-hidden="true"></pre><div><p class="xp-404">404</p><h3>You're off trail</h3><p>This page doesn't exist. Let's get you back.</p><a class="cs-link" href="#">Back to the trailhead <span aria-hidden="true">&rarr;</span></a></div></div>`;
-  const pre = el.querySelector("pre");
-  let pc = 20;
-  const draw = () => { pre.innerHTML = peakGrid({ r: prof.r, pc, done: false }, true); };
-  draw(); xpEvery(() => { pc = Math.max(2, Math.min(PK_W - 3, pc + (Math.random() > .5 ? 1 : -1) * (1 + Math.floor(Math.random() * 4)))); draw(); }, 650);
-}
-// 5. scramble: text breaks into characters, then resolves left to right into the next page
-const XP_PAGES = [["Quarters", "An iPhone app and smart fridge magnet that help roommates split rent and chores."], ["Beyond UX", "Work outside UX design that shapes how I design: illustration, print, research and 3D."], ["About", "UX designer finishing a BFA in UX Design at SCAD, May 2027."]];
-function xpScrambleTo(nodes, texts, dur) {
-  const pool = "@#%*+=-:;!?/\\<>[]{}", t0 = performance.now(), from = nodes.map(n => n.textContent);
-  let stop = false; xpStops.push(() => stop = true);
-  const step = now => {
-    if (stop) return;
-    const k = Math.min(1, (now - t0) / dur);
-    nodes.forEach((n, i) => {
-      const to = texts[i], L = Math.max(to.length, from[i].length), solved = Math.floor(L * Math.max(0, (k - .25) / .75));
-      let s = ""; for (let j = 0; j < L; j++) s += j < solved ? (to[j] || "") : (to[j] === " " || from[i][j] === " " ? " " : xpRand(pool));
-      n.textContent = k >= 1 ? to : s;
-    });
-    if (k < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-}
-function xpScramble(el) {
-  el.innerHTML = '<div class="xp-page"><h3></h3><p></p></div>';
-  const h = el.querySelector("h3"), p = el.querySelector("p"); let i = 0;
-  h.textContent = XP_PAGES[0][0]; p.textContent = XP_PAGES[0][1];
-  return () => { i = (i + 1) % XP_PAGES.length; xpScrambleTo([h, p], XP_PAGES[i], 700); };
-}
-// 6. numbers: digits spin, then settle one by one
-function xpNums(el) {
-  const N = [["87.5", "SUS score"], ["+71", "NPS"], ["9/9", "completed every task"], ["70+", "survey responses"]];
-  el.innerHTML = `<div class="xp-nums">${N.map(([v, l]) => `<div><b data-v="${esc(v)}">${esc(v)}</b><span>${esc(l)}</span></div>`).join("")}</div>`;
-  const play = () => el.querySelectorAll("b").forEach((b, n) => {
-    const v = b.dataset.v, t0 = performance.now() + n * 120, dur = 900; let stop = false; xpStops.push(() => stop = true);
-    const step = now => { if (stop) return; const k = Math.max(0, (now - t0) / dur);
-      b.textContent = [...v].map((ch, j) => /\d/.test(ch) && k < (j + 1) / v.length ? String(Math.floor(Math.random() * 10)) : ch).join("");
-      if (k < 1) requestAnimationFrame(step); else b.textContent = v; };
-    requestAnimationFrame(step);
-  });
-  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { play(); io.disconnect(); } }, { threshold: .6 }); io.observe(el);
-  xpStops.push(() => io.disconnect());
-  return play;
-}
-// 7. logomark: the real mark; hovering breaks it into characters (each cell flickers before landing), leaving snaps it back
+// 7. logomark: the vector mark, and on hover the same box redrawn as characters. Each cell is sampled from the
+// mark drawn at exactly the box's size, so the character version lines up 1:1 with the vector underneath.
 const XP_MARK_SVG = fills => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${MARK_VB}" width="390" height="503"><rect x="191.59" y="102.24" width="123.16" height="492.65" fill="${fills[0]}"/><rect x="190.6" y="225.39" width="125.2" height="61.59" fill="${fills[2]}"/><rect x="190.6" y="410.14" width="125.2" height="61.59" fill="${fills[2]}"/><path d="${BRAND_SVG.mark.bar}" fill="${fills[1]}"/></svg>`;
 async function xpMark(el) {
-  el.innerHTML = `<div class="xp-markbox" tabindex="0" role="img" aria-label="My logomark; hover to see it in characters">${XP_MARK_SVG(["var(--link)", "var(--ink)", "var(--xp-bg)"]).replace('width="390" height="503"', 'class="xp-markvec"')}<pre class="xp-mark" aria-hidden="true"></pre><span class="xp-hint">Hover me</span></div>`;
-  const box = el.firstChild, pre = box.querySelector("pre");
-  const s = await xpSample("data:image/svg+xml;charset=utf-8," + encodeURIComponent(XP_MARK_SVG(["#007F3F", "#000", "#fff"])), 40, .5); if (!s) return;
-  const cells = s.map(r => r.map(c => c.a < .4 || c.l > .92 ? null : c.rgb[1] > c.rgb[0] + 40 ? "g" : "k"));
-  const pool = "#%@*+=:";
-  let raf = 0, t0 = 0;
+  el.innerHTML = `<div class="xp-markbox" tabindex="0" role="img" aria-label="My logomark; hover to see it drawn in characters">${XP_MARK_SVG(["#007F3F", "var(--ink)", "var(--xp-bg)"]).replace('width="390" height="503"', 'class="xp-markvec"')}<canvas aria-hidden="true"></canvas><span class="xp-hint">Hover me</span></div>`;
+  const box = el.firstChild, vec = box.querySelector("svg"), cv = box.querySelector("canvas"), g = cv.getContext("2d");
+  const im = new Image(); im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(XP_MARK_SVG(["#007F3F", "#000", "rgba(0,0,0,0)"]));
+  try { await im.decode(); } catch (e) { return; }
+  const CW = 4, CH = 7;
+  let cells = [], cols = 0, rows = 0, W = 0, H = 0, raf = 0, t0 = 0;
+  const build = () => {
+    const r = vec.getBoundingClientRect(), br = box.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.style.left = (r.left - br.left) + "px"; cv.style.top = (r.top - br.top) + "px"; cv.style.width = W + "px"; cv.style.height = H + "px";
+    cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(W / CW); rows = Math.ceil(H / CH);
+    // draw the mark at the box's real size, then read each cell's coverage and colour
+    const o = document.createElement("canvas"); o.width = Math.ceil(W); o.height = Math.ceil(H);
+    const og = o.getContext("2d", { willReadFrequently: true }); og.drawImage(im, 0, 0, W, H);
+    const d = og.getImageData(0, 0, o.width, o.height).data; cells = [];
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      let a = 0, gr = 0, n = 0;
+      for (let yy = y * CH; yy < Math.min(o.height, (y + 1) * CH); yy++) for (let xx = x * CW; xx < Math.min(o.width, (x + 1) * CW); xx++) { const i = (yy * o.width + xx) * 4; a += d[i + 3]; gr += d[i + 3] > 128 && d[i + 1] > d[i] + 40 ? 1 : 0; n++; }
+      const cov = a / (n * 255);
+      if (cov > .12) cells.push({ x, y, cov, green: gr / n > .3, n: Math.random() });
+    }
+  };
+  const ink = () => getComputedStyle(box).color;
   const frame = now => {
-    const t = now - t0;
-    pre.innerHTML = cells.map((r, y) => r.map((k, x) => { if (!k) return " "; const at = (y * 7 + x * 3) + ((x * 31 + y * 17) % 7) * 25;
-      return `<span class="m${k}">${t < at ? xpRand(pool) : k === "g" ? "#" : "@"}</span>`; }).join("")).join("\n");
-    if (t < 700) raf = requestAnimationFrame(frame);
+    const t = now - t0; g.clearRect(0, 0, W, H); g.font = `700 ${CH}px ui-monospace, Menlo, Consolas, monospace`; g.textBaseline = "top";
+    const k = ink();
+    cells.forEach(c => {
+      const at = c.y * 6 + c.x * 2 + c.n * 160;
+      const ch = t < at ? "#%@*+=:"[(Math.random() * 7) | 0] : c.cov > .8 ? "@" : c.cov > .5 ? "%" : c.cov > .3 ? "+" : ":";
+      g.fillStyle = c.green ? "#007F3F" : k; g.fillText(ch, c.x * CW, c.y * CH);
+    });
+    if (t < 600) raf = requestAnimationFrame(frame);
   };
   const on = () => { box.classList.add("on"); cancelAnimationFrame(raf); t0 = performance.now(); raf = requestAnimationFrame(frame); };
   const off = () => { box.classList.remove("on"); cancelAnimationFrame(raf); };
   box.addEventListener("pointerenter", on); box.addEventListener("pointerleave", off);
   box.addEventListener("focus", on); box.addEventListener("blur", off);
+  build();
   xpStops.push(() => cancelAnimationFrame(raf));
 }
-// 8. Savannah: the historic district's wards in their real arrangement. Columns follow the north-south streets
-// (Montgomery, Barnard, Bull, Abercorn, Habersham, Houston); rows run south from Bay Street. Squares lost to
-// development (Liberty, Elbert) are shown dotted. Spacing is even, so it's a schematic, not a survey map.
-const XP_SQ = [
-  ["Franklin", "Ellis", "Johnson", "Reynolds", "Warren", "Washington"],
-  ["Liberty*", "Telfair", "Wright", "Oglethorpe", "Columbia", "Greene"],
-  ["Elbert*", "Orleans", "Chippewa", "@cemetery", "@cemetery", ""],
-  ["", "Pulaski", "Madison", "Lafayette", "Troup", "Crawford"],
-  ["", "Chatham", "Monterey", "Calhoun", "Whitefield", ""]
-];
-function xpMap(el) {
-  const W = 70, X0 = 7, DX = 11, col = i => X0 + i * DX, G = [];
-  const line = (ch = " ") => Array.from({ length: W }, () => ({ ch }));
-  const put = (row, x, text, cls, n) => [...text].forEach((ch, i) => { if (x + i >= 0 && x + i < W) row[x + i] = { ch, cls, n }; });
-  const street = (name, ch) => { const r = line(ch); put(r, 2, ` ${name} `, "st"); return r; };
-  const blocks = () => { const r = line(); for (let x = 0; x < W; x++) if ((x - X0 + 6) % DX === 0) r[x] = { ch: "|", cls: "rd" }; return r; };
-  G.push(line("~").map(c => ({ ch: "~", cls: "rv" })));
-  const rv = line("~").map(() => ({ ch: "~", cls: "rv" })); put(rv, 22, " Savannah River ", "rvl"); G.push(rv);
-  G.push(street("Bay St", "="));
-  const ROWS = [["Broughton St", "-"], ["Oglethorpe Ave", "="], ["Liberty St", "-"], ["Jones St", "-"], ["Gaston St", "="]];
-  XP_SQ.forEach((sqs, ri) => {
-    G.push(blocks());
-    const r = blocks();
-    sqs.forEach((nm, ci) => {
-      if (!nm) return;
-      if (nm === "@cemetery") { put(r, col(ci) - 2, "+ + +", "cm", "Colonial Park Cemetery"); return; }
-      const lost = nm.endsWith("*"), name = nm.replace("*", "") + " Square" + (lost ? " (lost)" : "");
-      put(r, col(ci) - 1, lost ? "[.]" : "[#]", lost ? "lost" : "sq", name);
-    });
-    if (ri === 3) put(r, col(2) + 3, "●", "me", "Me, at SCAD");
-    G.push(r); G.push(blocks());
-    G.push(street(...ROWS[ri]));
-  });
-  // Forsyth Park: south of Gaston, between Whitaker and Drayton, centred on Bull
-  for (let y = 0; y < 4; y++) { const r = blocks(); for (let x = col(2) - 6; x <= col(2) + 6; x++) r[x] = { ch: y === 0 || y === 3 ? "-" : x === col(2) - 6 || x === col(2) + 6 ? "|" : y === 1 && x === col(2) ? "*" : "\"", cls: "pk", n: "Forsyth Park" }; G.push(r); }
-  const lab = line(); put(lab, col(2) - 6, "Forsyth Park", "st"); G.push(lab);
-  const head = line(); [["Montgomery", 0], ["Barnard", 1], ["Bull", 2], ["Abercorn", 3], ["Habersham", 4], ["Houston", 5]].forEach(([n, i]) => put(head, col(i) - Math.floor(n.length / 2), n, "hd")); 
-  G.splice(3, 0, head); // street names just under Bay Street
-  const html = G.map(r => { let out = "", run = "", k = null, n = null;
-    const flush = () => { if (run) out += k ? `<span class="${k}"${n ? ` data-n="${esc(n)}"` : ""}>${esc(run)}</span>` : esc(run); run = ""; };
-    r.forEach(c => { if (c.cls !== k || c.n !== n) { flush(); k = c.cls; n = c.n; } run += c.ch; }); flush(); return out; }).join("\n");
-  el.innerHTML = `<div class="xp-mapbox"><pre class="xp-map" role="img" aria-label="ASCII map of Savannah's historic district squares, from the river to Forsyth Park">${html}</pre><p class="xp-tip" aria-live="polite">Hover a square</p></div>`;
-  const tip = el.querySelector(".xp-tip");
-  el.querySelector("pre").addEventListener("pointerover", e => { const n = e.target.dataset && e.target.dataset.n; tip.textContent = n || "Hover a square"; tip.classList.toggle("on", !!n); });
+/* ---------- ASCII touches that are live around the site ---------- */
+const STILL = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* The Penny in ASCII, turning on its vertical axis. Front: chrome edge, cream bezel, and the screen's four
+   quarters (each partly filled, like the app's progress), the roommates' letters and the green status light.
+   Back: brushed metal. The rim shows on the side turning away. Returns a stop function. */
+const PENNY_Q = [["qa", "A", .62], ["qn", "N", .78], ["qy", "Y", .45], ["qm", "M", .86]];
+function pennySpin(pre, { cols = 52, speed = 1 } = {}) {
+  const W = cols, H = Math.round(cols * .52) | 1, cx = (W - 1) / 2, cy = (H - 1) / 2, R = (W - 4) / 2, RY = R * .5;
+  const draw = a => {
+    const ca = Math.cos(a), sa = Math.sin(a), w = Math.max(.035, Math.abs(ca)), front = ca >= 0, rim = 2.2 * sa;
+    const light = .55 + .45 * w; // faces read brighter as they turn towards you
+    let out = "";
+    for (let y = 0; y < H; y++) {
+      let k0 = null, run = "";
+      const flush = () => { if (run) out += k0 ? `<span class="${k0}">${run}</span>` : run; run = ""; };
+      for (let x = 0; x < W; x++) {
+        const fx = (x - cx) / (R * w), fy = (y - cy) / RY, rr = Math.hypot(fx, fy);
+        const ex = (x - cx - rim) / (R * w), er = Math.hypot(ex, fy);
+        let ch = " ", k = null;
+        if (rr <= 1) {
+          const u = front ? fx : -fx, v = fy;
+          if (rr > .93) { ch = "@"; k = "pe"; }
+          else if (!front) { ch = rr < .08 ? "+" : ".:-=".charAt(Math.min(3, Math.floor(light * 3 + ((x * 7 + y * 13) % 3) * .12))); k = "pb"; }
+          else if (rr > .8) {
+            ch = v > .82 && Math.abs(u) < .05 ? "•" : light > .8 ? "%" : "=";
+            k = v > .82 && Math.abs(u) < .05 ? "led" : "pz";
+          } else {
+            const qi = v < 0 ? (u < 0 ? 0 : 1) : (u < 0 ? 2 : 3), [cls, L, fill] = PENNY_Q[qi];
+            // each quarter fills clockwise from 12 o'clock within its own 90°
+            const ang = (Math.atan2(u, -v) + Math.PI * 2) % (Math.PI * 2), start = [3, 0, 2, 1][qi] * Math.PI / 2, frac = ((ang - start + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 2);
+            const lx = Math.round(cx + (u < 0 ? -.4 : .4) * R * w * (front ? 1 : -1)), ly = Math.round(cy + (v < 0 ? -.4 : .4) * RY);
+            if (w > .45 && x === lx && y === ly) { ch = L; k = cls + " lt"; }
+            else if (Math.abs(u) < .035 / w * 1.5 || Math.abs(v) < .05) { ch = " "; k = null; }
+            else { const filled = frac <= fill; ch = filled ? (light > .8 ? "#" : "*") : (light > .8 ? "+" : ":"); k = cls + (filled ? "" : " soft"); }
+          }
+        } else if (er <= 1 && Math.abs(sa) > .05) { ch = Math.abs(sa) > .6 ? "|" : ":"; k = "pe"; }
+        if (k !== k0) { flush(); k0 = k; } run += ch;
+      }
+      flush(); out += "\n";
+    }
+    pre.innerHTML = out;
+  };
+  if (STILL()) { draw(.45); return () => {}; }
+  let raf = 0, on = true, t0 = performance.now();
+  const f = t => { if (!on) return; draw(.45 + (t - t0) / 1600 * speed); raf = requestAnimationFrame(f); };
+  // only spin while it's on screen
+  const io = new IntersectionObserver(es => { cancelAnimationFrame(raf); if (es[0].isIntersecting && on) raf = requestAnimationFrame(f); });
+  io.observe(pre); draw(.45);
+  return () => { on = false; cancelAnimationFrame(raf); io.disconnect(); };
 }
+let pennyStops = [];
+function initPennies() {
+  pennyStops.forEach(f => f()); pennyStops = [];
+  document.querySelectorAll("#app pre.penny-spin").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52 })));
+}
+
+/* Footer trail: the three mountains side by side as one thin ridge. The green trail covers the climbs I've done
+   and runs up the current one to my dot. Built from the same profiles as the mountain card. */
+function footerTrail() {
+  const foot = document.querySelector("footer"); if (!foot || foot.querySelector(".f-trail")) return;
+  const order = [...PEAKS.filter(p => p.done), ...PEAKS.filter(p => !p.done)], H = 6, cols = [];
+  let me = -1, done = -1;
+  order.forEach(pk => {
+    const pr = peakProfile(pk), off = cols.length;
+    pr.r.forEach(r => cols.push(Math.round(r * (H - 1) / (PK_H - 1))));
+    if (pk.done) done = off + PK_W - 1; else if (me < 0) me = off + pr.pc;
+  });
+  if (me < 0) me = done;
+  const W = cols.length; let out = "";
+  for (let y = 0; y < H; y++) {
+    for (let c = 0; c < W; c++) {
+      const r = cols[c], nx = c < W - 1 ? cols[c + 1] : r, pv = c ? cols[c - 1] : r;
+      if (c === me && y === r - 1) { out += '<span class="me">●</span>'; continue; }
+      if (y === r) { const ch = nx < pv ? "/" : nx > pv ? "\\" : "_"; out += c <= me ? `<span class="tr">${ch}</span>` : ch; }
+      else out += y > r && ((c * 7 + y * 3) % 11 === 0) ? "." : " ";
+    }
+    if (y < H - 1) out += "\n";
+  }
+  const el = document.createElement("div");
+  el.className = "wrap f-trail";
+  el.innerHTML = `<pre role="img" aria-label="My trail so far: ${order.filter(p => p.done).map(p => p.name).join(" and ")} done, ${order.filter(p => !p.done).map(p => p.name).join(", ")} in progress">${out}</pre>`;
+  foot.prepend(el);
+}
+
+/* 404: you're off trail. A mountain with a lost dot wandering along it, and the way back. */
+let lostTimer = 0;
+function viewLost() {
+  return `<section class="lost">
+      <pre class="lost-mtn" aria-hidden="true"></pre>
+      <div class="lost-copy">
+        <p class="lost-code">404</p>
+        <h1>You're off trail</h1>
+        <p>This page doesn't exist, or it moved. Let's get you back.</p>
+        <a class="cs-link" href="#">Back to the trailhead <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </section>`;
+}
+function initLost() {
+  clearInterval(lostTimer);
+  const pre = document.querySelector("#app .lost-mtn"); if (!pre) return;
+  const prof = peakProfile(PEAKS[1]); let pc = 22;
+  const draw = () => { pre.innerHTML = peakGrid({ r: prof.r, pc, done: false }, true); };
+  draw(); if (STILL()) return;
+  lostTimer = setInterval(() => { if (!pre.isConnected) return clearInterval(lostTimer); pc = Math.max(2, Math.min(PK_W - 3, pc + (Math.random() > .5 ? 1 : -1) * (1 + Math.floor(Math.random() * 4)))); draw(); }, 650);
+}
+
+/* Page change: the new page's heading and lead line break into characters, then resolve left to right. */
+const SCRAMBLE_POOL = "@#%*+=-:;!?/\\<>[]";
+function scrambleIn(root) {
+  if (STILL() || !root) return;
+  const targets = [...root.querySelectorAll("h1:not(.big-name), .cs-head .sum, .intro > p:first-of-type")].slice(0, 3);
+  const nodes = [];
+  targets.forEach(t => { const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (n.nodeValue.trim()) nodes.push([n, n.nodeValue]); });
+  if (!nodes.length) return;
+  const t0 = performance.now(), D = 520;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / D);
+    nodes.forEach(([n, to]) => {
+      if (!n.isConnected) return;
+      const solved = Math.floor(to.length * Math.max(0, (k - .15) / .85));
+      n.nodeValue = k >= 1 ? to : [...to].map((ch, j) => j < solved || ch === " " ? ch : SCRAMBLE_POOL[(Math.random() * SCRAMBLE_POOL.length) | 0]).join("");
+    });
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* Stats count in: the first time a figure scrolls into view, its digits spin and settle left to right. */
+function initCountIn() {
+  const els = [...document.querySelectorAll("#app .nums b, #app .fs b, #app .impact b, #app .ins b")].filter(b => /\d/.test(b.textContent));
+  if (!els.length || STILL() || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; io.unobserve(e.target);
+    const b = e.target, v = b.textContent, t0 = performance.now(), D = 800;
+    b.style.minWidth = b.offsetWidth + "px"; // hold the width so neighbours don't shift while digits change
+    const step = now => {
+      const k = (now - t0) / D;
+      if (k >= 1) { b.textContent = v; b.style.minWidth = ""; return; }
+      b.textContent = [...v].map((ch, j) => /\d/.test(ch) && k < (j + 1) / v.length ? String((Math.random() * 10) | 0) : ch).join("");
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }), { threshold: .8 });
+  els.forEach(b => io.observe(b));
+}
+
 function initExperiments() {
   xpStops.forEach(f => f()); xpStops = [];
   if (!document.querySelector(".xp-grid")) return;
   const $x = id => document.getElementById("xp-" + id), replay = {};
-  xpCard($x("card")); xpPenny($x("penny")); xpTrail($x("trail")); xpLost($x("lost"));
-  replay.scramble = xpScramble($x("scramble")); replay.nums = xpNums($x("nums"));
-  xpMark($x("mark")); xpMap($x("map"));
+  xpCard($x("card")); xpMark($x("mark"));
   document.querySelectorAll(".xp-replay").forEach(b => b.addEventListener("click", () => replay[b.dataset.for] && replay[b.dataset.for]()));
 }
 
@@ -2838,12 +2901,15 @@ function render() {
   else if (id === "home-3") { html = viewHome(true); }
   else if (id === "brand") { html = viewBrand(); nav = "brand"; }
   else if (id === "experiments") { html = viewExperiments(); nav = ""; }
+  else if (id && !["projects", "peaks"].includes(id) && !ALL.some(x => x.id === id)) { html = viewLost(); nav = ""; }
   else html = viewHome();
   document.body.classList.toggle("brand-mode", id === "brand");
   document.body.classList.toggle("quarters-mode", id === "quarters");
   if (portraitWidget) { portraitWidget.destroy(); portraitWidget = null; }
   if (aboutTilt) { aboutTilt.destroy(); aboutTilt = null; }
+  const firstRender = !$("#app").children.length;
   $("#app").innerHTML = html;
+  if (!firstRender) scrambleIn($("#app"));
   document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === nav) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   const page = p ? p.title : isBux ? "Beyond UX" : id === "about" ? "About" : id === "brand" ? "My Brand" : id === "experiments" ? "Experiments" : "";
   document.title = page ? `${page} · Jack Walker` : "Jack Walker's Portfolio";
@@ -2867,6 +2933,9 @@ function render() {
   initPeaks();
   initBrand();
   initExperiments();
+  initPennies();
+  initLost();
+  initCountIn();
   initDots();
 }
 
@@ -3141,6 +3210,7 @@ document.addEventListener("keydown", e => {
   });
 })();
 addEventListener("hashchange", render);
+footerTrail();
 render();
 </script>
 
