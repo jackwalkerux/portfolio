@@ -511,7 +511,6 @@ figure .img.fit img { cursor: zoom-in; }
   .cs-bandcamp-testing .cs-body { gap: 88px; margin-top: 72px; }
 }
 /* Quarters: same roomy rhythm as Bandcamp, sized for the narrower column beside the prototype */
-.cs-quarters .cs-body { gap: 120px; margin-top: 96px; }
 .cs-quarters .sec { gap: 28px; }
 .cs-quarters .sec > p.col, .cs-quarters .sub-p { max-width: 64ch; }
 .cs-quarters .hero { margin-top: 48px; }
@@ -527,48 +526,33 @@ figure .img.fit img { cursor: zoom-in; }
 .cs-quarters .fstats::before { margin-top: 64px; }
 .cs-quarters .recs { gap: 16px; max-width: 64ch; }
 .cs-quarters .recs li { grid-template-columns: 28px minmax(0, 1fr); }
-/* Quarters page, styled with the Quarters design system: app blue, warm ground panels, white cards */
-.cs-quarters { --link: #255A9B; --q-soft: #DCE6F4; --q-ground: #F4F3EF; --q-card: #FFFFFF; --q-line: #E7E5E0; }
-:root[data-theme="dark"] .cs-quarters { --link: #8DB2E8; --q-soft: #1F2C3F; --q-ground: #1A1C20; --q-card: #24272D; --q-line: #33373F; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cs-quarters { --link: #8DB2E8; --q-soft: #1F2C3F; --q-ground: #1A1C20; --q-card: #24272D; --q-line: #33373F; } }
+/* Quarters page: app blue accent, numbered section labels, open layout (no boxes) */
+.cs-quarters { --link: #255A9B; }
+:root[data-theme="dark"] .cs-quarters { --link: #8DB2E8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cs-quarters { --link: #8DB2E8; } }
 .cs-quarters .proto-h { color: var(--link); }
-.cs-quarters .cs-body { gap: 40px; margin-top: 72px; counter-reset: qsec; }
-.cs-quarters .sec { background: var(--q-ground); border-radius: 28px; padding: clamp(24px, 3vw, 44px); gap: 28px; counter-increment: qsec; }
-.cs-quarters .sec > h2 { display: grid; justify-items: start; gap: 14px; font-size: clamp(30px, 3.2vw, 38px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 4px; }
-.cs-quarters .sec > h2::before { content: counter(qsec, decimal-leading-zero); font-size: 14px; font-weight: 700; letter-spacing: 0; line-height: 1; padding: 7px 12px; border-radius: 999px; background: var(--q-soft); color: var(--link); }
-.cs-quarters .sec .q-card, .cs-quarters .persona > div, .cs-quarters .ins, .cs-quarters .parts:not(.themes), .cs-quarters .parts.themes > div,
-.cs-quarters .ba, .cs-quarters .finding, .cs-quarters .nums > div, .cs-quarters .myrole { background: var(--q-card); border-radius: 20px; }
-.cs-quarters .nums { gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-quarters .cs-body { gap: 112px; margin-top: 96px; counter-reset: qsec; }
+.cs-quarters .sec { border-top: 2px solid var(--link); padding-top: 28px; gap: 28px; counter-increment: qsec; }
+.cs-quarters .sec > h2 { display: grid; justify-items: start; gap: 10px; font-size: clamp(30px, 3.2vw, 38px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 4px; }
+.cs-quarters .sec > h2::before { content: counter(qsec, decimal-leading-zero); font-size: 15px; font-weight: 700; letter-spacing: 0; line-height: 1; color: var(--link); }
+.cs-quarters .nums { gap: 24px 32px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cs-quarters .sec:first-child .nums { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 1280px) { .cs-quarters .sec:first-child .nums { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.cs-quarters .nums > div { padding: 20px; }
-.cs-quarters .myrole { border-top: 0; padding: 22px 24px; margin-top: 0; }
-.cs-quarters .persona { gap: 12px; } .cs-quarters .persona > div { border-top: 0; padding: 22px 24px; }
-.cs-quarters .ins { padding: 4px 24px; margin-top: 0; }
-.cs-quarters .ins li { border-top: 1px solid var(--q-line); }
-.cs-quarters .ins li:first-child { border-top: 0; } .cs-quarters .ins li:last-child { border-bottom: 0; }
-.cs-quarters .parts:not(.themes) { padding: 24px; }
-.cs-quarters .parts.themes { gap: 12px; grid-template-columns: 1fr; }
-.cs-quarters .parts.themes > div { border-top: 0; padding: 20px 24px; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; align-items: baseline; }
+.cs-quarters .nums b { color: var(--link); }
+.cs-quarters .parts.themes { gap: 0; grid-template-columns: 1fr; }
+.cs-quarters .parts.themes > div { border-top: 1px solid var(--line); padding: 18px 0; grid-template-columns: 150px minmax(0, 1fr); gap: 16px; align-items: baseline; }
+.cs-quarters .parts.themes > div:last-child { border-bottom: 1px solid var(--line); }
 @media (max-width: 760px) { .cs-quarters .parts.themes > div { grid-template-columns: 1fr; gap: 4px; } }
-.cs-quarters .figs.duo { gap: 12px; } .cs-quarters .figs.duo .img { border-radius: 20px; background: #fff; }
-.cs-quarters .figs.duo figcaption { margin-top: 10px; }
-.cs-quarters .ba { border-top: 0; padding: clamp(24px, 3vw, 36px); }
-.cs-quarters .ba + .ba { margin-top: 0; }
-.cs-quarters .ba-notes li { border-left-color: var(--link); }
-.cs-quarters .finding { border-top: 0; padding: clamp(24px, 3vw, 36px); margin-top: 8px; }
+.cs-quarters .finding { margin-top: 8px; }
 .cs-quarters .fstats { grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); }
-.cs-quarters .fcol { border-top-color: var(--q-line); grid-template-columns: 1fr; gap: 20px; }
-.cs-quarters .fs span { max-width: none; } .cs-quarters .fcol.after { border-top-color: var(--link); }
-.cs-quarters .proc li { border-top-color: var(--q-line); }
-.cs-quarters .proc li::before { background: var(--q-ground); border-color: var(--link); }
+.cs-quarters .fcol { grid-template-columns: 1fr; gap: 20px; }
+.cs-quarters .fs span { max-width: none; }
+.cs-quarters .proc li::before { border-color: var(--link); }
 .cs-quarters .sub-h { margin-top: 16px; }
 .cs-quarters .pull { margin: 0; }
 @media (max-width: 760px) {
-  .cs-quarters .cs-body { gap: 24px; margin-top: 48px; }
-  .cs-quarters .sec { border-radius: 22px; padding: 24px 18px; margin-inline: -4px; }
+  .cs-quarters .cs-body { gap: 80px; margin-top: 64px; }
   .cs-quarters .nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cs-quarters .proc li { border-left-color: var(--q-line); }
   .cs-quarters .fstats { grid-template-columns: 1fr; gap: 24px; }
   .cs-quarters .fcol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 }
