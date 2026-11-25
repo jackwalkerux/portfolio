@@ -2406,7 +2406,7 @@ function selectBux(id, focusTab) {
   });
   history.replaceState(null, "", "#beyond-ux/" + id);
   lastId = "beyond-ux/" + id;
-  initClimbRail();
+  initDots();
   // If we're already scrolled into the content, jump to the top of the new section (just under the squished cards)
   const top = panel.getBoundingClientRect().top, under = bux ? bux.collapsedBottom() : 140;
   if (top < under) window.scrollTo(0, window.scrollY + top - under - 16);
@@ -2896,6 +2896,8 @@ function xpClimb(el) {
 }
 function initClimbRail() {
   if (climbRail) { climbRail.stop(); climbRail = null; }
+  // Saved for later: the site uses the section dots. The mountain rail now only runs on the unlisted #lab page.
+  if (!document.querySelector("#app .xp-grid")) return;
   // Every page gets the trail. Pages with sections (case studies, Beyond UX projects, Experiments) also get a dot each.
   // Dots are placed by how long each section is when fully open, so they stay put whether sections are open or closed.
   // The trail follows your real scroll between those fixed dots, reaching each one exactly as its section starts.
@@ -3540,6 +3542,7 @@ function render() {
   initLost();
   initImagined();
   initCountIn();
+  initDots();
   initClimbRail();
 }
 
