@@ -619,6 +619,51 @@ figure .img.fit img { cursor: zoom-in; }
 .dots button:focus-visible { outline: none; } .dots button:focus-visible::before { box-shadow: 0 0 0 3px color-mix(in srgb, var(--link) 35%, transparent); }
 @media (prefers-reduced-motion: reduce) { .dots button, .dots button::before { transition: none; } }
 @media (max-width: 900px) { .dots { display: none; } }
+/* Experiments */
+.xp-intro { margin-bottom: 8px; }
+.xp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 40px; }
+.xp { border: 1px solid var(--line); border-radius: 14px; padding: 26px; display: grid; gap: 12px; align-content: start; counter-increment: xp; }
+.xp-grid { counter-reset: xp; }
+.xp > h2 { display: grid; grid-template-columns: 2.4ch minmax(0, 1fr); align-items: baseline; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
+.xp > h2::before { content: counter(xp, decimal-leading-zero); color: color-mix(in srgb, var(--muted) 55%, transparent); }
+.xp-where { font-size: 14px; color: var(--muted); } .xp-where b { color: var(--link); font-weight: 700; }
+.xp-d { font-size: 15.5px; line-height: 1.5; color: var(--muted); }
+.xp-demo { margin-top: 6px; min-height: 240px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 3%, var(--bg)); display: grid; place-items: center; padding: 18px; overflow: hidden; position: relative; }
+.xp-demo pre { margin: 0; font: 600 11px/1.15 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); white-space: pre; }
+.xp-replay { justify-self: start; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.xp-replay:hover { color: var(--link); border-color: var(--link); }
+.xp-card { position: relative; width: 100%; max-width: 420px; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; background: var(--bg); cursor: pointer; }
+.xp-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.xp-card pre { position: absolute; inset: 0; display: grid; place-content: center; font-size: 6px; line-height: 1.04; background: #0d0d0d; color: #ddd; }
+.xp-card pre i { font-style: normal; transition: opacity .25s ease var(--r); }
+.xp-card pre { transition: background-color .4s ease .35s; }
+.xp-card:hover pre, .xp-card:focus-visible pre { background: transparent; }
+.xp-card:hover pre i, .xp-card:focus-visible pre i { opacity: 0; }
+.xp-hint { position: absolute; right: 8px; bottom: 8px; font: 600 12px var(--font); color: var(--muted); background: var(--bg); border-radius: 999px; padding: 3px 9px; transition: opacity .2s; }
+.xp-card:hover .xp-hint { opacity: 0; }
+.xp-penny { font-size: 10px !important; line-height: 1 !important; }
+.xp-penny span:not(.pr):not(.pb) { font-weight: 800; }
+.xp-penny .qa { color: #6F95DD; } .xp-penny .qn { color: #EE8E66; } .xp-penny .qy { color: #F2B92E; } .xp-penny .qm { color: #5DBB84; } .xp-penny .pr { color: var(--ink); } .xp-penny .pb { color: var(--muted); }
+.xp-trail { font-size: 9px !important; }
+.xp-demo .tr { color: var(--link); } .xp-demo .rg { color: color-mix(in srgb, var(--ink) 50%, var(--bg)); }
+.xp-demo .me { color: var(--link); animation: peakBlink .8s ease-in-out infinite; }
+.xp-lost { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; }
+.xp-mtn { font-size: 5px !important; }
+.xp-lost h3 { font-size: 20px; font-weight: 800; } .xp-lost p { font-size: 14.5px; color: var(--muted); margin: 4px 0 10px; }
+.xp-lost .xp-404 { font: 800 13px ui-monospace, Menlo, monospace; color: var(--link); margin: 0; }
+.xp-page { width: 100%; max-width: 380px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.xp-page h3 { font-size: 26px; font-weight: 800; color: var(--ink); min-height: 1.3em; }
+.xp-page p { font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: 8px; min-height: 4.5em; }
+.xp-nums { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 36px; }
+.xp-nums b { display: block; font: 800 34px ui-monospace, Menlo, Consolas, monospace; color: var(--link); letter-spacing: -0.02em; }
+.xp-nums span { font-size: 14px; color: var(--muted); }
+.xp-mark { font-size: 8px !important; line-height: 1 !important; }
+.xp-mark .mg { color: var(--link); } .xp-mark .mk { color: var(--ink); }
+.xp-map { font-size: 9px !important; }
+.xp-map .sq { color: var(--link); } .xp-map .rv { color: #6F95DD; }
+.xp-note { position: absolute; left: 14px; bottom: 10px; font-size: 12px; color: var(--muted); }
+@media (max-width: 900px) { .xp-grid { grid-template-columns: 1fr; } .xp-lost { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .xp-demo .me { animation: none; } }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
 .persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
 .persona > div { border-top: 2px solid var(--line); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
@@ -877,6 +922,7 @@ footer { border-top: 1px solid var(--line); }
     <a href="#beyond-ux">Beyond UX</a>
     <a href="#brand">My Brand</a>
     <a href="#about">About</a>
+    <a href="#experiments">Experiments</a>
     <a href="https://docs.google.com/document/d/1W2idFMJRs5636LlhtmxSSqJZcpYce-FCKtDAANgGB-8/export?format=pdf" target="_blank" rel="noopener">Résumé (PDF)</a>
   </div>
 </div>
@@ -2266,6 +2312,201 @@ function brandPlate() {
     </div>
   </figure>`;
 }
+/* ---------- Experiments: ASCII ideas, each shown live with where it could go later ---------- */
+const XP = [
+  { h: "Project cards that resolve from ASCII", where: "Home · project cards", d: "Each cover sits as characters until you hover, then dissolves into the real image, cell by cell.", demo: "card" },
+  { h: "A spinning Penny", where: "Quarters · prototype loader or Inside the Penny", d: "The Penny drawn in characters, turning slowly, its four quarters in the app's colours.", demo: "penny" },
+  { h: "A trail along the footer", where: "Every page · footer", d: "A thin ridge across the bottom of the site, with my dot at the end of the trail so far.", demo: "trail" },
+  { h: "You're off trail", where: "Broken links · 404 page", d: "A mountain with a lost dot wandering around it, and a way back to the trailhead.", demo: "lost" },
+  { h: "Scramble between pages", where: "Every page · page transitions", d: "Text breaks into characters for a split second, then resolves into the next page.", demo: "scramble" },
+  { h: "Numbers that count in", where: "Case studies · stats", d: "Figures cycle through random characters before settling, the first time they scroll into view.", demo: "nums" },
+  { h: "The logomark, built from characters", where: "My Brand · logomark hover", d: "My logomark assembles itself out of characters, then holds its shape.", demo: "mark" },
+  { h: "Savannah in ASCII", where: "About · where I'm based", d: "A stylised, not-to-scale sketch of Savannah's street grid and squares, with my dot on it.", demo: "map" }
+];
+const XP_REPLAY = new Set(["scramble", "nums", "mark"]);
+function viewExperiments() {
+  return `<section class="intro xp-intro">
+      <h1>Experiments</h1>
+      <p>Ideas for using ASCII art around the site. Each one runs live here, with where it could go later.</p>
+    </section>
+    <div class="cs-body xp-grid">${XP.map((x, i) => `
+      <section class="sec xp" data-xp="${x.demo}">
+        <h2>${esc(x.h)}</h2>
+        <p class="xp-where">Could live in: <b>${esc(x.where)}</b></p>
+        <p class="xp-d">${esc(x.d)}</p>
+        <div class="xp-demo" id="xp-${x.demo}"></div>
+        ${XP_REPLAY.has(x.demo) ? `<button class="xp-replay" type="button" data-for="${x.demo}">Replay</button>` : ""}
+      </section>`).join("")}
+    </div>`;
+}
+const XP_RAMP = " .`':,;-~=+*#%@";
+const xpRand = s => s[Math.floor(Math.random() * s.length)];
+// sample an image into a grid of brightness values (0 dark … 1 light)
+function xpSample(src, cols, aspect) {
+  return new Promise(res => {
+    const im = new Image(); im.decoding = "async";
+    im.onload = () => {
+      const rows = Math.round(cols * (im.height / im.width) * aspect), c = document.createElement("canvas");
+      c.width = cols; c.height = rows; const g = c.getContext("2d", { willReadFrequently: true });
+      g.drawImage(im, 0, 0, cols, rows); const d = g.getImageData(0, 0, cols, rows).data, out = [];
+      for (let y = 0; y < rows; y++) { const r = []; for (let x = 0; x < cols; x++) { const i = (y * cols + x) * 4; r.push({ l: (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255, a: d[i + 3] / 255, rgb: [d[i], d[i + 1], d[i + 2]] }); } out.push(r); }
+      res(out);
+    };
+    im.onerror = () => res(null); im.src = src;
+  });
+}
+let xpStops = [];
+function xpLoop(fn) { let raf = 0, on = true; const f = t => { if (!on) return; fn(t); raf = requestAnimationFrame(f); }; raf = requestAnimationFrame(f); xpStops.push(() => { on = false; cancelAnimationFrame(raf); }); }
+function xpEvery(fn, ms) { const id = setInterval(fn, ms); xpStops.push(() => clearInterval(id)); }
+
+// 1. card: ASCII over the cover; hovering dissolves each cell on its own delay
+async function xpCard(el) {
+  const src = ASSETS["bc-card"] || ASSETS["cover-quarters"]; if (!src) return;
+  el.innerHTML = `<div class="xp-card" tabindex="0"><img src="${src}" alt=""><pre aria-hidden="true"><code></code></pre><span class="xp-hint">Hover me</span></div>`;
+  const s = await xpSample(src, 96, .5); if (!s) return;
+  // brighter pixels get denser characters, each tinted with its pixel's colour
+  el.querySelector("pre code").innerHTML = s.map(r => r.map(c => `<i style="--r:${(Math.random() * .5).toFixed(2)}s;color:rgb(${c.rgb.join(",")})">${esc(XP_RAMP[Math.min(XP_RAMP.length - 1, Math.floor(c.l * XP_RAMP.length))])}</i>`).join("")).join("\n");
+}
+// 2. penny: a disc turning on its vertical axis; front shows the four quarters, back is plain
+function xpPenny(el) {
+  const W = 44, H = 22, Q = ["qa", "qn", "qy", "qm"], L = ["A", "N", "Y", "M"];
+  el.innerHTML = '<pre class="xp-penny" aria-label="A spinning ASCII Penny" role="img"></pre>';
+  const pre = el.firstChild, still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const draw = a => {
+    const ca = Math.cos(a), sa = Math.sin(a), w = Math.max(.04, Math.abs(ca)), out = [];
+    for (let y = 0; y < H; y++) {
+      let row = "", k0 = null, run = "";
+      const flush = () => { if (run) row += k0 ? `<span class="${k0}">${esc(run)}</span>` : esc(run); run = ""; };
+      for (let x = 0; x < W; x++) {
+        const nx = (x - (W - 1) / 2) / ((W - 1) / 2), ny = (y - (H - 1) / 2) / ((H - 1) / 2);
+        const rim = .16 * sa; // the edge shows on the side turning away
+        let ch = " ", k = null;
+        const inFace = (nx / w) ** 2 + ny ** 2 <= 1, inRim = ((nx - rim) / w) ** 2 + ny ** 2 <= 1;
+        if (inFace) {
+          const u = (ca >= 0 ? 1 : -1) * nx / w, v = ny, rr = u * u + v * v;
+          if (rr > .78) { ch = "@"; k = "pr"; } // bezel
+          else if (ca >= 0) {
+            const q = v < 0 ? (u < 0 ? 0 : 1) : (u < 0 ? 2 : 3);
+            const lx = Math.round((u < 0 ? -.38 : .38) * w * (W - 1) / 2 + (W - 1) / 2), ly = Math.round((v < 0 ? -.38 : .38) * (H - 1) / 2 + (H - 1) / 2);
+            ch = w > .55 && x === lx && y === ly ? L[q] : "+*#%%"[Math.min(4, Math.round(w * 4))]; k = Q[q];
+          } else { ch = XP_RAMP[3 + Math.round(w * 6)]; k = "pb"; }
+        } else if (inRim) { ch = "|"; k = "pr"; }
+        if (k !== k0) { flush(); k0 = k; } run += ch;
+      }
+      flush(); out.push(row);
+    }
+    pre.innerHTML = out.join("\n");
+  };
+  if (still) return draw(.5);
+  xpLoop(t => draw(t / 1400));
+}
+// 3. trail: a long ridge; the green trail runs up to my dot, which blinks
+function xpTrail(el) {
+  const W = 120, H = 5, prog = .62, r = [];
+  for (let c = 0; c < W; c++) r.push(Math.max(0, Math.min(H - 1, Math.round(2 + Math.sin(c * .11) * 1.3 + Math.sin(c * .37 + 1) * .7))));
+  const me = Math.round(W * prog); let out = "";
+  for (let y = 0; y < H; y++) {
+    for (let c = 0; c < W; c++) {
+      const nx = c < W - 1 ? r[c + 1] : r[c], pv = c ? r[c - 1] : r[c];
+      if (c === me && y === r[c] - 1) { out += '<span class="me">●</span>'; continue; }
+      if (y === r[c]) { const ch = nx < pv ? "/" : nx > pv ? "\\" : "_"; out += c <= me ? `<span class="tr">${ch}</span>` : `<span class="rg">${ch}</span>`; }
+      else out += y > r[c] ? (Math.random() > .82 ? "." : " ") : " ";
+    }
+    out += "\n";
+  }
+  el.innerHTML = `<pre class="xp-trail" role="img" aria-label="A thin ASCII trail with a dot two thirds of the way along">${out}</pre>`;
+}
+// 4. lost: the mountain with the dot wandering off the trail
+function xpLost(el) {
+  const pk = PEAKS[1], prof = peakProfile(pk);
+  el.innerHTML = `<div class="xp-lost"><pre class="xp-mtn" aria-hidden="true"></pre><div><p class="xp-404">404</p><h3>You're off trail</h3><p>This page doesn't exist. Let's get you back.</p><a class="cs-link" href="#">Back to the trailhead <span aria-hidden="true">&rarr;</span></a></div></div>`;
+  const pre = el.querySelector("pre");
+  let pc = 20;
+  const draw = () => { pre.innerHTML = peakGrid({ r: prof.r, pc, done: false }, true); };
+  draw(); xpEvery(() => { pc = Math.max(2, Math.min(PK_W - 3, pc + (Math.random() > .5 ? 1 : -1) * (1 + Math.floor(Math.random() * 4)))); draw(); }, 650);
+}
+// 5. scramble: text breaks into characters, then resolves left to right into the next page
+const XP_PAGES = [["Quarters", "An iPhone app and smart fridge magnet that help roommates split rent and chores."], ["Beyond UX", "Work outside UX design that shapes how I design: illustration, print, research and 3D."], ["About", "UX designer finishing a BFA in UX Design at SCAD, May 2027."]];
+function xpScrambleTo(nodes, texts, dur) {
+  const pool = "@#%*+=-:;!?/\\<>[]{}", t0 = performance.now(), from = nodes.map(n => n.textContent);
+  let stop = false; xpStops.push(() => stop = true);
+  const step = now => {
+    if (stop) return;
+    const k = Math.min(1, (now - t0) / dur);
+    nodes.forEach((n, i) => {
+      const to = texts[i], L = Math.max(to.length, from[i].length), solved = Math.floor(L * Math.max(0, (k - .25) / .75));
+      let s = ""; for (let j = 0; j < L; j++) s += j < solved ? (to[j] || "") : (to[j] === " " || from[i][j] === " " ? " " : xpRand(pool));
+      n.textContent = k >= 1 ? to : s;
+    });
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function xpScramble(el) {
+  el.innerHTML = '<div class="xp-page"><h3></h3><p></p></div>';
+  const h = el.querySelector("h3"), p = el.querySelector("p"); let i = 0;
+  h.textContent = XP_PAGES[0][0]; p.textContent = XP_PAGES[0][1];
+  return () => { i = (i + 1) % XP_PAGES.length; xpScrambleTo([h, p], XP_PAGES[i], 700); };
+}
+// 6. numbers: digits spin, then settle one by one
+function xpNums(el) {
+  const N = [["87.5", "SUS score"], ["+71", "NPS"], ["9/9", "completed every task"], ["70+", "survey responses"]];
+  el.innerHTML = `<div class="xp-nums">${N.map(([v, l]) => `<div><b data-v="${esc(v)}">${esc(v)}</b><span>${esc(l)}</span></div>`).join("")}</div>`;
+  const play = () => el.querySelectorAll("b").forEach((b, n) => {
+    const v = b.dataset.v, t0 = performance.now() + n * 120, dur = 900; let stop = false; xpStops.push(() => stop = true);
+    const step = now => { if (stop) return; const k = Math.max(0, (now - t0) / dur);
+      b.textContent = [...v].map((ch, j) => /\d/.test(ch) && k < (j + 1) / v.length ? String(Math.floor(Math.random() * 10)) : ch).join("");
+      if (k < 1) requestAnimationFrame(step); else b.textContent = v; };
+    requestAnimationFrame(step);
+  });
+  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { play(); io.disconnect(); } }, { threshold: .6 }); io.observe(el);
+  xpStops.push(() => io.disconnect());
+  return play;
+}
+// 7. logomark: sample the mark, then each cell flickers through random characters before landing
+async function xpMark(el) {
+  el.innerHTML = '<pre class="xp-mark" role="img" aria-label="My logomark, built from characters"></pre>';
+  const pre = el.firstChild;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${MARK_VB}" width="390" height="503"><rect x="191.59" y="102.24" width="123.16" height="492.65" fill="#007F3F"/><rect x="190.6" y="225.39" width="125.2" height="61.59" fill="#fff"/><rect x="190.6" y="410.14" width="125.2" height="61.59" fill="#fff"/><path d="${BRAND_SVG.mark.bar}" fill="#000"/></svg>`;
+  const s = await xpSample("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), 40, .5); if (!s) return;
+  const cells = s.map(r => r.map(c => c.a < .4 || c.l > .92 ? null : c.rgb[1] > c.rgb[0] + 40 ? "g" : "k"));
+  const pool = "#%@*+=";
+  const play = () => {
+    const t0 = performance.now(); let stop = false; xpStops.push(() => stop = true);
+    const step = now => { if (stop) return; const t = now - t0;
+      pre.innerHTML = cells.map((r, y) => r.map((k, x) => { if (!k) return " "; const at = 120 + (y * 9 + x * 4) + (((x * 31 + y * 17) % 7) * 30);
+        const ch = t < at ? (t < at - 260 ? " " : xpRand(pool)) : k === "g" ? "#" : "@"; return `<span class="m${k}">${ch}</span>`; }).join("")).join("\n");
+      if (t < 1400) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  play(); return play;
+}
+// 8. Savannah: a stylised grid of wards, each with its square, the river along the top and Forsyth Park below
+function xpMap(el) {
+  const W = 58, rows = [];
+  rows.push("~".repeat(W)); rows.push(" Savannah River".padEnd(W, "~"));
+  rows.push("=".repeat(W));
+  for (let w = 0; w < 4; w++) {
+    rows.push(Array.from({ length: W }, (_, x) => x % 10 === 4 ? "|" : "-").join(""));
+    rows.push(Array.from({ length: W }, (_, x) => x % 10 === 4 ? "|" : (x % 10 >= 6 && x % 10 <= 8) ? "#" : " ").join(""));
+    rows.push(Array.from({ length: W }, (_, x) => x % 10 === 4 ? "|" : " ").join(""));
+  }
+  rows.push(Array.from({ length: W }, (_, x) => x % 10 === 4 ? "|" : "-").join(""));
+  const park = "  [   Forsyth Park   ]  ";
+  rows.push(" ".repeat(Math.floor((W - park.length) / 2)) + park);
+  const me = [rows.length - 6, 27];
+  el.innerHTML = `<pre class="xp-map" role="img" aria-label="A stylised ASCII sketch of Savannah's street grid with a blinking dot">${rows.map((r, y) => [...r].map((ch, x) => y === me[0] && x === me[1] ? '<span class="me">●</span>' : ch === "#" ? `<span class="sq">${ch}</span>` : ch === "~" ? `<span class="rv">${ch}</span>` : esc(ch)).join("")).join("\n")}</pre><p class="xp-note">Stylised, not to scale: wards with their squares (green), the river and Forsyth Park.</p>`;
+}
+function initExperiments() {
+  xpStops.forEach(f => f()); xpStops = [];
+  if (!document.querySelector(".xp-grid")) return;
+  const $x = id => document.getElementById("xp-" + id), replay = {};
+  xpCard($x("card")); xpPenny($x("penny")); xpTrail($x("trail")); xpLost($x("lost"));
+  replay.scramble = xpScramble($x("scramble")); replay.nums = xpNums($x("nums"));
+  xpMark($x("mark")).then(f => replay.mark = f); xpMap($x("map"));
+  document.querySelectorAll(".xp-replay").forEach(b => b.addEventListener("click", () => replay[b.dataset.for] && replay[b.dataset.for]()));
+}
+
 function viewBrand() {
   const tile = (inner, dark, cls = "", cap = "") => `<div class="bt ${dark ? "d" : "l"} ${cls}" data-zoom data-cap="${esc(cap)}" tabindex="0" role="button" aria-label="View ${esc(cap)} larger">${inner}</div>`;
   return `<article class="brand-page">
@@ -2519,6 +2760,7 @@ function render() {
   else if (id === "about") { html = viewAbout(); nav = "about"; }
   else if (id === "home-3") { html = viewHome(true); }
   else if (id === "brand") { html = viewBrand(); nav = "brand"; }
+  else if (id === "experiments") { html = viewExperiments(); nav = ""; }
   else html = viewHome();
   document.body.classList.toggle("brand-mode", id === "brand");
   document.body.classList.toggle("quarters-mode", id === "quarters");
@@ -2526,13 +2768,13 @@ function render() {
   if (aboutTilt) { aboutTilt.destroy(); aboutTilt = null; }
   $("#app").innerHTML = html;
   document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === nav) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-  const page = p ? p.title : isBux ? "Beyond UX" : id === "about" ? "About" : id === "brand" ? "My Brand" : "";
+  const page = p ? p.title : isBux ? "Beyond UX" : id === "about" ? "About" : id === "brand" ? "My Brand" : id === "experiments" ? "Experiments" : "";
   document.title = page ? `${page} · Jack Walker` : "Jack Walker's Portfolio";
   const crumb = document.getElementById("crumb");
   if (crumb) crumb.innerHTML = p ? `<a href="#projects">UX Projects</a><i aria-hidden="true">/</i><b aria-current="page">${esc(p.title)}</b>`
-    : isBux ? '<b aria-current="page">Beyond UX</b>' : id === "about" ? '<b aria-current="page">About</b>' : id === "brand" ? '<b aria-current="page">My Brand</b>' : "";
+    : isBux ? '<b aria-current="page">Beyond UX</b>' : id === "about" ? '<b aria-current="page">About</b>' : id === "brand" ? '<b aria-current="page">My Brand</b>' : id === "experiments" ? '<b aria-current="page">Experiments</b>' : "";
   // Coming back home lands you where you left off: on the project you opened, or the project grid.
-  const home = !p && !isBux && id !== "about" && id !== "brand";
+  const home = !p && !isBux && id !== "about" && id !== "brand" && id !== "experiments";
   const card = home && cameFrom ? document.querySelector(`.card[href="#${cameFrom.id}"]`) : null;
   if (card) card.scrollIntoView({ block: "center" });
   else if (id === "projects") document.getElementById("projects").scrollIntoView({ block: "start" });
@@ -2547,6 +2789,7 @@ function render() {
   initHomeLinks();
   initPeaks();
   initBrand();
+  initExperiments();
   initDots();
 }
 
