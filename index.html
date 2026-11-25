@@ -680,10 +680,10 @@ figure .img.fit img { cursor: zoom-in; }
 :root[data-theme="dark"] .penny-spin .pz { color: #8F897E; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .penny-spin .pz { color: #8F897E; } }
 /* Quarters card: a small Penny badge that spins while you hover the card */
-.shot { position: relative; }
-.card-penny { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: color-mix(in srgb, var(--bg) 88%, transparent); box-shadow: 0 4px 16px rgba(0, 0, 0, .12); pointer-events: none; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
-.card:hover .card-penny { transform: scale(1.06); }
-.card-penny .penny-spin { font-size: 5.4px; line-height: 1; }
+.card:has(.card-penny) { position: relative; }
+.card-penny { position: absolute; right: 18px; bottom: 16px; display: grid; place-items: center; pointer-events: none; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.card:hover .card-penny { transform: scale(1.08); }
+.card-penny .penny-spin { font-size: 4.2px; line-height: 1; }
 .penny-fig { margin: 0 0 8px; display: grid; justify-items: center; }
 .penny-fig .penny-spin { font-size: clamp(7px, 1vw, 10px); }
 .proto-msg { gap: 14px; align-content: center; }
@@ -1840,10 +1840,10 @@ const LOCK = '<span class="lock" aria-hidden="true"><span><svg viewBox="0 0 24 2
 function card(p) {
   const tag = p.locked ? `div aria-disabled="true" title="Coming soon"` : `a href="${p.href || "#" + p.id}"`; // locked work can't be opened for now
   return `<${tag} class="card${p.highlight ? " hl" : ""}${p.locked ? " locked" : ""}">
-    <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked ? LOCK : ""}${p.id === "quarters" ? '<span class="card-penny" aria-hidden="true"><pre class="penny-spin" data-cols="26" data-hover></pre></span>' : ""}</div>
+    <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked ? LOCK : ""}</div>
     <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h2>
     <p>${esc(p.summary)}</p>
-    <span class="meta">${p.highlight ? '<span class="hl-tag">Highlighted Work</span> · ' : ""}${esc(p.meta)}</span>
+    <span class="meta">${p.highlight ? '<span class="hl-tag">Highlighted Work</span> · ' : ""}${esc(p.meta)}</span>${p.id === "quarters" ? '<span class="card-penny" aria-hidden="true"><pre class="penny-spin" data-cols="22" data-hover></pre></span>' : ""}
   </${p.locked ? "div" : "a"}>`;
 }
 
