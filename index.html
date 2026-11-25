@@ -704,6 +704,51 @@ figure .img.fit img { cursor: zoom-in; }
 @media (max-width: 760px) { .lost { grid-template-columns: 1fr; gap: 24px; } .lost-mtn { font-size: 6px; } }
 @media (prefers-reduced-motion: reduce) { .f-trail .me, .lost-mtn .me { animation: none; } }
 /* Experiments: what's live */
+.xp.wide { grid-column: 1 / -1; }
+/* A. climb */
+.xp-climb { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; width: 100%; height: 360px; }
+.xp-climb-page { overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 18px 22px; scrollbar-width: none; }
+.xp-climb-page::-webkit-scrollbar { display: none; }
+.xp-climb-page section { padding: 6px 0 30px; }
+.xp-climb-page h4 { font-size: 17px; font-weight: 800; margin-bottom: 10px; } .xp-climb-page h4 span { color: color-mix(in srgb, var(--muted) 55%, transparent); }
+.xp-climb-page p { height: 10px; border-radius: 5px; background: color-mix(in srgb, var(--ink) 7%, var(--bg)); margin: 0 0 9px; }
+.xp-climb-page p:nth-child(3) { width: 82%; } .xp-climb-page p:nth-child(4) { width: 64%; }
+.xp-climb-end { height: auto !important; background: none !important; color: var(--muted); font-size: 13px; padding-bottom: 40px; }
+.xp-climb-mtn { align-self: center; font-size: 10.5px !important; line-height: 1.08 !important; }
+.xp-demo .fl { color: #E0663A; } .xp-demo .tk { color: var(--muted); font-weight: 800; }
+/* B. develop */
+.xp-dev { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #0d0d0d; }
+.xp-dev img, .xp-dev canvas { position: absolute; inset: 0; width: 100%; height: 100%; } .xp-dev img { object-fit: cover; }
+/* C. weather */
+.xp-wx { display: grid; gap: 12px; justify-items: center; }
+.xp-wx pre { font-size: 7px !important; line-height: 1.1 !important; }
+.xp-wx-btns { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.xp-wx-btns button { font: 600 13px var(--font); color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.xp-wx-btns button[aria-pressed] { color: var(--bg); background: var(--link); border-color: var(--link); }
+.xp-wx .wsn { color: #F2B92E; } .xp-wx .wmo { color: #C9CCD3; } .xp-wx .wst { color: color-mix(in srgb, var(--ink) 60%, var(--bg)); }
+.xp-wx .wcl { color: color-mix(in srgb, var(--ink) 45%, var(--bg)); } .xp-wx .wrn { color: #6F95DD; } .xp-wx .wsw { color: var(--ink); }
+/* D. house */
+.xp-house { display: grid; grid-template-columns: auto minmax(0, 300px); gap: 32px; align-items: center; }
+.xp-plan { font-size: 11px !important; line-height: 1.25 !important; }
+.xp-plan .rm { transition: background-color .3s; border-radius: 2px; font-weight: 700; }
+.xp-plan .rm.qa { color: #6F95DD; } .xp-plan .rm.qn { color: #EE8E66; } .xp-plan .rm.qy { color: #D9A21C; } .xp-plan .rm.qm { color: #4FA874; }
+.xp-plan .rm.on { background: color-mix(in srgb, currentColor 18%, transparent); }
+.xp-plan .fr { color: var(--ink); font-weight: 700; }
+.xp-house-side { display: grid; gap: 12px; justify-items: center; }
+.xp-hp { font-size: 6.5px !important; }
+.xp-house-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
+.xp-house-btns button { font: 600 12.5px var(--font); text-align: left; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; cursor: pointer; }
+.xp-house-btns button b { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; color: #16181D; margin-right: 4px; font-size: 11px; }
+.xp-house-btns .qa b { background: #9DB8EC; } .xp-house-btns .qn b { background: #F4B396; } .xp-house-btns .qy b { background: #F7D36A; } .xp-house-btns .qm b { background: #93D3AC; }
+.xp-house-msg { font-size: 13.5px; color: var(--muted); text-align: center; min-height: 2.6em; }
+.penny-spin .pd { color: #255A9B; } .penny-spin .ck { color: #FFFFFF; font-weight: 800; }
+/* E. terminal */
+.xp-term { width: 100%; height: 320px; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #0d0f0e; color: #D7E3DA; border-radius: 8px; padding: 14px 16px; font: 500 13px/1.5 ui-monospace, Menlo, Consolas, monospace; cursor: text; }
+.xp-term-out { overflow-y: auto; } .xp-term-out b { color: #4ADE80; font-weight: 700; } .xp-term .dim { color: #7D8A80; } .xp-term .err { color: #F28B82; }
+.xp-term-in { display: flex; gap: 8px; align-items: center; } .xp-term-in span { color: #4ADE80; white-space: nowrap; }
+.xp-term-in input { flex: 1; min-width: 0; background: none; border: 0; outline: none; color: inherit; font: inherit; caret-color: #4ADE80; }
+.xp-term-art { font-size: 7px !important; line-height: 1.1 !important; color: #9FB3A5 !important; margin: 4px 0 !important; }
+@media (max-width: 900px) { .xp-house { grid-template-columns: 1fr; } .xp-plan { font-size: 8px !important; } }
 .xp-live { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 20px; }
 .xp-live h2 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
 .xp-live ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -2366,6 +2411,11 @@ function brandPlate() {
 const XP = [
   { h: "Project cards that resolve from ASCII", where: "Undecided: not the project cards, which need to stay informational", d: "The cover is drawn in characters, cell for cell over the real image. Hover and it clears outward from your pointer.", demo: "card" },
   { h: "A spinning Penny", where: "Undecided: see the placement ideas", d: "The Penny in characters, turning: progress quarters on the front, brushed metal on the back, the rim showing as it turns.", demo: "penny" },
+  { h: "The trail is the scroll bar", where: "Case studies and Beyond UX · replacing the section dots", d: "A mountain on its side runs beside the page. Scroll the sample page and your dot climbs; numbers mark each section, and a flag goes up at the end.", demo: "climb", wide: true },
+  { h: "A hero that develops from characters", where: "Case studies · the top image", d: "The image starts as coarse, sparse characters, sharpens, then turns into the photo. Move over it afterwards and it smears back into characters.", demo: "develop", replay: true },
+  { h: "Weather on the mountain", where: "Home · Where I'm Headed", d: "The ridge with the sky drawn over it. Live, this would follow each peak's real weather and local time; here you can pick the conditions.", demo: "weather" },
+  { h: "A Quarters house simulator", where: "Quarters · The solution", d: "Tap a roommate to do a chore. Their quarter fills on the Penny; when all four are full, it flips to the all-done screen.", demo: "house", wide: true },
+  { h: "Terminal mode", where: "Every page · a hidden toggle (press ~)", d: "The whole site as text with a prompt. Try ls, open quarters, peaks, hike or help.", demo: "term", wide: true },
   { h: "The logomark, built from characters", where: "My Brand · hovering the logomark tile", d: "The logomark as it is. Hover and the same shape is redrawn in characters, cell for cell, then snaps back when you move away.", demo: "mark" }
 ];
 const XP_LIVE = [["A trail along the footer", "The footer on every page", ""], ["You're off trail", "Any broken link, like this one", "#off-trail"], ["Scramble between pages", "Headings when you change page", ""], ["Numbers that count in", "Stats on the case studies", "#quarters"]];
@@ -2377,12 +2427,12 @@ function viewExperiments() {
     </section>
     <div class="xp-live"><h2>Now live on the site</h2><ul>${XP_LIVE.map(([h, w, href]) => `<li><b>${esc(h)}</b><span>${href ? `<a href="${href}">${esc(w)}</a>` : esc(w)}</span></li>`).join("")}</ul></div>
     <div class="cs-body xp-grid">${XP.map((x, i) => `
-      <section class="sec xp" data-xp="${x.demo}">
+      <section class="sec xp${x.wide ? " wide" : ""}" data-xp="${x.demo}">
         <h2>${esc(x.h)}</h2>
         <p class="xp-where">Could live in: <b>${esc(x.where)}</b></p>
         <p class="xp-d">${esc(x.d)}</p>
         <div class="xp-demo" id="xp-${x.demo}"></div>
-        ${XP_REPLAY.has(x.demo) ? `<button class="xp-replay" type="button" data-for="${x.demo}">Replay</button>` : ""}
+        ${x.replay ? `<button class="xp-replay" type="button" data-for="${x.demo}">Replay</button>` : ""}
       </section>`).join("")}
     </div>`;
 }
@@ -2503,9 +2553,8 @@ const STILL = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
    quarters (each partly filled, like the app's progress), the roommates' letters and the green status light.
    Back: brushed metal. The rim shows on the side turning away. Returns a stop function. */
 const PENNY_Q = [["qa", "A", .62], ["qn", "N", .78], ["qy", "Y", .45], ["qm", "M", .86]];
-function pennySpin(pre, { cols = 52, speed = 1, hover = null } = {}) {
+function pennyFrame(cols, a, { fills = PENNY_Q.map(q => q[2]), back = "metal" } = {}) {
   const W = cols, H = Math.round(cols * .52) | 1, cx = (W - 1) / 2, cy = (H - 1) / 2, R = (W - 4) / 2, RY = R * .5;
-  const draw = a => {
     const ca = Math.cos(a), sa = Math.sin(a), w = Math.max(.035, Math.abs(ca)), front = ca >= 0, rim = 2.2 * sa;
     const light = .55 + .45 * w; // faces read brighter as they turn towards you
     let out = "";
@@ -2519,6 +2568,12 @@ function pennySpin(pre, { cols = 52, speed = 1, hover = null } = {}) {
         if (rr <= 1) {
           const u = front ? fx : -fx, v = fy;
           if (rr > .93) { ch = "@"; k = "pe"; }
+          else if (!front && back === "done") {
+            // the all-done screen: a blue disc with a white check
+            const seg = (ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, t = Math.max(0, Math.min(1, ((fx - ax) * dx + (fy - ay) * dy) / (dx * dx + dy * dy))); return Math.hypot(fx - ax - t * dx, fy - ay - t * dy); };
+            const onCheck = Math.min(seg(-.38, .02, -.1, .32), seg(-.1, .32, .42, -.3)) < .1;
+            if (rr > .8) { ch = light > .8 ? "%" : "="; k = "pz"; } else { ch = onCheck ? "#" : light > .8 ? "#" : "*"; k = onCheck ? "ck" : "pd"; }
+          }
           else if (!front) { ch = rr < .08 ? "+" : ".:-=".charAt(Math.min(3, Math.floor(light * 3 + ((x * 7 + y * 13) % 3) * .12))); k = "pb"; }
           else if (rr > .8) {
             ch = v > .82 && Math.abs(u) < .05 ? "•" : light > .8 ? "%" : "=";
@@ -2537,8 +2592,10 @@ function pennySpin(pre, { cols = 52, speed = 1, hover = null } = {}) {
       }
       flush(); out += "\n";
     }
-    pre.innerHTML = out;
-  };
+    return out;
+}
+function pennySpin(pre, { cols = 52, speed = 1, hover = null } = {}) {
+  const draw = a => { pre.innerHTML = pennyFrame(cols, a); };
   if (STILL()) { draw(.45); return () => {}; }
   if (hover) {
     // still until hovered; spins up while the pointer is on it, then eases round to face the front again
@@ -2571,7 +2628,7 @@ function pennySpin(pre, { cols = 52, speed = 1, hover = null } = {}) {
 let pennyStops = [];
 function initPennies() {
   pennyStops.forEach(f => f()); pennyStops = [];
-  document.querySelectorAll("#app pre.penny-spin:not(#xp-penny pre)").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52, hover: pre.hasAttribute("data-hover") ? pre.closest(".card") : null })));
+  document.querySelectorAll("#app pre.penny-spin[data-cols]:not(#xp-penny pre)").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52, hover: pre.hasAttribute("data-hover") ? pre.closest(".card") : null })));
 }
 
 /* Footer trail: the three mountains side by side as one thin ridge. The green trail covers the climbs I've done
@@ -2672,11 +2729,207 @@ function initCountIn() {
   els.forEach(b => io.observe(b));
 }
 
+/* ---------- Experiments, round 2: bigger ASCII ideas ---------- */
+// A. The trail is the scroll bar: a sideways mountain beside a scrolling case study; your dot climbs as you read
+function xpClimb(el) {
+  const SECS = ["At a glance", "The problem", "What we learned", "The solution", "Testing", "What we fixed", "Why it matters"];
+  el.innerHTML = `<div class="xp-climb"><div class="xp-climb-page" tabindex="0" aria-label="Sample case study, scroll it">${SECS.map((h, i) => `<section><h4><span>0${i + 1}</span> ${h}</h4>${"<p></p>".repeat(3)}</section>`).join("")}<p class="xp-climb-end">The end of the page.</p></div><pre class="xp-climb-mtn" aria-hidden="true"></pre></div>`;
+  const page = el.querySelector(".xp-climb-page"), pre = el.querySelector("pre");
+  // a profile laid on its side: row = distance up the page (top = summit), column = how far the ridge sticks out
+  const prof = peakProfile(PEAKS[1]).r.slice(0, peakProfile(PEAKS[1]).pc + 1), N = 30, WD = 28;
+  const xs = Array.from({ length: N }, (_, i) => { const j = Math.round((1 - i / (N - 1)) * (prof.length - 1)); return Math.round((PK_H - 1 - prof[j]) / (PK_H - 1) * (WD - 3)) + 1; });
+  const draw = () => {
+    const max = page.scrollHeight - page.clientHeight, k = max > 0 ? page.scrollTop / max : 0;
+    const me = Math.round((1 - k) * (N - 1)); // bottom row = trailhead
+    const tops = [...page.querySelectorAll("section")].map(s => Math.round((1 - Math.min(1, s.offsetTop / Math.max(1, page.scrollHeight - page.clientHeight * .4))) * (N - 1)));
+    let out = "";
+    for (let y = 0; y < N; y++) {
+      const x = xs[y], prev = y ? xs[y - 1] : x, ch = x > prev ? "\\" : x < prev ? "/" : "|", lit = y >= me;
+      let row = " ".repeat(WD).split("");
+      for (let c = x + 1; c < WD; c++) row[c] = (c + y) % 4 === 0 ? ":" : (c * 3 + y) % 7 === 0 ? "." : " ";
+      row[x] = `<span class="${lit ? "tr" : "rg"}">${ch}</span>`;
+      if (y === me) row[Math.max(0, x - 1)] = '<span class="me">●</span>';
+      if (y === 0 && k > .98) row[Math.max(0, x - 1)] = '<span class="fl">⚑</span>';
+      const tick = tops.indexOf(y); if (tick >= 0 && y !== me) row[0] = `<span class="tk">${tick + 1}</span>`;
+      out += row.join("") + "\n";
+    }
+    pre.innerHTML = out;
+  };
+  page.addEventListener("scroll", draw, { passive: true }); draw();
+}
+// B. Hero that develops from characters: coarse and sparse, then denser, then the photo; your pointer smears it back
+async function xpDevelop(el) {
+  const src = ASSETS["q-lookbook"] || ASSETS["cover-quarters"]; if (!src) return;
+  el.innerHTML = `<div class="xp-dev"><img src="${src}" alt="Quarters lookbook"><canvas aria-hidden="true"></canvas><span class="xp-hint">Move over it</span></div>`;
+  const box = el.firstChild, img = box.querySelector("img"), cv = box.querySelector("canvas"), g = cv.getContext("2d");
+  try { await img.decode(); } catch (e) { return; }
+  const RAMP = " .:-=+*#%@", grids = {};
+  let W, H, raf = 0, t0 = 0, alive = true, smear = null, SC = 8, scols, srows, mx = -999, my = -999;
+  xpStops.push(() => { alive = false; cancelAnimationFrame(raf); });
+  const grid = cs => {
+    if (grids[cs]) return grids[cs];
+    const ch = cs * 1.6, cols = Math.ceil(W / cs), rows = Math.ceil(H / ch);
+    const s = Math.max(W / img.naturalWidth, H / img.naturalHeight), sw = W / s, sh = H / s, sx = (img.naturalWidth - sw) / 2, sy = (img.naturalHeight - sh) / 2;
+    const o = document.createElement("canvas"); o.width = cols; o.height = rows;
+    const og = o.getContext("2d", { willReadFrequently: true }); og.drawImage(img, sx, sy, cols * cs / s, rows * ch / s, 0, 0, cols, rows);
+    const d = og.getImageData(0, 0, cols, rows).data, cells = [];
+    for (let i = 0; i < cols * rows; i++) { const r = d[i * 4], gg = d[i * 4 + 1], b = d[i * 4 + 2], l = (r * .3 + gg * .59 + b * .11) / 255; cells.push([`rgb(${r},${gg},${b})`, RAMP[Math.min(9, Math.floor((1 - l) * 10))], Math.random()]); }
+    return (grids[cs] = { cs, ch, cols, rows, cells });
+  };
+  const paint = (G, alpha, density = 1, only = null) => {
+    g.font = `700 ${G.ch}px ui-monospace, Menlo, Consolas, monospace`; g.textBaseline = "top";
+    for (let y = 0; y < G.rows; y++) for (let x = 0; x < G.cols; x++) {
+      const [c, chr, n] = G.cells[y * G.cols + x]; if (n > density || chr === " ") continue;
+      const a = only ? only[y * G.cols + x] * alpha : alpha; if (a < .02) continue;
+      g.globalAlpha = a; g.fillStyle = c; g.fillText(chr, x * G.cs, y * G.ch);
+    }
+    g.globalAlpha = 1;
+  };
+  const size = () => { W = box.clientWidth; H = box.clientHeight; const dpr = Math.min(2, devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); for (const k in grids) delete grids[k]; const G = grid(SC); scols = G.cols; srows = G.rows; smear = new Float32Array(scols * srows); };
+  // develop: 0–0.9s coarse & sparse → 0.9–1.8s fine & dense → 1.8–2.6s fade into the photo
+  const frame = now => {
+    if (!alive) return;
+    const t = (now - t0) / 1000; g.clearRect(0, 0, W, H);
+    let busy = t < 2.6;
+    if (t < 2.6) {
+      g.fillStyle = "#0d0d0d"; g.globalAlpha = t < 1.8 ? 1 : 1 - (t - 1.8) / .8; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+      if (t < .9) paint(grid(16), 1, .35 + t * .7);
+      else if (t < 1.8) paint(grid(8), 1, Math.min(1, .5 + (t - .9)));
+      else paint(grid(8), 1 - (t - 1.8) / .8);
+    }
+    // smear: cells near the pointer flip back to characters, then fade
+    if (smear) {
+      const G = grid(SC);
+      for (let y = 0; y < srows; y++) for (let x = 0; x < scols; x++) {
+        const i = y * scols + x, d = Math.hypot(x * SC + SC / 2 - mx, y * G.ch + G.ch / 2 - my);
+        if (d < 46) smear[i] = Math.max(smear[i], 1 - d / 46);
+        smear[i] *= .93; if (smear[i] > .02) busy = true; else smear[i] = 0;
+      }
+      if (t >= 2.6) { g.globalAlpha = 1; for (let i = 0; i < smear.length; i++) if (smear[i] > .02) { const x = i % scols, y = (i / scols) | 0; g.globalAlpha = smear[i] * .55; g.fillStyle = "#0d0d0d"; g.fillRect(x * SC, y * G.ch, SC, G.ch); } g.globalAlpha = 1; paint(G, 1, 1, smear); }
+    }
+    raf = busy ? requestAnimationFrame(frame) : 0;
+  };
+  const play = () => { cancelAnimationFrame(raf); t0 = performance.now(); raf = requestAnimationFrame(frame); };
+  box.addEventListener("pointermove", e => { const r = box.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; if (!raf) raf = requestAnimationFrame(frame); });
+  box.addEventListener("pointerleave", () => { mx = my = -999; });
+  size(); 
+  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { play(); io.disconnect(); } }, { threshold: .4 }); io.observe(box); xpStops.push(() => io.disconnect());
+  return play;
+}
+// C. Weather on the mountain: the ridge with sky, sun or moon, clouds, rain or snow drawn over it
+function xpWeather(el) {
+  const KINDS = [["day", "Clear day"], ["night", "Clear night"], ["cloud", "Cloudy"], ["rain", "Rain"], ["snow", "Snow"]];
+  el.innerHTML = `<div class="xp-wx"><pre aria-hidden="true"></pre><div class="xp-wx-btns" role="group" aria-label="Weather">${KINDS.map(([k, l], i) => `<button type="button" data-k="${k}"${i ? "" : ' aria-pressed="true"'}>${l}</button>`).join("")}</div></div>`;
+  const pre = el.querySelector("pre"), W = PK_W, H = PK_H + 4;
+  const prof = peakProfile(PEAKS[1]); let kind = "day", parts = [], t = 0;
+  const ground = c => prof.r[c] + 4;
+  el.querySelectorAll(".xp-wx-btns button").forEach(b => b.addEventListener("click", () => { kind = b.dataset.k; parts = []; el.querySelectorAll(".xp-wx-btns button").forEach(x => x.toggleAttribute("aria-pressed", x === b)); }));
+  const stars = Array.from({ length: 26 }, (_, i) => [((i * 37) % W), (i * 11) % 9, i]);
+  const tick = () => {
+    t++;
+    const G = Array.from({ length: H }, () => Array(W).fill(" ")), C = Array.from({ length: H }, () => Array(W).fill(""));
+    const put = (y, x, ch, c) => { if (y >= 0 && y < H && x >= 0 && x < W && y < ground(x)) { G[y][x] = ch; C[y][x] = c; } };
+    if (kind === "night") { stars.forEach(([x, y, i]) => put(y, x, (t + i) % 9 < 2 ? "*" : ".", "wst")); [" __ ", "(  )", " `´ "].forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(1 + i, 50 + j, ch, "wmo"))); }
+    if (kind === "day") { [" \\ | / ", " - O - ", " / | \\ "].forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(1 + i, 48 + j, ch, "wsn"))); }
+    if (kind === "cloud" || kind === "rain" || kind === "snow") {
+      [[(t * .3) % (W + 20) - 14, 1], [(t * .2 + 30) % (W + 20) - 14, 3], [(t * .25 + 52) % (W + 20) - 14, 0]].forEach(([cx, cy]) =>
+        ["  .--.   ", ".(    ). ", "(___.__)_"].forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(cy + i, Math.round(cx) + j, ch, "wcl"))));
+    }
+    if (kind === "rain" || kind === "snow") {
+      for (let i = 0; i < (kind === "rain" ? 5 : 2); i++) parts.push([Math.random() * W, 3 + Math.random() * 2]);
+      parts = parts.filter(p => { p[1] += kind === "rain" ? 1 : .35; p[0] += kind === "rain" ? -.5 : Math.sin(t * .1 + p[1]) * .3; return p[1] < ground(Math.round(Math.max(0, Math.min(W - 1, p[0])))); });
+      parts.forEach(([x, y]) => put(Math.round(y), Math.round(x), kind === "rain" ? "/" : "*", kind === "rain" ? "wrn" : "wsw"));
+    }
+    // the mountain below the sky
+    const art = peakGrid(prof, true).split("\n");
+    const sky = G.slice(0, H).map((r, y) => r.map((ch, x) => C[y][x] ? `<span class="${C[y][x]}">${esc(ch)}</span>` : ch).join(""));
+    pre.innerHTML = sky.slice(0, 4).join("\n") + "\n" + art.map((line, y) => {
+      // overlay any sky particles that fall in front of the mountain's sky area
+      const rowSky = G[y + 4]; let out = "", plain = line.replace(/<[^>]+>/g, "");
+      if (!rowSky.some((c, x) => c !== " ")) return line;
+      for (let x = 0; x < W; x++) out += rowSky[x] !== " " ? `<span class="${C[y + 4][x]}">${esc(rowSky[x])}</span>` : esc(plain[x] || " ");
+      return out;
+    }).join("\n");
+  };
+  tick(); const id = setInterval(tick, 90); xpStops.push(() => clearInterval(id));
+}
+// D. A house simulator: tap a roommate to do a chore or pay; their quarter fills on the Penny; all four full flips it to done
+function xpHouse(el) {
+  const R = [["A", "Alex", "qa"], ["N", "Natalia", "qn"], ["Y", "You", "qy"], ["M", "Maya", "qm"]];
+  const plan = (lit) => {
+    const box = (k, label) => `<span class="${lit === k ? "rm on " : "rm "}${R.find(r => r[0] === k)[2]}">${label}</span>`;
+    return `+----------------+----------------+
+|  ${box("A", "Alex's room  ")} |  ${box("N", "Natalia's room")}|
+|                |                |
++------    ------+------    ------+
+|          kitchen       <span class="fr">[ fridge ]</span>|
+|                        <span class="fr">[  (P)   ]</span>|
++------    ------+------    ------+
+|  ${box("Y", "Your room    ")} |  ${box("M", "Maya's room   ")}|
+|                |                |
++----------------+----------------+`;
+  };
+  el.innerHTML = `<div class="xp-house"><pre class="xp-plan" aria-hidden="true"></pre><div class="xp-house-side"><pre class="penny-spin xp-hp" role="img" aria-label="The Penny on the fridge"></pre><div class="xp-house-btns">${R.map(([k, n, c]) => `<button type="button" data-k="${k}" class="${c}"><b>${k}</b> ${n}: do a chore</button>`).join("")}</div><button type="button" class="xp-replay" data-reset>Reset the week</button><p class="xp-house-msg" aria-live="polite">Tap a roommate.</p></div></div>`;
+  const planEl = el.querySelector(".xp-plan"), pen = el.querySelector(".xp-hp"), msg = el.querySelector(".xp-house-msg");
+  let fills = [0, 0, 0, 0], shown = [0, 0, 0, 0], ang = .45, raf = 0, done = false, lit = null, litT = 0;
+  const CHORES = ["took out the trash", "paid rent", "cleaned the fridge", "did the dishes", "bought paper towels", "swapped the trash"];
+  const render = () => { pen.innerHTML = pennyFrame(38, ang, { fills: shown, back: "done" }); planEl.innerHTML = plan(lit); };
+  const loop = () => {
+    let busy = false;
+    shown = shown.map((v, i) => { const d = fills[i] - v; if (Math.abs(d) > .005) { busy = true; return v + d * .15; } return fills[i]; });
+    const target = done ? .45 + Math.PI : .45;
+    if (Math.abs(target - ang) > .01) { ang += (target - ang) * .08; busy = true; } else ang = target;
+    if (lit && performance.now() - litT > 700) lit = null; else if (lit) busy = true;
+    render(); raf = busy ? requestAnimationFrame(loop) : 0;
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+  el.querySelectorAll(".xp-house-btns button").forEach(b => b.addEventListener("click", () => {
+    const i = R.findIndex(r => r[0] === b.dataset.k); if (fills[i] >= 1 || done) return;
+    fills[i] = Math.min(3, Math.round(fills[i] * 3) + 1) / 3; lit = b.dataset.k; litT = performance.now(); // three chores fill a quarter
+    msg.textContent = `${R[i][1] === "You" ? "You" : R[i][1]} ${CHORES[(Math.random() * CHORES.length) | 0]}.` + (fills[i] >= 1 ? ` ${R[i][1] === "You" ? "Your" : R[i][1] + "'s"} quarter is full.` : "");
+    if (fills.every(f => f >= 1)) { setTimeout(() => { done = true; msg.textContent = "Everyone's done for the week. The Penny flips to the all-done screen."; kick(); }, 600); }
+    kick();
+  }));
+  el.querySelector("[data-reset]").addEventListener("click", () => { fills = [0, 0, 0, 0]; done = false; msg.textContent = "New week. Tap a roommate."; kick(); });
+  xpStops.push(() => cancelAnimationFrame(raf));
+  render();
+}
+// E. Terminal mode: the site as text, with a prompt you can type into
+function xpTerm(el) {
+  el.innerHTML = `<div class="xp-term" role="region" aria-label="Terminal mode demo"><div class="xp-term-out" aria-live="polite"></div><label class="xp-term-in"><span>jack@portfolio ~ %</span><input type="text" spellcheck="false" autocomplete="off" aria-label="Type a command"></label></div>`;
+  const out = el.querySelector(".xp-term-out"), inp = el.querySelector("input"), term = el.firstChild;
+  const print = (html, cls = "") => { const d = document.createElement("div"); d.className = cls; d.innerHTML = html; out.appendChild(d); out.scrollTop = out.scrollHeight; };
+  const pages = ALL.filter(p => !p.locked && !p.href);
+  const CMDS = {
+    help: () => print(`commands: <b>ls</b> · <b>open &lt;project&gt;</b> · <b>about</b> · <b>hike</b> · <b>peaks</b> · <b>clear</b> · <b>exit</b>`),
+    ls: () => print(pages.map((p, i) => `[${i + 1}] ${esc(p.title)}${p.sub ? " " + esc(p.sub) : ""}`).join("<br>") + "<br>[b] Beyond UX   [m] My Brand   [a] About"),
+    about: () => print("Jack Walker. UX designer finishing a BFA in UX Design at SCAD, May 2027.<br>Open to UX design roles, Winter 2026–27."),
+    peaks: () => print(PEAKS.map(p => `${p.done ? "[x]" : "[>]"} ${esc(p.name)}  ${esc(p.elev)}  ${esc(p.where)}`).join("<br>")),
+    hike: () => print(`<pre class="xp-term-art">${peakGrid(peakProfile(PEAKS[(Math.random() * PEAKS.length) | 0]), true)}</pre>`),
+    clear: () => { out.innerHTML = ""; },
+    exit: () => print("On the real site this would switch back to the normal view.", "dim")
+  };
+  const run = raw => {
+    const v = raw.trim(); print(`<span class="dim">~ %</span> ${esc(v)}`);
+    if (!v) return;
+    const [c, ...rest] = v.toLowerCase().split(/\s+/), arg = rest.join(" ");
+    if (c === "open" || /^\d+$/.test(c)) {
+      const p = /^\d+$/.test(c) ? pages[+c - 1] : pages.find(x => x.title.toLowerCase().startsWith(arg) || x.id.startsWith(arg));
+      return p ? print(`<b>${esc(p.title)}</b>${p.sub ? " " + esc(p.sub) : ""}<br>${esc(p.summary)}<br><span class="dim">${esc(p.meta)} · on the real site this opens #${esc(p.id)}</span>`) : print("No project by that name. Try <b>ls</b>.", "err");
+    }
+    (CMDS[c] || (() => print(`command not found: ${esc(c)}. Try <b>help</b>.`, "err")))();
+  };
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") { run(inp.value); inp.value = ""; } });
+  term.addEventListener("click", () => inp.focus({ preventScroll: true }));
+  print("Terminal mode. On the real site, press <b>~</b> anywhere to switch to it.", "dim"); print("Type <b>help</b> to start.");
+}
+
 function initExperiments() {
   xpStops.forEach(f => f()); xpStops = [];
   if (!document.querySelector(".xp-grid")) return;
   const $x = id => document.getElementById("xp-" + id), replay = {};
   xpCard($x("card")); xpMark($x("mark"));
+  xpClimb($x("climb")); xpDevelop($x("develop")).then(f => replay.develop = f); xpWeather($x("weather")); xpHouse($x("house")); xpTerm($x("term"));
   const pen = $x("penny"); if (pen) { pen.innerHTML = '<pre class="penny-spin" data-cols="56" role="img" aria-label="The Penny drawn in characters, turning slowly"></pre>'; xpStops.push(pennySpin(pen.firstChild, { cols: 56 })); }
   document.querySelectorAll(".xp-replay").forEach(b => b.addEventListener("click", () => replay[b.dataset.for] && replay[b.dataset.for]()));
 }
