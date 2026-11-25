@@ -3161,10 +3161,7 @@ function viewAbout() {
           </div>
         </div>
       </section>
-    </div>
-    <section class="imagined"><h2>Imagined peaks</h2><p>Mountains that don't exist, drawn in characters. Drag one to turn it.</p>
-      <div class="imag-grid">${Object.entries(MOUNTAINS).map(([k, m]) => `<figure><pre class="xp-terr imag" data-kind="${k}" aria-hidden="true"></pre><figcaption>${esc(m.name)}</figcaption></figure>`).join("")}</div>
-    </section>`;
+    </div>`;
 }
 let imagStops = [];
 function initImagined() {
