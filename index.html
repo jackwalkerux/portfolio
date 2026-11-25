@@ -200,7 +200,7 @@ main { padding-block: 56px 96px; }
 .peaks { margin-top: 88px; padding-top: 32px; border-top: 1px solid var(--line); display: grid; gap: 28px; }
 .peaks > h2 { font-size: 20px; }
 .peak-list { display: grid; gap: 20px; }
-.peak { display: grid; grid-template-columns: 225px minmax(0, 1fr) minmax(280px, 340px); gap: 14px; align-items: center; padding: 28px 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--wash); }
+.peak { display: grid; grid-template-columns: 225px minmax(0, 1fr) minmax(280px, 340px); gap: 14px; align-items: center; padding: 28px 28px; border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--ink) 3%, var(--bg)); /* neutral grey, not the green-tinted wash */ }
 .peak-info { display: grid; gap: 6px; justify-items: start; }
 .peak-info h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.01em; }
 .peak-info p { font-size: 15px; color: var(--muted); line-height: 1.45; }
@@ -213,12 +213,17 @@ main { padding-block: 56px 96px; }
 .peak-art { container-type: inline-size; min-width: 0; }
 .peak-art pre { margin: 0; font: 600 11px/1.18 ui-monospace, Menlo, Consolas, monospace; font-size: clamp(7px, calc(100cqw / 64 / .61), 15px); color: var(--muted); white-space: pre; overflow: hidden; }
 .peak-art .tx { opacity: .45; }
-.peak-art .rg, .peak-art .tr { color: var(--ink); }
+/* ridge in a soft grey (light mode) so the green trail stands out; full ink in dark mode where grey would sink */
+.peaks { --ridge: color-mix(in srgb, var(--ink) 50%, var(--bg)); }
+:root[data-theme="dark"] .peaks { --ridge: var(--ink); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .peaks { --ridge: var(--ink); } }
+.peak-art .rg, .peak-art .tr { color: var(--ridge); }
 .peak-art .tr { transition: color .25s ease; }
 .peaks.on .peak-art .tr { color: var(--link); transition-delay: calc(var(--d) * 24ms); }
 .peak-art .me { display: inline-block; color: var(--link); opacity: 0; transform: scale(.3); transition: opacity .3s ease, transform .45s cubic-bezier(.2, .9, .3, 1.4); }
 .peaks.on .peak-art .me { opacity: 1; transform: none; transition-delay: calc(var(--d) * 24ms + 120ms); }
-.peaks.on .prog .peak-art .me { animation: peakBob 2.4s ease-in-out 2.4s infinite; }
+.peaks.on .peak-art .me { animation: peakBlink .8s ease-in-out 1.2s infinite; }
+@keyframes peakBlink { 50% { opacity: .15; } }
 @keyframes peakCaret { 50% { opacity: 0; } }
 .peak-photos { min-width: 0; display: grid; justify-items: center; gap: 12px; }
 .pp-stack { isolation: isolate; /* keep the cards' stacking order inside the stack, under the sticky header */ display: grid; width: 100%; max-width: 320px; padding: 10px 18px 14px 4px; background: none; border: 0; cursor: pointer; font: inherit; color: inherit; }
@@ -279,11 +284,11 @@ main { padding-block: 56px 96px; }
 .pk-count b { color: var(--ink); }
 .peak-art { touch-action: pan-y; }
 @media (prefers-reduced-motion: reduce) { .peak-info, .peak-pics { transition: none; } }
-.peak-art .dn { color: var(--ink); }
+.peak-art .dn { color: var(--ridge); }
 .peaks.on .peak-art .dn { animation: peakDescend 2.8s ease-in-out infinite; animation-delay: calc(1.8s + var(--d) * 70ms); }
-@keyframes peakDescend { 0%, 55%, 100% { color: var(--ink); } 18% { color: var(--link); } }
+@keyframes peakDescend { 0%, 55%, 100% { color: var(--ridge); } 18% { color: var(--link); } }
 @keyframes peakBob { 50% { transform: translateY(-3px); } }
-@media (prefers-reduced-motion: reduce) { .peak-status i, .peaks.on .prog .peak-art .me, .peaks.on .peak-art .dn { animation: none; } .peaks.on .peak-art .dn { color: var(--link); } }
+@media (prefers-reduced-motion: reduce) { .peak-status i, .peaks.on .peak-art .me, .peaks.on .peak-art .dn { animation: none; } .peaks.on .peak-art .dn { color: var(--link); } }
 
 /* My Brand */
 /* In light mode the brand page takes the brand's Offwhite as its page colour, so the Offwhite tiles sit on their own ground */
