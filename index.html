@@ -585,15 +585,16 @@ figure .img.fit img { cursor: zoom-in; }
 @media (max-width: 760px) { .psplit { grid-template-columns: 1fr; gap: 28px; } .psplit .pcut img { max-width: 260px; } }
 .cs-link { font-weight: 700; color: var(--link); text-decoration: none; font-size: 17px; } .cs-link:hover { text-decoration: underline; }
 /* Section dots */
-.dots { position: fixed; right: clamp(12px, 2vw, 28px); top: 50%; transform: translateY(-50%); z-index: 40; display: grid; gap: 10px; justify-items: center; }
-.dots button { position: relative; width: 18px; height: 18px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
-.dots button::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 45%, transparent); transition: height .25s ease, background .2s; }
-.dots button:hover::before { background: var(--muted); }
-.dots button.on::before { height: 22px; background: var(--link); }
-.dots button.on { height: 30px; }
-.dot-l { position: absolute; right: 26px; top: 50%; transform: translate(4px, -50%); white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; }
+.dots { position: fixed; right: clamp(8px, 1.6vw, 22px); top: 50%; transform: translateY(-50%); z-index: 40; display: flex; flex-direction: column; transition: opacity .35s ease; }
+.dots.off { opacity: 0; pointer-events: none; }
+.dots button { position: relative; width: 32px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; overflow: visible; transition: height .45s cubic-bezier(.22, 1, .36, 1), opacity .35s ease; }
+.dots button.enter, .dots button.gone { height: 0; opacity: 0; pointer-events: none; }
+.dots button::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 45%, transparent); transition: transform .25s cubic-bezier(.22, 1, .36, 1), background .25s ease; }
+.dots button:hover::before { transform: scale(1.4); background: var(--muted); }
+.dots-pill { position: absolute; left: 50%; width: 8px; margin-left: -4px; top: 1px; height: 22px; border-radius: 999px; background: var(--link); z-index: 1; pointer-events: none; transition: top .38s cubic-bezier(.22, 1, .36, 1), height .38s cubic-bezier(.22, 1, .36, 1), background-color .35s ease; }
+.dot-l { position: absolute; right: 34px; top: 50%; transform: translate(6px, -50%); white-space: nowrap; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .25s cubic-bezier(.22, 1, .36, 1); }
 .dots button:hover .dot-l, .dots button:focus-visible .dot-l { opacity: 1; transform: translate(0, -50%); }
-.dots button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 999px; }
+.dots button:focus-visible { outline: none; } .dots button:focus-visible::before { box-shadow: 0 0 0 3px var(--link); }
 @media (max-width: 900px) { .dots { display: none; } }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
 .persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
@@ -2454,34 +2455,70 @@ function render() {
 }
 
 /* Section dots: a vertical stack on the right edge, one dot per section of the current page.
-   The current section's dot stretches into a pill; hover shows its name, click jumps there. */
+   One nav stays on the page for the whole visit, so moving between pages morphs it: dots grow in or
+   shrink away, and a pill slides to the current section, stretching across the gap as it travels. */
 let dots = null;
-function initDots() {
-  if (dots) { dots.el.remove(); removeEventListener("scroll", dots.on); removeEventListener("resize", dots.on); dots = null; }
-  const secs = [...document.querySelectorAll("#app .cs-body > .sec, #app .bux-panel .projs > .proj")];
-  if (secs.length < 2) return;
-  const name = s => (s.querySelector(":scope > h2, .proj-title") || {}).textContent || "";
+const DOT_STEP = 24, DOT_PILL = 22;
+function dotsNav() {
+  if (dots) return dots;
   const el = document.createElement("nav");
-  el.className = "dots"; el.setAttribute("aria-label", "Sections on this page");
-  el.innerHTML = secs.map((s, i) => `<button type="button" data-i="${i}" aria-label="${esc(name(s).trim())}"><span class="dot-l">${esc(name(s).trim())}</span></button>`).join("");
+  el.className = "dots off"; el.setAttribute("aria-label", "Sections on this page");
+  el.innerHTML = '<span class="dots-pill" aria-hidden="true"></span>';
   document.body.appendChild(el);
-  const btns = [...el.children];
+  dots = { el, pill: el.firstChild, secs: [], cur: -1, t: 0 };
   el.addEventListener("click", e => {
-    const b = e.target.closest("button"); if (!b) return;
-    const s = secs[+b.dataset.i];
+    const b = e.target.closest("button"); if (!b || b.classList.contains("gone")) return;
+    const s = dots.secs[+b.dataset.i]; if (!s) return;
     if (s.classList.contains("proj") && s.classList.contains("closed")) { setProj(s, true); syncProjAll(s.closest(".bux-piece")); }
     const y = s.getBoundingClientRect().top + scrollY - (bux ? bux.collapsedBottom() : 80) - 16;
     scrollTo({ top: y, behavior: "smooth" });
   });
-  const on = () => {
-    if (secs[0].isConnected) el.style.setProperty("--link", getComputedStyle(secs[0]).getPropertyValue("--link")); // match the page's accent (blue on Quarters)
-    const line = innerHeight * .35; let cur = 0;
-    secs.forEach((s, i) => { if (s.isConnected && s.getBoundingClientRect().top < line) cur = i; });
-    if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) cur = secs.length - 1;
-    btns.forEach((b, i) => { b.classList.toggle("on", i === cur); if (i === cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
-  };
-  addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
-  dots = { el, on }; on();
+  addEventListener("scroll", dotsUpdate, { passive: true }); addEventListener("resize", dotsUpdate);
+  return dots;
+}
+function dotsMove(from, to, instant) {
+  const p = dots.pill, y = i => i * DOT_STEP + (DOT_STEP - DOT_PILL) / 2;
+  clearTimeout(dots.t);
+  if (instant || from < 0) { p.style.transition = "none"; p.style.top = y(to) + "px"; p.style.height = DOT_PILL + "px"; p.offsetHeight; p.style.transition = ""; return; }
+  // stretch to cover both dots, then let go of the old one
+  p.style.top = y(Math.min(from, to)) + "px";
+  p.style.height = Math.abs(to - from) * DOT_STEP + DOT_PILL + "px";
+  dots.t = setTimeout(() => { p.style.top = y(to) + "px"; p.style.height = DOT_PILL + "px"; }, 170);
+}
+function dotsUpdate() {
+  if (!dots) return;
+  const secs = dots.secs.filter(s => s.isConnected);
+  if (secs.length < 2) return;
+  dots.el.style.setProperty("--link", getComputedStyle(secs[0]).getPropertyValue("--link")); // the page's accent (blue on Quarters)
+  const line = innerHeight * .35; let cur = 0;
+  secs.forEach((s, i) => { if (s.getBoundingClientRect().top < line) cur = i; });
+  if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) cur = secs.length - 1;
+  if (cur !== dots.cur) { dotsMove(dots.cur, cur); dots.cur = cur; }
+  dots.el.querySelectorAll("button:not(.gone)").forEach((b, i) => { b.classList.toggle("on", i === cur); if (i === cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+}
+function initDots() {
+  const d = dotsNav();
+  const secs = [...document.querySelectorAll("#app .cs-body > .sec, #app .bux-panel .projs > .proj")];
+  const names = secs.map(s => ((s.querySelector(":scope > h2, .proj-title") || {}).textContent || "").trim());
+  d.secs = secs;
+  const live = [...d.el.querySelectorAll("button:not(.gone)")];
+  names.forEach((n, i) => {
+    let b = live[i];
+    if (!b) {
+      b = document.createElement("button"); b.type = "button"; b.className = "enter";
+      b.innerHTML = '<span class="dot-l"></span>';
+      d.el.appendChild(b);
+      requestAnimationFrame(() => requestAnimationFrame(() => b.classList.remove("enter")));
+    }
+    b.dataset.i = i; b.setAttribute("aria-label", n); b.firstChild.textContent = n;
+  });
+  live.slice(names.length).forEach(b => { b.classList.add("gone"); b.removeAttribute("data-i"); setTimeout(() => b.remove(), 450); });
+  const show = secs.length >= 2;
+  d.el.classList.toggle("off", !show);
+  if (!show) return;
+  // a new page starts at its first section: slide the pill there from wherever it was
+  d.cur = d.cur >= 0 ? Math.min(d.cur, names.length - 1) : -1;
+  dotsUpdate();
 }
 
 document.body.classList.toggle("draft-off", !DRAFT);
