@@ -583,6 +583,7 @@ figure .img.fit img { cursor: zoom-in; }
 .psplit .parts > div { border-top: 1px solid var(--line); padding: 14px 0; }
 .psplit .parts > div:last-child { border-bottom: 1px solid var(--line); }
 @media (max-width: 760px) { .psplit { grid-template-columns: 1fr; gap: 28px; } .psplit .pcut img { max-width: 260px; } }
+.cs-link { font-weight: 700; color: var(--link); text-decoration: none; font-size: 17px; } .cs-link:hover { text-decoration: underline; }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
 .persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
 .persona > div { border-top: 2px solid var(--line); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
@@ -1086,20 +1087,29 @@ const OTHER = [
       { t: "Farmers Market Posters", p: "This next series of posters was designed only with specific typographic elements. No other shapes were allowed during this design challenge." },
       { figs: [["gd-farm1", "Poster 1 - No Color, 1 font size"], ["gd-farm2", "Poster 2 - No Color, Multiple font sizes"]], kind: "posters2" },
       { figs: [["gd-farm3", "Poster 3 - Color Allowed, Limited shape usage"], ["gd-farm4", "Poster 4 - No limits"]], kind: "posters2" } ] },
-  { id: "fridge-research", tab: "Research", cover: "fr-front", blurb: "The Ideal Fridge study", title: "The Ideal Fridge", lede: "A team research study into how people use their refrigerators, published as a printed magazine. I designed the front and back covers.",
+  { id: "fridge-research", tab: "Research", cover: "fr-front", blurb: "Bandcamp usability study and The Ideal Fridge", title: "Research", lede: "Research studies I've worked on, from usability testing to in-home observation.",
     blocks: [
+      { h: "Bandcamp Usability Research", p: "Bandcamp makes new fans work too hard to find music and pay for it. I designed the redesign prototype and wrote the tests that proved it fixed three core problems." },
+      { figs: [["bc-cover", ""]], n: 1 },
+      { nums: [["19", "participants tested"], ["3", "usability problems found"], ["9/9", "completed every key task on our redesign"]] },
+      { t: "Navigation, before and after" },
+      { figs: [["bc-nav-before", "Before: navigation changes with each section"], ["bc-nav-after", "After: one global navigation on every page"]] },
+      { t: "Checkout, before and after" },
+      { figs: [["bc-buy-before", "Before: no total in the purchase dialog"], ["bc-buy-after", "After: the full price up front"]] },
+      { link: ["Read the full Bandcamp case study", "#bandcamp-testing"] },
+      { h: "The Ideal Fridge", p: "A team research study into how people use their refrigerators, published as a printed magazine. I designed the front and back covers." },
       { figs: [["fr-hero", "The finished magazine"]], n: 1 },
       { p: "We started with secondary research, then ran our own studies in four stages." },
-      { h: "Observation", p: "Each of us watched a participant use their fridge in the hour around dinner, when fridges get the most use." },
+      { t: "Observation", p: "Each of us watched a participant use their fridge in the hour around dinner, when fridges get the most use." },
       { figs: [["fr-obs1", "Insights on helpful features"], ["fr-obs2", "Insights on compact space"]] },
-      { h: "Screener and interviews", p: "A screener found interview candidates across a wide range of demographics." },
+      { t: "Screener and interviews", p: "A screener found interview candidates across a wide range of demographics." },
       { figs: [["fr-stake", "Stakeholder map"], ["fr-screener", "Screener outcomes"], ["fr-questions", "Introductory interview questions"], ["fr-insights", "Key insights from each interview"]] },
-      { h: "Sensory cue workshop", p: "A four-part workshop on what draws people to a fridge: the ideal interior, how they organize it, and how it should feel, physically and emotionally." },
+      { t: "Sensory cue workshop", p: "A four-part workshop on what draws people to a fridge: the ideal interior, how they organize it, and how it should feel, physically and emotionally." },
       { figs: [["fr-workshop", "Participants in the workshop"], ["fr-kit", "Stimulus kit"], ["fr-data", "Example of the data collected"]], n: 3 },
-      { h: "Affinitization", p: "We grouped everything we found into patterns, then into ten core insights." },
+      { t: "Affinitization", p: "We grouped everything we found into patterns, then into ten core insights." },
       { nums: [["1000+", "Unique insights"], ["114", "Tertiary data points"], ["29", "Secondary data points"], ["10", "Core insights"]] },
       { figs: [["fr-aff2", "Affinity mapping"], ["fr-aff1", "Sorted insights"]] },
-      { h: "The magazine" },
+      { t: "The magazine" },
       { figs: [["fr-front", "Front cover, designed by me"], ["fr-back", "Back cover, designed by me"]] },
       { figs: [["fr-p12", "Pages 1 and 2"], ["fr-p34", "Pages 3 and 4"], ["fr-p56", "Pages 5 and 6"]], n: 3 },
       { figs: [["fr-mock", "Printed mockups"]], n: 1 } ] },
@@ -1669,6 +1679,7 @@ function block(b) {
   if (b.t) return `<h4 class="piece-h">${esc(b.t)}</h4>` + (b.p ? `<p class="col piece-p">${esc(b.p)}</p>` : "");
   if (b.h) return `<h3 class="sub-h">${esc(b.h)}</h3>` + (b.p ? `<p class="col sub-p">${esc(b.p)}</p>` : "");
   if (b.p) return `<p class="col${b.cls ? " " + b.cls : ""}">${esc(b.p)}</p>`;
+  if (b.link) return `<p class="col"><a class="cs-link" href="${esc(b.link[1])}">${esc(b.link[0])} <span aria-hidden="true">&rarr;</span></a></p>`;
   if (b.qcols) return `<div class="persona">${b.qcols.map(c => `<div><h4>${esc(c.h)}</h4><p>${esc(c.d)}</p></div>`).join("")}</div>`;
   if (b.insights) return `<ol class="ins">${b.insights.map(([n, h, d]) => `<li><b>${esc(n)}</b><div><h4>${esc(h)}</h4><p>${esc(d)}</p></div></li>`).join("")}</ol>`;
   if (b.penny) return `<div class="psplit"><figure class="pcut">${media(b.penny, "The Penny, exploded into its parts")}</figure><dl class="parts">${b.parts.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("")}</dl></div>`;
