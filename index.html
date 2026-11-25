@@ -265,13 +265,17 @@ main { padding-block: 56px 96px; }
 .peak-info, .peak-pics { transition: opacity .2s ease, transform .3s cubic-bezier(.2, .8, .2, 1); }
 .peak.swap .peak-info, .peak.swap .peak-pics { opacity: 0; transform: translateY(6px); }
 .peak-pics { min-width: 0; }
-.peak-nav { display: flex; align-items: center; gap: 10px; }
-.pk-go { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); cursor: pointer; transition: border-color .15s, color .15s, transform .15s; }
+.peak-mid { display: grid; gap: 18px; min-width: 0; }
+.peak-nav { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.pk-pips { display: flex; gap: 6px; }
+.pk-pips i { width: 6px; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 45%, transparent); transition: width .32s cubic-bezier(.2, .8, .2, 1), background-color .32s ease; }
+.pk-pips i.on { width: 18px; background: var(--link); }
+.pk-go { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); cursor: pointer; transition: border-color .15s, color .15s, transform .15s; }
 .pk-go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .pk-go:hover { border-color: var(--link); color: var(--link); }
 .pk-go:active { transform: scale(.94); }
 .pk-go:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
-.pk-count { font: 600 14px var(--font); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 3.2em; text-align: center; }
+.pk-count { font: 600 14px var(--font); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 2.6em; text-align: center; }
 .pk-count b { color: var(--ink); }
 .peak-art { touch-action: pan-y; }
 @media (prefers-reduced-motion: reduce) { .peak-info, .peak-pics { transition: none; } }
@@ -1746,7 +1750,9 @@ function card(p) {
 }
 
 /* Peaks: each trail drawn from its real elevation profile, all on one shared scale so heights and lengths compare
-   honestly (1 row = 250 ft, 1 column = 0.133 mi; vertical exaggeration is roughly 5x, like a printed trail profile).
+   honestly (1 row = 185 ft, 1 column = 0.133 mi; vertical exaggeration is roughly 7x, like a printed trail profile).
+   Bumps along the way (dips, false summits, steep pitches) are drawn at PK_AMP times their real size so each
+   mountain's character reads at this small scale.
    trail: [miles from the trailhead, feet] up to the summit. far: [0-1 across the far side, feet] for the other flank.
    atMi: where Jack is on the trail (summit when done). Profiles from published trail data; some features
    (switchbacks, false summits, the bridge, El Capitan's cliff) are accentuated a little so they read in ASCII. */
@@ -1780,7 +1786,7 @@ const PEAKS = [
     trail: [[0, 3878], [.5, 4050], [1, 4300], [1.5, 4550], [2, 4800], [2.5, 5050], [3, 5300], [3.5, 5550], [4, 5800], [4.5, 6050], [4.8, 5980], [5.1, 6100], [5.5, 6320], [5.8, 6490], [6, 6593]],
     far: [[.2, 6250], [.45, 5550], [.7, 4800], [1, 4000]] }
 ];
-const PK_W = 64, PK_H = 18, FT_ROW = 250, MI_COL = 7.5, PK_X0 = 1;
+const PK_W = 64, PK_H = 20, FT_ROW = 185, MI_COL = 7.5, PK_X0 = 1, PK_AMP = 1.7;
 const lerpPts = (P, x) => { for (let i = 1; i < P.length; i++) if (x <= P[i][0]) { const [x0, y0] = P[i - 1], [x1, y1] = P[i]; return y0 + (y1 - y0) * ((x - x0) / (x1 - x0 || 1)); } return P[P.length - 1][1]; };
 const trailMi = pk => pk.trail[pk.trail.length - 1][0];
 const trailGain = pk => Math.round((pk.trail[pk.trail.length - 1][1] - pk.trail[0][1]) / 10) * 10;
@@ -1788,7 +1794,12 @@ const trailGain = pk => Math.round((pk.trail[pk.trail.length - 1][1] - pk.trail[
 function peakProfile(pk) {
   const W = PK_W, H = PK_H, base = pk.trail[0][1], miles = trailMi(pk);
   const sc = Math.round(PK_X0 + miles * MI_COL), far = [[0, pk.trail[pk.trail.length - 1][1]], ...pk.far];
-  const ftAt = c => c <= sc ? lerpPts(pk.trail, Math.max(0, (c - PK_X0) / MI_COL)) : lerpPts(far, (c - sc) / (W - 1 - sc));
+  const top = pk.trail[pk.trail.length - 1][1], end = far[far.length - 1][1];
+  const raw = c => c <= sc ? lerpPts(pk.trail, Math.max(0, (c - PK_X0) / MI_COL)) : lerpPts(far, (c - sc) / (W - 1 - sc));
+  // exaggerate how far each point strays from a straight climb (or descent), keeping the trailhead, summit and far base fixed
+  const line = c => c <= sc ? base + (top - base) * Math.max(0, (c - PK_X0) / Math.max(1, sc - PK_X0)) : top + (end - top) * ((c - sc) / (W - 1 - sc));
+  const amp = c => 1 + (PK_AMP - 1) * Math.min(1, Math.abs(c - sc) / 6); // ease off near the summit so it stays a clean point
+  const ftAt = c => Math.min(top - (c === sc ? 0 : 60), line(c) + (raw(c) - line(c)) * amp(c)); // never above the summit
   const r = []; for (let c = 0; c < W; c++) r.push(Math.max(0, Math.min(H - 1, (H - 1) - Math.round((ftAt(c) - base) / FT_ROW))));
   return { r, pc: pk.done ? sc : Math.round(PK_X0 + (pk.atMi || 0) * MI_COL), done: !!pk.done };
 }
@@ -1856,13 +1867,16 @@ const PK_ARROW = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d 
 const peakCard = (pk, i) => `<article class="peak ${pk.done ? "done" : "prog"}" data-i="${i}" aria-roledescription="carousel" aria-label="Mountains">
     <div class="peak-side">
       <div class="peak-info" aria-live="polite">${peakInfo(pk)}</div>
+    </div>
+    <div class="peak-mid">
+      <div class="peak-art" role="img" aria-label="${esc(peakLabel(pk))}"><pre>${peakArt(pk)}</pre></div>
       <div class="peak-nav">
         <button class="pk-go" type="button" data-d="-1" aria-label="Previous mountain">${PK_ARROW(-1)}</button>
+        <span class="pk-pips" aria-hidden="true">${PEAKS.map((_, j) => `<i${j === i ? ' class="on"' : ""}></i>`).join("")}</span>
         <span class="pk-count"><b>${i + 1}</b> / ${PEAKS.length}</span>
         <button class="pk-go" type="button" data-d="1" aria-label="Next mountain">${PK_ARROW(1)}</button>
       </div>
     </div>
-    <div class="peak-art" role="img" aria-label="${esc(peakLabel(pk))}"><pre>${peakArt(pk)}</pre></div>
     <div class="peak-pics">${peakPhotos(pk)}</div>
   </article>`;
 // A loose pile of photos: click (or arrow keys) tosses the top one to the back
@@ -1900,6 +1914,7 @@ function initPeaks() {
     i = (i + d + PEAKS.length) % PEAKS.length;
     const pk = PEAKS[i], to = peakProfile(pk);
     count.textContent = i + 1; card.dataset.i = i;
+    card.querySelectorAll(".pk-pips i").forEach((p, j) => p.classList.toggle("on", j === i));
     art.setAttribute("aria-label", peakLabel(pk));
     // text and photos fade out, swap, fade back in
     card.classList.add("swap"); clearTimeout(swapT);
