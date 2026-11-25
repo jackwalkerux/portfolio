@@ -939,7 +939,9 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .btn { font: inherit; font-size: 15px; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; justify-self: start; }
 .btn:hover { border-color: var(--link); }
 
-footer { border-top: 1px solid var(--line); }
+footer { border-top: 1px solid var(--line); position: relative; overflow: hidden; }
+.f-topo { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+footer > .wrap { position: relative; z-index: 1; }
 .foot { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 40px; padding-block: 56px 44px; }
 .f-main { display: grid; gap: 10px; align-content: start; }
 .f-name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
@@ -2325,7 +2327,7 @@ function selectBux(id, focusTab) {
   });
   history.replaceState(null, "", "#beyond-ux/" + id);
   lastId = "beyond-ux/" + id;
-  initDots();
+  initClimbRail();
   // If we're already scrolled into the content, jump to the top of the new section (just under the squished cards)
   const top = panel.getBoundingClientRect().top, under = bux ? bux.collapsedBottom() : 140;
   if (top < under) window.scrollTo(0, window.scrollY + top - under - 16);
@@ -2653,6 +2655,37 @@ function initPennies() {
 
 /* Footer trail: the three mountains side by side as one thin ridge. The green trail covers the climbs I've done
    and runs up the current one to my dot. Built from the same profiles as the mountain card. */
+/* Footer: a faint topographic map drawn behind the footer's content; the pointer raises a gentle hill */
+function footerTopo() {
+  const foot = document.querySelector("footer"); if (!foot || foot.querySelector(".f-topo")) return;
+  const cv = document.createElement("canvas"); cv.className = "f-topo"; cv.setAttribute("aria-hidden", "true"); foot.prepend(cv);
+  const g = cv.getContext("2d"), CW = 7, CH = 12, BANDS = 7;
+  let W, H, cols, rows, t = 0, raf = 0, last = 0, px = -999, py = -999, hx = -999, hy = -999, amp = 0;
+  const size = () => { W = foot.clientWidth; H = foot.clientHeight; const dpr = Math.min(2, devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); cols = Math.ceil(W / CW); rows = Math.ceil(H / CH); };
+  foot.addEventListener("pointermove", e => { const r = foot.getBoundingClientRect(); px = (e.clientX - r.left) / CW; py = (e.clientY - r.top) / CH; if (hx < -900) { hx = px; hy = py; } });
+  foot.addEventListener("pointerleave", () => { px = py = -999; });
+  const frame = now => {
+    const dt = Math.min(50, now - (last || now)); last = now; t += dt * .00004;
+    if (px > -900) { hx += (px - hx) * .2; hy += (py - hy) * .2; amp += (1 - amp) * .08; } else amp += (0 - amp) * .05;
+    const ink = getComputedStyle(foot).color;
+    const Hm = new Float32Array((cols + 1) * (rows + 1));
+    for (let y = 0; y <= rows; y++) for (let x = 0; x <= cols; x++) { const d = Math.hypot((x - hx) * .55, y - hy); Hm[y * (cols + 1) + x] = fbm(x * .022 + t * 3, y * .05 - t * 1.5 + 40) + amp * .3 * Math.exp(-d * d / 80); }
+    g.clearRect(0, 0, W, H); g.font = `600 ${CH - 1}px ui-monospace, Menlo, Consolas, monospace`; g.textBaseline = "top"; g.fillStyle = ink;
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const i = y * (cols + 1) + x, h0 = Hm[i], hr = Hm[i + 1], hd = Hm[i + cols + 1];
+      const b = Math.floor(h0 * BANDS), br = Math.floor(hr * BANDS), bd = Math.floor(hd * BANDS);
+      if (b === br && b === bd) continue;
+      const a = Math.atan2(hd - h0, hr - h0), c = Math.cos(a), sn = Math.sin(a);
+      g.globalAlpha = Math.max(b, br, bd) % 3 === 0 ? .16 : .08; // index contours a touch stronger, all faint
+      g.fillText(Math.abs(c) > .92 ? "|" : Math.abs(sn) > .92 ? "-" : c * sn > 0 ? "\\" : "/", x * CW, y * CH);
+    }
+    g.globalAlpha = 1;
+    raf = requestAnimationFrame(frame);
+  };
+  size(); new ResizeObserver(size).observe(foot);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  new IntersectionObserver(es => { cancelAnimationFrame(raf); if (es[0].isIntersecting) { last = 0; raf = requestAnimationFrame(still ? n => { frame(n); cancelAnimationFrame(raf); } : frame); } }).observe(foot);
+}
 function footerTrail() {
   const foot = document.querySelector("footer"); if (!foot || foot.querySelector(".f-trail")) return;
   const order = [...PEAKS.filter(p => p.done), ...PEAKS.filter(p => !p.done)], H = 6, cols = [];
@@ -2784,9 +2817,10 @@ function xpClimb(el) {
 }
 function initClimbRail() {
   if (climbRail) { removeEventListener("scroll", climbRail.on); removeEventListener("resize", climbRail.on); climbRail.el.remove(); climbRail = null; }
-  const secs = [...document.querySelectorAll("#app .xp-grid > .xp")];
-  if (secs.length < 2) return;
-  const names = secs.map(s => s.querySelector("h2").textContent.trim());
+  // every page gets the trail; pages with sections (case studies, Beyond UX projects, Experiments) also get markers.
+  // Pages without them just climb to the flag at the end.
+  const secs = [...document.querySelectorAll("#app .xp-grid > .xp, #app .cs-body > .sec, #app .bux-panel .projs > .proj")];
+  const names = secs.map(s => ((s.querySelector(":scope > h2, .proj-title") || {}).textContent || "").trim());
   const el = document.createElement("nav"); el.className = "climb-rail"; el.setAttribute("aria-label", "Sections on this page");
   el.innerHTML = `<pre aria-hidden="true"></pre><div class="climb-hits">${names.map((n, i) => `<button type="button" data-i="${i}" aria-label="${esc(n)}"><span>${esc(n)}</span></button>`).join("")}</div>`;
   document.body.appendChild(el);
@@ -2800,7 +2834,9 @@ function initClimbRail() {
       return Math.round((PK_H - 1 - r) / (PK_H - 1) * (WD - 5));
     });
   };
+  const tone = secs[0] || document.querySelector("#app > *") || document.body;
   const on = () => {
+    el.style.setProperty("--link", getComputedStyle(tone).getPropertyValue("--link")); // the page's accent (blue on Quarters)
     const top = document.querySelector(".top") ? document.querySelector(".top").getBoundingClientRect().bottom : 60;
     el.style.top = top + "px";
     const n = Math.max(20, Math.floor((innerHeight - top) / LH));
@@ -2827,7 +2863,11 @@ function initClimbRail() {
       b.classList.toggle("on", i === cur); b.classList.toggle("past", i < cur);
     });
   };
-  el.querySelector(".climb-hits").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const s = secs[+b.dataset.i]; scrollTo({ top: s.getBoundingClientRect().top + scrollY - 90, behavior: "smooth" }); });
+  el.querySelector(".climb-hits").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return; const s = secs[+b.dataset.i];
+    if (s.classList.contains("proj") && s.classList.contains("closed")) { setProj(s, true); syncProjAll(s.closest(".bux-piece")); }
+    scrollTo({ top: s.getBoundingClientRect().top + scrollY - (bux ? bux.collapsedBottom() : 80) - 16, behavior: "smooth" });
+  });
   addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
   climbRail = { el, on }; on();
 }
@@ -3387,12 +3427,11 @@ function render() {
   initPeaks();
   initBrand();
   initExperiments();
-  initClimbRail();
   initPennies();
   initLost();
   initImagined();
   initCountIn();
-  initDots();
+  initClimbRail();
 }
 
 /* Section dots: a vertical stack on the right edge, one dot per section of the current page.
@@ -3666,7 +3705,7 @@ document.addEventListener("keydown", e => {
   });
 })();
 addEventListener("hashchange", render);
-footerTrail();
+footerTopo();
 render();
 </script>
 
