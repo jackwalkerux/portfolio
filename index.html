@@ -716,9 +716,6 @@ figure .img.fit img { cursor: zoom-in; }
 .xp-climb-end { height: auto !important; background: none !important; color: var(--muted); font-size: 13px; padding-bottom: 40px; }
 .xp-climb-mtn { align-self: center; font-size: 10.5px !important; line-height: 1.08 !important; }
 .xp-demo .fl { color: #E0663A; } .xp-demo .tk { color: var(--muted); font-weight: 800; }
-/* B. develop */
-.xp-dev { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #0d0d0d; }
-.xp-dev img, .xp-dev canvas { position: absolute; inset: 0; width: 100%; height: 100%; } .xp-dev img { object-fit: cover; }
 /* C. weather */
 .xp-wx { display: grid; gap: 12px; justify-items: center; }
 .xp-wx pre { font-size: 7px !important; line-height: 1.1 !important; }
@@ -727,28 +724,36 @@ figure .img.fit img { cursor: zoom-in; }
 .xp-wx-btns button[aria-pressed] { color: var(--bg); background: var(--link); border-color: var(--link); }
 .xp-wx .wsn { color: #F2B92E; } .xp-wx .wmo { color: #C9CCD3; } .xp-wx .wst { color: color-mix(in srgb, var(--ink) 60%, var(--bg)); }
 .xp-wx .wcl { color: color-mix(in srgb, var(--ink) 45%, var(--bg)); } .xp-wx .wrn { color: #6F95DD; } .xp-wx .wsw { color: var(--ink); }
-/* D. house */
-.xp-house { display: grid; grid-template-columns: auto minmax(0, 300px); gap: 32px; align-items: center; }
-.xp-plan { font-size: 11px !important; line-height: 1.25 !important; }
-.xp-plan .rm { transition: background-color .3s; border-radius: 2px; font-weight: 700; }
-.xp-plan .rm.qa { color: #6F95DD; } .xp-plan .rm.qn { color: #EE8E66; } .xp-plan .rm.qy { color: #D9A21C; } .xp-plan .rm.qm { color: #4FA874; }
-.xp-plan .rm.on { background: color-mix(in srgb, currentColor 18%, transparent); }
-.xp-plan .fr { color: var(--ink); font-weight: 700; }
-.xp-house-side { display: grid; gap: 12px; justify-items: center; }
-.xp-hp { font-size: 6.5px !important; }
-.xp-house-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
-.xp-house-btns button { font: 600 12.5px var(--font); text-align: left; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; cursor: pointer; }
-.xp-house-btns button b { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; color: #16181D; margin-right: 4px; font-size: 11px; }
-.xp-house-btns .qa b { background: #9DB8EC; } .xp-house-btns .qn b { background: #F4B396; } .xp-house-btns .qy b { background: #F7D36A; } .xp-house-btns .qm b { background: #93D3AC; }
-.xp-house-msg { font-size: 13.5px; color: var(--muted); text-align: center; min-height: 2.6em; }
 .penny-spin .pd { color: #255A9B; } .penny-spin .ck { color: #FFFFFF; font-weight: 800; }
-/* E. terminal */
-.xp-term { width: 100%; height: 320px; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #0d0f0e; color: #D7E3DA; border-radius: 8px; padding: 14px 16px; font: 500 13px/1.5 ui-monospace, Menlo, Consolas, monospace; cursor: text; }
-.xp-term-out { overflow-y: auto; } .xp-term-out b { color: #4ADE80; font-weight: 700; } .xp-term .dim { color: #7D8A80; } .xp-term .err { color: #F28B82; }
-.xp-term-in { display: flex; gap: 8px; align-items: center; } .xp-term-in span { color: #4ADE80; white-space: nowrap; }
-.xp-term-in input { flex: 1; min-width: 0; background: none; border: 0; outline: none; color: inherit; font: inherit; caret-color: #4ADE80; }
-.xp-term-art { font-size: 7px !important; line-height: 1.1 !important; color: #9FB3A5 !important; margin: 4px 0 !important; }
-@media (max-width: 900px) { .xp-house { grid-template-columns: 1fr; } .xp-plan { font-size: 8px !important; } }
+/* climb rail on the Experiments page */
+.climb-rail { position: fixed; right: 0; top: 50%; transform: translateY(-46%); z-index: 40; }
+.climb-rail pre { margin: 0; font: 700 9px/10.5px ui-monospace, Menlo, Consolas, monospace; color: color-mix(in srgb, var(--muted) 55%, transparent); white-space: pre; }
+.climb-rail .tr { color: var(--link); } .climb-rail .rg { color: color-mix(in srgb, var(--ink) 45%, var(--bg)); }
+.climb-rail .me { color: var(--link); animation: peakBlink .8s ease-in-out infinite; } .climb-rail .fl { color: #E0663A; } .climb-rail .tk { color: var(--muted); }
+.climb-hits { position: absolute; inset: 0; }
+.climb-hits button { position: absolute; right: 0; width: 100%; height: 14px; transform: translateY(-50%); background: none; border: 0; padding: 0; cursor: pointer; }
+.climb-hits button:hover { background: color-mix(in srgb, var(--link) 10%, transparent); border-radius: 4px; }
+@media (max-width: 1100px) { .climb-rail { display: none; } }
+/* weather, refined */
+.xp-wx pre { font-size: 8.5px !important; line-height: 1.08 !important; padding: 10px 14px; border-radius: 8px; transition: background-color .6s ease; }
+.xp-wx[data-k="day"] pre { background: linear-gradient(#E4EEF8, transparent 45%); } .xp-wx[data-k="dusk"] pre { background: linear-gradient(#F6D9C4, transparent 50%); }
+.xp-wx[data-k="night"] pre { background: linear-gradient(#1B2233, transparent 55%); } .xp-wx[data-k="cloud"] pre, .xp-wx[data-k="snow"] pre { background: linear-gradient(#E4E6EA, transparent 45%); }
+.xp-wx[data-k="rain"] pre { background: linear-gradient(#CDD3DC, transparent 50%); }
+.xp-wx .wds { color: #E58A4E; } .xp-wx .wds2 { color: #E9A67A; } .xp-wx .wcd { color: color-mix(in srgb, var(--ink) 70%, var(--bg)); } .xp-wx .wsp { color: #6F95DD; }
+.xp-wx .wst { color: #9AA3B5; } .xp-wx .wst.on { color: #FFF6D8; } .xp-wx .wmo { color: #F2E9C9; } .xp-wx .wmn { color: #8C93A3; } .xp-wx .wmd { color: #B9826A; } .xp-wx .wcap { color: var(--ink); font-weight: 800; }
+.xp-wx[data-k="night"] .tx { opacity: .3; }
+/* topo */
+.xp-topo { font-size: 9px !important; line-height: 1.12 !important; cursor: crosshair; }
+.xp-topo .tc { color: color-mix(in srgb, var(--ink) 35%, var(--bg)); } .xp-topo .tc-idx { color: color-mix(in srgb, var(--ink) 70%, var(--bg)); } .xp-topo .tc-hi { color: var(--link); }
+/* terrain */
+.xp-terr { font-size: 8px !important; line-height: 1 !important; cursor: grab; touch-action: none; } .xp-terr:active { cursor: grabbing; }
+.xp-terr .tbase { color: color-mix(in srgb, var(--muted) 40%, transparent); } .xp-terr .tforest { color: #3E8E5E; } .xp-terr .trock { color: #8B7E6E; } .xp-terr .tsnow { color: var(--ink); }
+[data-xp="terrain"] .xp-demo { display: grid; gap: 6px; }
+/* styles */
+.xp-sty { display: grid; gap: 12px; justify-items: center; color: var(--ink); }
+/* flow */
+.xp-flow { display: block; border-radius: 8px; cursor: crosshair; }
+[data-xp="flow"] .xp-demo { color: var(--ink); }
 .xp-live { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 20px; }
 .xp-live h2 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
 .xp-live ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -2411,11 +2416,12 @@ function brandPlate() {
 const XP = [
   { h: "Project cards that resolve from ASCII", where: "Undecided: not the project cards, which need to stay informational", d: "The cover is drawn in characters, cell for cell over the real image. Hover and it clears outward from your pointer.", demo: "card" },
   { h: "A spinning Penny", where: "Undecided: see the placement ideas", d: "The Penny in characters, turning: progress quarters on the front, brushed metal on the back, the rim showing as it turns.", demo: "penny" },
-  { h: "The trail is the scroll bar", where: "Case studies and Beyond UX · replacing the section dots", d: "A mountain on its side runs beside the page. Scroll the sample page and your dot climbs; numbers mark each section, and a flag goes up at the end.", demo: "climb", wide: true },
-  { h: "A hero that develops from characters", where: "Case studies · the top image", d: "The image starts as coarse, sparse characters, sharpens, then turns into the photo. Move over it afterwards and it smears back into characters.", demo: "develop", replay: true },
-  { h: "Weather on the mountain", where: "Home · Where I'm Headed", d: "The ridge with the sky drawn over it. Live, this would follow each peak's real weather and local time; here you can pick the conditions.", demo: "weather" },
-  { h: "A Quarters house simulator", where: "Quarters · The solution", d: "Tap a roommate to do a chore. Their quarter fills on the Penny; when all four are full, it flips to the all-done screen.", demo: "house", wide: true },
-  { h: "Terminal mode", where: "Every page · a hidden toggle (press ~)", d: "The whole site as text with a prompt. Try ls, open quarters, peaks, hike or help.", demo: "term", wide: true },
+  { h: "The trail is the scroll bar", where: "Case studies and Beyond UX · replacing the section dots. It's running on this page now: look right.", d: "A mountain on its side. The trail starts at the top and the green line runs down as you scroll; numbers mark where sections start, and a flag goes up at the end.", demo: "climb", wide: true },
+  { h: "Weather on the mountain", where: "Home · Where I'm Headed", d: "The ridge under a sky that changes: a sun with turning rays, dusk, a crescent moon and twinkling stars, layered clouds, angled rain with splashes, and snow that slowly caps the ridge.", demo: "weather", wide: true },
+  { h: "A living topographic map", where: "Home or About · a background behind the intro", d: "Contour lines drawn in characters over terrain that slowly shifts. Move your pointer over it to raise a hill.", demo: "topo", wide: true },
+  { h: "A 3D mountain in characters", where: "Home · Where I'm Headed, or the 404 page", d: "A shaded height map that turns slowly: forest, rock and a snowy summit, lit from one side. Drag to spin it.", demo: "terrain" },
+  { h: "One photo, many ASCII styles", where: "About · the headshot", d: "My headshot in five character styles: classic, blocks, braille, dots and binary, each in mono or the photo's own colours.", demo: "styles" },
+  { h: "A flow field of characters", where: "The 404 page, or behind a section break", d: "Hundreds of characters drift along invisible currents and leave fading trails. Faster ones turn green; your pointer pushes them aside.", demo: "flow", wide: true },
   { h: "The logomark, built from characters", where: "My Brand · hovering the logomark tile", d: "The logomark as it is. Hover and the same shape is redrawn in characters, cell for cell, then snaps back when you move away.", demo: "mark" }
 ];
 const XP_LIVE = [["A trail along the footer", "The footer on every page", ""], ["You're off trail", "Any broken link, like this one", "#off-trail"], ["Scramble between pages", "Headings when you change page", ""], ["Numbers that count in", "Stats on the case studies", "#quarters"]];
@@ -2729,199 +2735,276 @@ function initCountIn() {
   els.forEach(b => io.observe(b));
 }
 
-/* ---------- Experiments, round 2: bigger ASCII ideas ---------- */
-// A. The trail is the scroll bar: a sideways mountain beside a scrolling case study; your dot climbs as you read
+/* ---------- Experiments, round 3 ---------- */
+// A. The trail as this page's scroll bar: a mountain on its side down the right edge. The trail starts at the
+// top and the green line runs down as you scroll; numbers mark where each section starts; a flag at the end.
+let climbRail = null;
+function climbProfile(N, WD) {
+  const pr = peakProfile(PEAKS[1]), prof = pr.r.slice(0, pr.pc + 1);
+  // top row = trailhead (close to the edge), bottom row = summit (furthest out)
+  return Array.from({ length: N }, (_, i) => { const j = Math.round(i / (N - 1) * (prof.length - 1)); return Math.round((PK_H - 1 - prof[j]) / (PK_H - 1) * (WD - 4)); });
+}
+function climbArt(xs, WD, me, ticks, atEnd) {
+  const N = xs.length; let out = "";
+  for (let y = 0; y < N; y++) {
+    // mirrored: the ridge faces the page content, the mountain's body runs out to the screen edge
+    const x = WD - 2 - xs[y], prev = y ? WD - 2 - xs[y - 1] : x, ch = x < prev ? "/" : x > prev ? "\\" : "|", lit = y <= me;
+    const row = Array(WD).fill(" ");
+    for (let c = x + 1; c < WD; c++) row[c] = (c + y) % 4 === 0 ? ":" : (c * 3 + y) % 7 === 0 ? "." : " ";
+    row[x] = `<span class="${lit ? "tr" : "rg"}">${ch}</span>`;
+    if (y === me) row[Math.max(1, x - 1)] = '<span class="me">●</span>';
+    if (y === N - 1 && atEnd) row[Math.max(1, x - 1)] = '<span class="fl">⚑</span>';
+    const t = ticks.indexOf(y); if (t >= 0 && y !== me) row[0] = `<span class="tk">${t + 1}</span>`;
+    out += row.join("") + (y < N - 1 ? "\n" : "");
+  }
+  return out;
+}
 function xpClimb(el) {
   const SECS = ["At a glance", "The problem", "What we learned", "The solution", "Testing", "What we fixed", "Why it matters"];
   el.innerHTML = `<div class="xp-climb"><div class="xp-climb-page" tabindex="0" aria-label="Sample case study, scroll it">${SECS.map((h, i) => `<section><h4><span>0${i + 1}</span> ${h}</h4>${"<p></p>".repeat(3)}</section>`).join("")}<p class="xp-climb-end">The end of the page.</p></div><pre class="xp-climb-mtn" aria-hidden="true"></pre></div>`;
-  const page = el.querySelector(".xp-climb-page"), pre = el.querySelector("pre");
-  // a profile laid on its side: row = distance up the page (top = summit), column = how far the ridge sticks out
-  const prof = peakProfile(PEAKS[1]).r.slice(0, peakProfile(PEAKS[1]).pc + 1), N = 30, WD = 28;
-  const xs = Array.from({ length: N }, (_, i) => { const j = Math.round((1 - i / (N - 1)) * (prof.length - 1)); return Math.round((PK_H - 1 - prof[j]) / (PK_H - 1) * (WD - 3)) + 1; });
+  const page = el.querySelector(".xp-climb-page"), pre = el.querySelector("pre"), N = 30, WD = 18, xs = climbProfile(N, WD);
   const draw = () => {
     const max = page.scrollHeight - page.clientHeight, k = max > 0 ? page.scrollTop / max : 0;
-    const me = Math.round((1 - k) * (N - 1)); // bottom row = trailhead
-    const tops = [...page.querySelectorAll("section")].map(s => Math.round((1 - Math.min(1, s.offsetTop / Math.max(1, page.scrollHeight - page.clientHeight * .4))) * (N - 1)));
-    let out = "";
-    for (let y = 0; y < N; y++) {
-      const x = xs[y], prev = y ? xs[y - 1] : x, ch = x > prev ? "\\" : x < prev ? "/" : "|", lit = y >= me;
-      let row = " ".repeat(WD).split("");
-      for (let c = x + 1; c < WD; c++) row[c] = (c + y) % 4 === 0 ? ":" : (c * 3 + y) % 7 === 0 ? "." : " ";
-      row[x] = `<span class="${lit ? "tr" : "rg"}">${ch}</span>`;
-      if (y === me) row[Math.max(0, x - 1)] = '<span class="me">●</span>';
-      if (y === 0 && k > .98) row[Math.max(0, x - 1)] = '<span class="fl">⚑</span>';
-      const tick = tops.indexOf(y); if (tick >= 0 && y !== me) row[0] = `<span class="tk">${tick + 1}</span>`;
-      out += row.join("") + "\n";
-    }
-    pre.innerHTML = out;
+    const ticks = [...page.querySelectorAll("section")].map(s => Math.round(Math.min(1, s.offsetTop / Math.max(1, max)) * (N - 1)));
+    pre.innerHTML = climbArt(xs, WD, Math.round(k * (N - 1)), ticks, k > .98);
   };
   page.addEventListener("scroll", draw, { passive: true }); draw();
 }
-// B. Hero that develops from characters: coarse and sparse, then denser, then the photo; your pointer smears it back
-async function xpDevelop(el) {
-  const src = ASSETS["q-lookbook"] || ASSETS["cover-quarters"]; if (!src) return;
-  el.innerHTML = `<div class="xp-dev"><img src="${src}" alt="Quarters lookbook"><canvas aria-hidden="true"></canvas><span class="xp-hint">Move over it</span></div>`;
-  const box = el.firstChild, img = box.querySelector("img"), cv = box.querySelector("canvas"), g = cv.getContext("2d");
-  try { await img.decode(); } catch (e) { return; }
-  const RAMP = " .:-=+*#%@", grids = {};
-  let W, H, raf = 0, t0 = 0, alive = true, smear = null, SC = 8, scols, srows, mx = -999, my = -999;
-  xpStops.push(() => { alive = false; cancelAnimationFrame(raf); });
-  const grid = cs => {
-    if (grids[cs]) return grids[cs];
-    const ch = cs * 1.6, cols = Math.ceil(W / cs), rows = Math.ceil(H / ch);
-    const s = Math.max(W / img.naturalWidth, H / img.naturalHeight), sw = W / s, sh = H / s, sx = (img.naturalWidth - sw) / 2, sy = (img.naturalHeight - sh) / 2;
-    const o = document.createElement("canvas"); o.width = cols; o.height = rows;
-    const og = o.getContext("2d", { willReadFrequently: true }); og.drawImage(img, sx, sy, cols * cs / s, rows * ch / s, 0, 0, cols, rows);
-    const d = og.getImageData(0, 0, cols, rows).data, cells = [];
-    for (let i = 0; i < cols * rows; i++) { const r = d[i * 4], gg = d[i * 4 + 1], b = d[i * 4 + 2], l = (r * .3 + gg * .59 + b * .11) / 255; cells.push([`rgb(${r},${gg},${b})`, RAMP[Math.min(9, Math.floor((1 - l) * 10))], Math.random()]); }
-    return (grids[cs] = { cs, ch, cols, rows, cells });
+function initClimbRail() {
+  if (climbRail) { removeEventListener("scroll", climbRail.on); removeEventListener("resize", climbRail.on); climbRail.el.remove(); climbRail = null; }
+  const secs = [...document.querySelectorAll("#app .xp-grid > .xp")];
+  if (secs.length < 2) return;
+  const el = document.createElement("nav"); el.className = "climb-rail"; el.setAttribute("aria-label", "Sections on this page");
+  el.innerHTML = `<pre aria-hidden="true"></pre><div class="climb-hits">${secs.map((s, i) => `<button type="button" aria-label="${esc(s.querySelector("h2").textContent)}" data-i="${i}"></button>`).join("")}</div>`;
+  document.body.appendChild(el);
+  const pre = el.querySelector("pre"), WD = 16;
+  let N = 0, xs = [];
+  const on = () => {
+    const n = Math.max(20, Math.min(64, Math.floor(innerHeight * .62 / 10.5)));
+    if (n !== N) { N = n; xs = climbProfile(N, WD); }
+    const max = document.documentElement.scrollHeight - innerHeight, k = max > 0 ? Math.min(1, scrollY / max) : 0;
+    const ticks = secs.map(s => Math.round(Math.min(1, Math.max(0, (s.getBoundingClientRect().top + scrollY - innerHeight * .3) / Math.max(1, max))) * (N - 1)));
+    pre.innerHTML = climbArt(xs, WD, Math.round(k * (N - 1)), ticks, k > .99);
+    el.querySelectorAll(".climb-hits button").forEach((b, i) => { b.style.top = (ticks[i] / (N - 1) * 100) + "%"; });
   };
-  const paint = (G, alpha, density = 1, only = null) => {
-    g.font = `700 ${G.ch}px ui-monospace, Menlo, Consolas, monospace`; g.textBaseline = "top";
-    for (let y = 0; y < G.rows; y++) for (let x = 0; x < G.cols; x++) {
-      const [c, chr, n] = G.cells[y * G.cols + x]; if (n > density || chr === " ") continue;
-      const a = only ? only[y * G.cols + x] * alpha : alpha; if (a < .02) continue;
-      g.globalAlpha = a; g.fillStyle = c; g.fillText(chr, x * G.cs, y * G.ch);
+  el.querySelector(".climb-hits").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const s = secs[+b.dataset.i]; scrollTo({ top: s.getBoundingClientRect().top + scrollY - 90, behavior: "smooth" }); });
+  addEventListener("scroll", on, { passive: true }); addEventListener("resize", on);
+  climbRail = { el, on }; on();
+}
+
+// B. Weather on the mountain, refined: a deeper sky band, a sun with turning rays, a crescent moon, layered clouds,
+// angled rain with splashes, and snow that slowly caps the ridge.
+function xpWeather(el) {
+  const KINDS = [["day", "Clear day"], ["dusk", "Dusk"], ["night", "Clear night"], ["cloud", "Cloudy"], ["rain", "Rain"], ["snow", "Snow"]];
+  el.innerHTML = `<div class="xp-wx" data-k="day"><pre aria-hidden="true"></pre><div class="xp-wx-btns" role="group" aria-label="Weather">${KINDS.map(([k, l], i) => `<button type="button" data-k="${k}"${i ? "" : ' aria-pressed="true"'}>${l}</button>`).join("")}</div></div>`;
+  const wrap = el.firstChild, pre = el.querySelector("pre"), W = PK_W, SKY = 7, prof = peakProfile(PEAKS[1]), H = PK_H + SKY;
+  let kind = "day", parts = [], t = 0, cap = 0;
+  const ground = x => prof.r[Math.max(0, Math.min(W - 1, x))] + SKY;
+  el.querySelectorAll(".xp-wx-btns button").forEach(b => b.addEventListener("click", () => { kind = b.dataset.k; wrap.dataset.k = kind; parts = []; cap = 0; el.querySelectorAll(".xp-wx-btns button").forEach(x => x.toggleAttribute("aria-pressed", x === b)); }));
+  const stars = Array.from({ length: 34 }, (_, i) => [(i * 37 + (i % 3) * 11) % W, (i * 13) % 11, i]);
+  const hash = (x, y) => ((Math.sin(x * 127.1 + y * 311.7) * 43758.5) % 1 + 1) % 1;
+  const tick = () => {
+    t++;
+    const G = Array.from({ length: H }, () => Array(W).fill(null));
+    const put = (y, x, ch, c) => { x = Math.round(x); y = Math.round(y); if (y >= 0 && y < H && x >= 0 && x < W && y < ground(x)) G[y][x] = [ch, c]; };
+    const sprite = (rows, y0, x0, c) => rows.forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(y0 + i, x0 + j, ch, c)));
+    if (kind === "night") {
+      stars.forEach(([x, y, i]) => { const tw = (t + i * 7) % 23; put(y, x, tw < 2 ? "+" : tw < 5 ? "*" : "·", tw < 5 ? "wst on" : "wst"); });
+      sprite(["  _.._ ", " .' .-'", "/  /   ", "|  |   ", "\\  '.  ", " '._'-.", "       "], 0, 48, "wmo");
+    }
+    if (kind === "day") { const r = t % 8 < 4; sprite(r ? ["  \\ | /  ", "-- ( ) --", "  / | \\  "] : [" .  |  . ", "-- ( ) --", " '  |  ' "], 1, 46, "wsn"); }
+    if (kind === "dusk") { sprite(["   _____   ", " .'     '. "], 5, 44, "wds"); for (let x = 0; x < W; x++) if ((x + t) % 9 === 0) put(4, x, "~", "wds2"); stars.slice(0, 8).forEach(([x, y]) => put(y % 3, x, "·", "wst")); }
+    if (kind === "cloud" || kind === "rain" || kind === "snow") {
+      const dark = kind === "rain" ? "wcd" : "wcl";
+      [[t * .18, 0, 2], [t * .12 + 26, 2, 1], [t * .22 + 48, 1, 2], [t * .09 + 12, 4, 1]].forEach(([cx, cy, sz]) =>
+        sprite(sz > 1 ? ["    .---.     ", " .-(     )-.  ", "(___________)_"] : ["  .--.  ", " (    ).", "(______)"], cy, (cx % (W + 20)) - 16, cy > 2 ? "wcl" : dark));
+    }
+    if (kind === "rain") {
+      for (let i = 0; i < 7; i++) parts.push([Math.random() * (W + 10), SKY - 3, 0]);
+      parts = parts.filter(p => { p[1] += 1.1; p[0] -= .45; const g = ground(Math.round(p[0])); if (p[1] >= g - 1) { if (!p[2]) { p[2] = 1; put(g - 1, p[0], "∙", "wsp"); } return false; } return true; });
+      parts.forEach(([x, y]) => put(y, x, hash(Math.round(x), 1) > .5 ? "/" : "'", "wrn"));
+    }
+    if (kind === "snow") {
+      for (let i = 0; i < 3; i++) parts.push([Math.random() * W, SKY - 3]);
+      parts = parts.filter(p => { p[1] += .3; p[0] += Math.sin(t * .08 + p[1] * 2) * .35; return p[1] < ground(Math.round(p[0])) - 1; });
+      parts.forEach(([x, y]) => put(y, x, hash(Math.round(x), Math.round(y)) > .6 ? "*" : "·", "wsw"));
+      cap = Math.min(1, cap + .004);
+    }
+    // the mountain: night darkens it, snow whitens the ridge from the top down as it falls
+    const art = peakGrid(prof, true).split("\n"), topRow = Math.min(...prof.r);
+    const ridgeCls = kind === "night" ? "wmn" : kind === "dusk" ? "wmd" : "";
+    const sky = G.map(r => r.map(c => c ? `<span class="${c[1]}">${esc(c[0])}</span>` : " ").join(""));
+    let html = sky.slice(0, SKY).join("\n") + "\n";
+    html += art.map((line, y) => {
+      const row = G[y + SKY], snowy = kind === "snow" && y - topRow < cap * 9;
+      const plain = line.replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+      let out = "";
+      for (let x = 0; x < W; x++) {
+        if (row[x]) { out += `<span class="${row[x][1]}">${esc(row[x][0])}</span>`; continue; }
+        const ch = plain[x] || " ", isRidge = "/\\_|".includes(ch);
+        if (snowy && isRidge) out += `<span class="wcap">${ch === "_" ? "~" : ch}</span>`;
+        else if (isRidge) out += ridgeCls ? `<span class="${ridgeCls}">${esc(ch)}</span>` : `<span class="rg">${esc(ch)}</span>`;
+        else out += ch === " " ? " " : `<span class="tx${ridgeCls ? " " + ridgeCls : ""}">${esc(ch)}</span>`;
+      }
+      return out;
+    }).join("\n");
+    pre.innerHTML = html;
+  };
+  tick(); const id = setInterval(tick, 80); xpStops.push(() => clearInterval(id));
+}
+
+// shared: smooth value noise (0..1) and a few octaves of it
+const vnHash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+const vNoise = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  const a = vnHash(xi, yi), b = vnHash(xi + 1, yi), c = vnHash(xi, yi + 1), d = vnHash(xi + 1, yi + 1); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; };
+const fbm = (x, y) => vNoise(x, y) * .55 + vNoise(x * 2.1, y * 2.1) * .3 + vNoise(x * 4.3, y * 4.3) * .15;
+
+// C. A living topographic map: contour lines drawn in characters over slowly shifting terrain; your pointer raises a hill
+function xpTopo(el) {
+  el.innerHTML = '<pre class="xp-topo" aria-hidden="true"></pre>';
+  const pre = el.firstChild, W = 96, H = 30, BANDS = 7;
+  let t = 0, px = -99, py = -99, raf = 0, last = 0, alive = true;
+  xpStops.push(() => { alive = false; cancelAnimationFrame(raf); });
+  pre.addEventListener("pointermove", e => { const r = pre.getBoundingClientRect(); px = (e.clientX - r.left) / r.width * W; py = (e.clientY - r.top) / r.height * H; });
+  pre.addEventListener("pointerleave", () => { px = py = -99; });
+  const h = (x, y) => fbm(x * .028 + t * .003, y * .056 - t * .0015) + Math.max(0, .45 - Math.hypot((x - px) * .5, y - py) * .03) * (px > -50 ? 1 : 0);
+  const frame = now => {
+    if (!alive) return;
+    if (now - last > 70) {
+      last = now; t++;
+      const Hm = []; for (let y = 0; y <= H; y++) { const r = []; for (let x = 0; x <= W; x++) r.push(h(x, y)); Hm.push(r); }
+      let out = "";
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const b = Math.floor(Hm[y][x] * BANDS), br = Math.floor(Hm[y][x + 1] * BANDS), bd = Math.floor(Hm[y + 1][x] * BANDS);
+          if (b !== br || b !== bd) {
+            const gx = Hm[y][x + 1] - Hm[y][x], gy = Hm[y + 1][x] - Hm[y][x], a = Math.atan2(gy, gx);
+            const dir = Math.abs(Math.cos(a)) > .92 ? "|" : Math.abs(Math.sin(a)) > .92 ? "-" : Math.cos(a) * Math.sin(a) > 0 ? "\\" : "/";
+            const top = Math.max(b, br, bd) >= BANDS - 3;
+            out += `<span class="${top ? "tc-hi" : b % 5 === 0 ? "tc-idx" : "tc"}">${dir}</span>`;
+          } else out += (x * 7 + y * 13) % 41 === 0 ? "·" : " ";
+        }
+        out += "\n";
+      }
+      pre.innerHTML = out;
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  const io = new IntersectionObserver(es => { cancelAnimationFrame(raf); if (es[0].isIntersecting) raf = requestAnimationFrame(frame); }); io.observe(pre); xpStops.push(() => io.disconnect());
+}
+
+// D. A 3D mountain in characters: a shaded height map that turns slowly; drag to spin it
+function xpTerrain(el) {
+  el.innerHTML = '<pre class="xp-terr" aria-hidden="true"></pre><p class="xp-tip">Drag to turn it</p>';
+  const pre = el.firstChild, W = 92, H = 38, N = 90, RAMP = " .:-=+*#%@";
+  // height map: one main peak with a ridge and some rough noise, sea level around the edge
+  const hm = Array.from({ length: N }, (_, j) => Array.from({ length: N }, (_, i) => {
+    const x = i / (N - 1) * 2 - 1, y = j / (N - 1) * 2 - 1, d = Math.hypot(x * 1.1, y);
+    return Math.max(0, Math.pow(Math.max(0, 1 - d), 1.6) * 1.1 + Math.max(0, .35 - Math.abs(x - y * .5) * .9) * .35 * (1 - d) + (fbm(i * .18, j * .18) - .5) * .25 * (1 - d));
+  }));
+  let ang = .6, vel = .004, drag = null, raf = 0, alive = true;
+  xpStops.push(() => { alive = false; cancelAnimationFrame(raf); });
+  pre.addEventListener("pointerdown", e => { drag = e.clientX; pre.setPointerCapture(e.pointerId); });
+  pre.addEventListener("pointermove", e => { if (drag == null) return; const dx = e.clientX - drag; drag = e.clientX; ang += dx * .01; vel = dx * .001; });
+  pre.addEventListener("pointerup", () => { drag = null; });
+  const L = [-.5, .8, -.4], ln = Math.hypot(...L);
+  const frame = () => {
+    if (!alive) return;
+    if (drag == null) { vel += (.004 - vel) * .02; ang += vel; }
+    const ca = Math.cos(ang), sa = Math.sin(ang), Z = new Float32Array(W * H).fill(-1e9), C = Array(W * H).fill(" "), K = Array(W * H).fill("");
+    for (let j = 0; j < N - 1; j++) for (let i = 0; i < N - 1; i++) {
+      const x = i / (N - 1) * 2 - 1, y = j / (N - 1) * 2 - 1, z = hm[j][i];
+      const rx = x * ca - y * sa, ry = x * sa + y * ca; // turn around the vertical axis
+      const sx = Math.round(W / 2 + rx * W * .36), sy = Math.round(H * .78 + ry * H * .2 - z * H * .78), depth = ry;
+      if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
+      const idx = sy * W + sx; if (depth <= Z[idx]) continue;
+      const dzx = hm[j][i + 1] - z, dzy = hm[j + 1][i] - z, nx = -dzx * 44, ny = -dzy * 44, nz = 1, nl = Math.hypot(nx, ny, nz);
+      const rnx = nx * ca - ny * sa, rny = nx * sa + ny * ca;
+      const lit = Math.max(0, (rnx * L[0] + nz * L[1] + rny * L[2]) / (nl * ln));
+      Z[idx] = depth; C[idx] = RAMP[Math.min(9, Math.round(lit * 8 + (z > .02 ? 1 : 0)))];
+      K[idx] = z > .78 ? "tsnow" : z > .45 ? "trock" : z > .03 ? "tforest" : "tbase";
+    }
+    let out = ""; for (let y = 0; y < H; y++) { let k0 = null, run = ""; const fl = () => { if (run) out += k0 ? `<span class="${k0}">${run}</span>` : run; run = ""; };
+      for (let x = 0; x < W; x++) { const i = y * W + x, k = C[i] === " " ? "" : K[i]; if (k !== k0) { fl(); k0 = k; } run += C[i]; } fl(); out += "\n"; }
+    pre.innerHTML = out; raf = requestAnimationFrame(frame);
+  };
+  const io = new IntersectionObserver(es => { cancelAnimationFrame(raf); if (es[0].isIntersecting) raf = requestAnimationFrame(frame); }); io.observe(pre); xpStops.push(() => io.disconnect());
+}
+
+// E. One photo, many ASCII styles: classic ramp, blocks, braille, dots and binary, in mono or the photo's colours
+async function xpStyles(el) {
+  const src = ASSETS["jack-walker-headshot"]; if (!src) return;
+  const STY = [["classic", "Classic"], ["blocks", "Blocks"], ["braille", "Braille"], ["dots", "Dots"], ["binary", "Binary"]];
+  el.innerHTML = `<div class="xp-sty"><canvas aria-label="My headshot drawn in characters" role="img"></canvas><div class="xp-wx-btns" role="group" aria-label="Style">${STY.map(([k, l], i) => `<button type="button" data-s="${k}"${i ? "" : ' aria-pressed="true"'}>${l}</button>`).join("")}<button type="button" data-c aria-pressed="true">Colour</button></div></div>`;
+  const cv = el.querySelector("canvas"), g = cv.getContext("2d"), im = new Image(); im.src = src;
+  try { await im.decode(); } catch (e) { return; }
+  let style = "classic", colour = true, W = 0, Hh = 0;
+  const size = () => { const w = Math.min(520, el.clientWidth - 20), dpr = Math.min(2, devicePixelRatio || 1); W = w; Hh = w; cv.width = w * dpr; cv.height = w * dpr; cv.style.width = w + "px"; cv.style.height = w + "px"; g.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  const sample = (cols, rows) => { const o = document.createElement("canvas"); o.width = cols; o.height = rows; const og = o.getContext("2d", { willReadFrequently: true });
+    const s = Math.max(cols / im.naturalWidth, rows / im.naturalHeight); og.drawImage(im, (cols - im.naturalWidth * s) / 2, (rows - im.naturalHeight * s) / 2, im.naturalWidth * s, im.naturalHeight * s); return og.getImageData(0, 0, cols, rows).data; };
+  const ink = () => getComputedStyle(el).color;
+  const draw = () => {
+    g.clearRect(0, 0, W, Hh);
+    const cw = style === "braille" ? 6 : 7, ch = style === "braille" ? 10 : 11, cols = Math.floor(W / cw), rows = Math.floor(Hh / ch);
+    g.font = `700 ${ch}px ui-monospace, Menlo, Consolas, monospace`; g.textBaseline = "top";
+    const mono = ink();
+    if (style === "braille") {
+      const d = sample(cols * 2, rows * 4), DOT = [[0, 0, 1], [0, 1, 2], [0, 2, 4], [1, 0, 8], [1, 1, 16], [1, 2, 32], [0, 3, 64], [1, 3, 128]];
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+        let code = 0, r = 0, gg = 0, b = 0;
+        DOT.forEach(([dx, dy, bit]) => { const i = ((y * 4 + dy) * cols * 2 + x * 2 + dx) * 4, l = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255; r += d[i]; gg += d[i + 1]; b += d[i + 2];
+          if (l < .55 + (vnHash(x * 2 + dx, y * 4 + dy) - .5) * .25) code |= bit; });
+        if (!code) continue;
+        g.fillStyle = colour ? `rgb(${r / 8 | 0},${gg / 8 | 0},${b / 8 | 0})` : mono; g.fillText(String.fromCharCode(0x2800 + code), x * cw, y * ch);
+      }
+      return;
+    }
+    const d = sample(cols, rows), SETS = { classic: "@%#*+=-:. ", blocks: "█▓▒░ ", dots: "●•·. ", binary: "10" };
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const i = (y * cols + x) * 4, l = (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) / 255;
+      let c;
+      if (style === "binary") { if (l > .82) continue; c = vnHash(x, y) > .5 ? "1" : "0"; }
+      else { const set = SETS[style]; c = set[Math.min(set.length - 1, Math.floor(l * set.length))]; if (c === " ") continue; }
+      g.globalAlpha = style === "binary" ? Math.max(.25, 1 - l) : 1;
+      g.fillStyle = colour ? `rgb(${d[i]},${d[i + 1]},${d[i + 2]})` : mono; g.fillText(c, x * cw, y * ch);
     }
     g.globalAlpha = 1;
   };
-  const size = () => { W = box.clientWidth; H = box.clientHeight; const dpr = Math.min(2, devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); for (const k in grids) delete grids[k]; const G = grid(SC); scols = G.cols; srows = G.rows; smear = new Float32Array(scols * srows); };
-  // develop: 0–0.9s coarse & sparse → 0.9–1.8s fine & dense → 1.8–2.6s fade into the photo
-  const frame = now => {
-    if (!alive) return;
-    const t = (now - t0) / 1000; g.clearRect(0, 0, W, H);
-    let busy = t < 2.6;
-    if (t < 2.6) {
-      g.fillStyle = "#0d0d0d"; g.globalAlpha = t < 1.8 ? 1 : 1 - (t - 1.8) / .8; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
-      if (t < .9) paint(grid(16), 1, .35 + t * .7);
-      else if (t < 1.8) paint(grid(8), 1, Math.min(1, .5 + (t - .9)));
-      else paint(grid(8), 1 - (t - 1.8) / .8);
-    }
-    // smear: cells near the pointer flip back to characters, then fade
-    if (smear) {
-      const G = grid(SC);
-      for (let y = 0; y < srows; y++) for (let x = 0; x < scols; x++) {
-        const i = y * scols + x, d = Math.hypot(x * SC + SC / 2 - mx, y * G.ch + G.ch / 2 - my);
-        if (d < 46) smear[i] = Math.max(smear[i], 1 - d / 46);
-        smear[i] *= .93; if (smear[i] > .02) busy = true; else smear[i] = 0;
-      }
-      if (t >= 2.6) { g.globalAlpha = 1; for (let i = 0; i < smear.length; i++) if (smear[i] > .02) { const x = i % scols, y = (i / scols) | 0; g.globalAlpha = smear[i] * .55; g.fillStyle = "#0d0d0d"; g.fillRect(x * SC, y * G.ch, SC, G.ch); } g.globalAlpha = 1; paint(G, 1, 1, smear); }
-    }
-    raf = busy ? requestAnimationFrame(frame) : 0;
-  };
-  const play = () => { cancelAnimationFrame(raf); t0 = performance.now(); raf = requestAnimationFrame(frame); };
-  box.addEventListener("pointermove", e => { const r = box.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; if (!raf) raf = requestAnimationFrame(frame); });
-  box.addEventListener("pointerleave", () => { mx = my = -999; });
-  size(); 
-  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { play(); io.disconnect(); } }, { threshold: .4 }); io.observe(box); xpStops.push(() => io.disconnect());
-  return play;
+  el.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { style = b.dataset.s; el.querySelectorAll("[data-s]").forEach(x => x.toggleAttribute("aria-pressed", x === b)); draw(); }));
+  const cb = el.querySelector("[data-c]"); cb.addEventListener("click", () => { colour = !colour; cb.toggleAttribute("aria-pressed", colour); draw(); });
+  size(); draw();
 }
-// C. Weather on the mountain: the ridge with sky, sun or moon, clouds, rain or snow drawn over it
-function xpWeather(el) {
-  const KINDS = [["day", "Clear day"], ["night", "Clear night"], ["cloud", "Cloudy"], ["rain", "Rain"], ["snow", "Snow"]];
-  el.innerHTML = `<div class="xp-wx"><pre aria-hidden="true"></pre><div class="xp-wx-btns" role="group" aria-label="Weather">${KINDS.map(([k, l], i) => `<button type="button" data-k="${k}"${i ? "" : ' aria-pressed="true"'}>${l}</button>`).join("")}</div></div>`;
-  const pre = el.querySelector("pre"), W = PK_W, H = PK_H + 4;
-  const prof = peakProfile(PEAKS[1]); let kind = "day", parts = [], t = 0;
-  const ground = c => prof.r[c] + 4;
-  el.querySelectorAll(".xp-wx-btns button").forEach(b => b.addEventListener("click", () => { kind = b.dataset.k; parts = []; el.querySelectorAll(".xp-wx-btns button").forEach(x => x.toggleAttribute("aria-pressed", x === b)); }));
-  const stars = Array.from({ length: 26 }, (_, i) => [((i * 37) % W), (i * 11) % 9, i]);
-  const tick = () => {
-    t++;
-    const G = Array.from({ length: H }, () => Array(W).fill(" ")), C = Array.from({ length: H }, () => Array(W).fill(""));
-    const put = (y, x, ch, c) => { if (y >= 0 && y < H && x >= 0 && x < W && y < ground(x)) { G[y][x] = ch; C[y][x] = c; } };
-    if (kind === "night") { stars.forEach(([x, y, i]) => put(y, x, (t + i) % 9 < 2 ? "*" : ".", "wst")); [" __ ", "(  )", " `´ "].forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(1 + i, 50 + j, ch, "wmo"))); }
-    if (kind === "day") { [" \\ | / ", " - O - ", " / | \\ "].forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(1 + i, 48 + j, ch, "wsn"))); }
-    if (kind === "cloud" || kind === "rain" || kind === "snow") {
-      [[(t * .3) % (W + 20) - 14, 1], [(t * .2 + 30) % (W + 20) - 14, 3], [(t * .25 + 52) % (W + 20) - 14, 0]].forEach(([cx, cy]) =>
-        ["  .--.   ", ".(    ). ", "(___.__)_"].forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(cy + i, Math.round(cx) + j, ch, "wcl"))));
-    }
-    if (kind === "rain" || kind === "snow") {
-      for (let i = 0; i < (kind === "rain" ? 5 : 2); i++) parts.push([Math.random() * W, 3 + Math.random() * 2]);
-      parts = parts.filter(p => { p[1] += kind === "rain" ? 1 : .35; p[0] += kind === "rain" ? -.5 : Math.sin(t * .1 + p[1]) * .3; return p[1] < ground(Math.round(Math.max(0, Math.min(W - 1, p[0])))); });
-      parts.forEach(([x, y]) => put(Math.round(y), Math.round(x), kind === "rain" ? "/" : "*", kind === "rain" ? "wrn" : "wsw"));
-    }
-    // the mountain below the sky
-    const art = peakGrid(prof, true).split("\n");
-    const sky = G.slice(0, H).map((r, y) => r.map((ch, x) => C[y][x] ? `<span class="${C[y][x]}">${esc(ch)}</span>` : ch).join(""));
-    pre.innerHTML = sky.slice(0, 4).join("\n") + "\n" + art.map((line, y) => {
-      // overlay any sky particles that fall in front of the mountain's sky area
-      const rowSky = G[y + 4]; let out = "", plain = line.replace(/<[^>]+>/g, "");
-      if (!rowSky.some((c, x) => c !== " ")) return line;
-      for (let x = 0; x < W; x++) out += rowSky[x] !== " " ? `<span class="${C[y + 4][x]}">${esc(rowSky[x])}</span>` : esc(plain[x] || " ");
-      return out;
-    }).join("\n");
+
+// F. A flow field: hundreds of characters drift along invisible currents and leave fading trails; your pointer pushes them
+function xpFlow(el) {
+  el.innerHTML = '<canvas class="xp-flow" aria-hidden="true"></canvas>';
+  const cv = el.firstChild, g = cv.getContext("2d");
+  let W, H, ps = [], t = 0, raf = 0, px = -999, py = -999, alive = true;
+  xpStops.push(() => { alive = false; cancelAnimationFrame(raf); });
+  const CH = "·∙•:+*#%";
+  const size = () => { W = el.clientWidth - 36; H = 300; const dpr = Math.min(2, devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px"; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ps = Array.from({ length: 520 }, () => ({ x: Math.random() * W, y: Math.random() * H, v: 0 })); g.fillStyle = getComputedStyle(el).backgroundColor; g.fillRect(0, 0, W, H); };
+  cv.addEventListener("pointermove", e => { const r = cv.getBoundingClientRect(); px = e.clientX - r.left; py = e.clientY - r.top; });
+  cv.addEventListener("pointerleave", () => { px = py = -999; });
+  const frame = () => {
+    if (!alive) return; t += .004;
+    const cs = getComputedStyle(el), bg = cs.backgroundColor, link = getComputedStyle(document.querySelector(".xp-where b") || el).color, ink = cs.color;
+    g.globalAlpha = .2; g.fillStyle = bg; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+    g.font = "700 12px ui-monospace, Menlo, Consolas, monospace"; g.textBaseline = "middle"; g.textAlign = "center";
+    ps.forEach((p, i) => {
+      const a = fbm(p.x * .004 + t, p.y * .004 - t) * Math.PI * 4;
+      let vx = Math.cos(a) * 1.3, vy = Math.sin(a) * 1.3;
+      const dx = p.x - px, dy = p.y - py, d = Math.hypot(dx, dy); if (d < 90) { vx += dx / d * (90 - d) * .06; vy += dy / d * (90 - d) * .06; }
+      p.x += vx; p.y += vy; p.v = Math.hypot(vx, vy);
+      if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) { p.x = Math.random() * W; p.y = Math.random() * H; }
+      if ((i + (t * 1000 | 0)) % 2) return;
+      g.fillStyle = p.v > 1.9 ? link : ink; g.globalAlpha = p.v > 1.9 ? 1 : .75;
+      g.fillText(CH[Math.min(CH.length - 1, Math.floor(p.v * 2.5))], p.x, p.y);
+    });
+    g.globalAlpha = 1; raf = requestAnimationFrame(frame);
   };
-  tick(); const id = setInterval(tick, 90); xpStops.push(() => clearInterval(id));
-}
-// D. A house simulator: tap a roommate to do a chore or pay; their quarter fills on the Penny; all four full flips it to done
-function xpHouse(el) {
-  const R = [["A", "Alex", "qa"], ["N", "Natalia", "qn"], ["Y", "You", "qy"], ["M", "Maya", "qm"]];
-  const plan = (lit) => {
-    const box = (k, label) => `<span class="${lit === k ? "rm on " : "rm "}${R.find(r => r[0] === k)[2]}">${label}</span>`;
-    return `+----------------+----------------+
-|  ${box("A", "Alex's room  ")} |  ${box("N", "Natalia's room")}|
-|                |                |
-+------    ------+------    ------+
-|          kitchen       <span class="fr">[ fridge ]</span>|
-|                        <span class="fr">[  (P)   ]</span>|
-+------    ------+------    ------+
-|  ${box("Y", "Your room    ")} |  ${box("M", "Maya's room   ")}|
-|                |                |
-+----------------+----------------+`;
-  };
-  el.innerHTML = `<div class="xp-house"><pre class="xp-plan" aria-hidden="true"></pre><div class="xp-house-side"><pre class="penny-spin xp-hp" role="img" aria-label="The Penny on the fridge"></pre><div class="xp-house-btns">${R.map(([k, n, c]) => `<button type="button" data-k="${k}" class="${c}"><b>${k}</b> ${n}: do a chore</button>`).join("")}</div><button type="button" class="xp-replay" data-reset>Reset the week</button><p class="xp-house-msg" aria-live="polite">Tap a roommate.</p></div></div>`;
-  const planEl = el.querySelector(".xp-plan"), pen = el.querySelector(".xp-hp"), msg = el.querySelector(".xp-house-msg");
-  let fills = [0, 0, 0, 0], shown = [0, 0, 0, 0], ang = .45, raf = 0, done = false, lit = null, litT = 0;
-  const CHORES = ["took out the trash", "paid rent", "cleaned the fridge", "did the dishes", "bought paper towels", "swapped the trash"];
-  const render = () => { pen.innerHTML = pennyFrame(38, ang, { fills: shown, back: "done" }); planEl.innerHTML = plan(lit); };
-  const loop = () => {
-    let busy = false;
-    shown = shown.map((v, i) => { const d = fills[i] - v; if (Math.abs(d) > .005) { busy = true; return v + d * .15; } return fills[i]; });
-    const target = done ? .45 + Math.PI : .45;
-    if (Math.abs(target - ang) > .01) { ang += (target - ang) * .08; busy = true; } else ang = target;
-    if (lit && performance.now() - litT > 700) lit = null; else if (lit) busy = true;
-    render(); raf = busy ? requestAnimationFrame(loop) : 0;
-  };
-  const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
-  el.querySelectorAll(".xp-house-btns button").forEach(b => b.addEventListener("click", () => {
-    const i = R.findIndex(r => r[0] === b.dataset.k); if (fills[i] >= 1 || done) return;
-    fills[i] = Math.min(3, Math.round(fills[i] * 3) + 1) / 3; lit = b.dataset.k; litT = performance.now(); // three chores fill a quarter
-    msg.textContent = `${R[i][1] === "You" ? "You" : R[i][1]} ${CHORES[(Math.random() * CHORES.length) | 0]}.` + (fills[i] >= 1 ? ` ${R[i][1] === "You" ? "Your" : R[i][1] + "'s"} quarter is full.` : "");
-    if (fills.every(f => f >= 1)) { setTimeout(() => { done = true; msg.textContent = "Everyone's done for the week. The Penny flips to the all-done screen."; kick(); }, 600); }
-    kick();
-  }));
-  el.querySelector("[data-reset]").addEventListener("click", () => { fills = [0, 0, 0, 0]; done = false; msg.textContent = "New week. Tap a roommate."; kick(); });
-  xpStops.push(() => cancelAnimationFrame(raf));
-  render();
-}
-// E. Terminal mode: the site as text, with a prompt you can type into
-function xpTerm(el) {
-  el.innerHTML = `<div class="xp-term" role="region" aria-label="Terminal mode demo"><div class="xp-term-out" aria-live="polite"></div><label class="xp-term-in"><span>jack@portfolio ~ %</span><input type="text" spellcheck="false" autocomplete="off" aria-label="Type a command"></label></div>`;
-  const out = el.querySelector(".xp-term-out"), inp = el.querySelector("input"), term = el.firstChild;
-  const print = (html, cls = "") => { const d = document.createElement("div"); d.className = cls; d.innerHTML = html; out.appendChild(d); out.scrollTop = out.scrollHeight; };
-  const pages = ALL.filter(p => !p.locked && !p.href);
-  const CMDS = {
-    help: () => print(`commands: <b>ls</b> · <b>open &lt;project&gt;</b> · <b>about</b> · <b>hike</b> · <b>peaks</b> · <b>clear</b> · <b>exit</b>`),
-    ls: () => print(pages.map((p, i) => `[${i + 1}] ${esc(p.title)}${p.sub ? " " + esc(p.sub) : ""}`).join("<br>") + "<br>[b] Beyond UX   [m] My Brand   [a] About"),
-    about: () => print("Jack Walker. UX designer finishing a BFA in UX Design at SCAD, May 2027.<br>Open to UX design roles, Winter 2026–27."),
-    peaks: () => print(PEAKS.map(p => `${p.done ? "[x]" : "[>]"} ${esc(p.name)}  ${esc(p.elev)}  ${esc(p.where)}`).join("<br>")),
-    hike: () => print(`<pre class="xp-term-art">${peakGrid(peakProfile(PEAKS[(Math.random() * PEAKS.length) | 0]), true)}</pre>`),
-    clear: () => { out.innerHTML = ""; },
-    exit: () => print("On the real site this would switch back to the normal view.", "dim")
-  };
-  const run = raw => {
-    const v = raw.trim(); print(`<span class="dim">~ %</span> ${esc(v)}`);
-    if (!v) return;
-    const [c, ...rest] = v.toLowerCase().split(/\s+/), arg = rest.join(" ");
-    if (c === "open" || /^\d+$/.test(c)) {
-      const p = /^\d+$/.test(c) ? pages[+c - 1] : pages.find(x => x.title.toLowerCase().startsWith(arg) || x.id.startsWith(arg));
-      return p ? print(`<b>${esc(p.title)}</b>${p.sub ? " " + esc(p.sub) : ""}<br>${esc(p.summary)}<br><span class="dim">${esc(p.meta)} · on the real site this opens #${esc(p.id)}</span>`) : print("No project by that name. Try <b>ls</b>.", "err");
-    }
-    (CMDS[c] || (() => print(`command not found: ${esc(c)}. Try <b>help</b>.`, "err")))();
-  };
-  inp.addEventListener("keydown", e => { if (e.key === "Enter") { run(inp.value); inp.value = ""; } });
-  term.addEventListener("click", () => inp.focus({ preventScroll: true }));
-  print("Terminal mode. On the real site, press <b>~</b> anywhere to switch to it.", "dim"); print("Type <b>help</b> to start.");
+  size();
+  const io = new IntersectionObserver(es => { cancelAnimationFrame(raf); if (es[0].isIntersecting) raf = requestAnimationFrame(frame); }); io.observe(cv); xpStops.push(() => io.disconnect());
 }
 
 function initExperiments() {
@@ -2929,7 +3012,7 @@ function initExperiments() {
   if (!document.querySelector(".xp-grid")) return;
   const $x = id => document.getElementById("xp-" + id), replay = {};
   xpCard($x("card")); xpMark($x("mark"));
-  xpClimb($x("climb")); xpDevelop($x("develop")).then(f => replay.develop = f); xpWeather($x("weather")); xpHouse($x("house")); xpTerm($x("term"));
+  xpClimb($x("climb")); xpWeather($x("weather")); xpTopo($x("topo")); xpTerrain($x("terrain")); xpStyles($x("styles")); xpFlow($x("flow"));
   const pen = $x("penny"); if (pen) { pen.innerHTML = '<pre class="penny-spin" data-cols="56" role="img" aria-label="The Penny drawn in characters, turning slowly"></pre>'; xpStops.push(pennySpin(pen.firstChild, { cols: 56 })); }
   document.querySelectorAll(".xp-replay").forEach(b => b.addEventListener("click", () => replay[b.dataset.for] && replay[b.dataset.for]()));
 }
@@ -3220,6 +3303,7 @@ function render() {
   initPeaks();
   initBrand();
   initExperiments();
+  initClimbRail();
   initPennies();
   initLost();
   initCountIn();
@@ -3276,7 +3360,7 @@ function dotsUpdate() {
 }
 function initDots() {
   const d = dotsNav();
-  const secs = [...document.querySelectorAll("#app .cs-body > .sec, #app .bux-panel .projs > .proj")];
+  const secs = document.querySelector("#app .xp-grid") ? [] : [...document.querySelectorAll("#app .cs-body > .sec, #app .bux-panel .projs > .proj")]; // Experiments uses the climbing trail instead
   const names = secs.map(s => ((s.querySelector(":scope > h2, .proj-title") || {}).textContent || "").trim());
   d.secs = secs; d.lock = -1;
   const live = [...d.el.querySelectorAll("button:not(.gone)")];
