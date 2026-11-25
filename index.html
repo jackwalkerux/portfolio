@@ -134,18 +134,17 @@ main { padding-block: 56px 96px; }
 #cur { display: none; }
 .has-cursor #cur { display: block; position: fixed; inset: 0; z-index: 99; pointer-events: none; }
 .has-cursor * { cursor: none !important; }
-#cur-dot { position: fixed; left: 0; top: 0; translate: -60px -60px; will-change: translate; width: 7px; height: 7px; border-radius: 50%; background: var(--cur-fill); box-shadow: 0 0 0 1.25px var(--cur-edge); transform: translate(-50%, -50%); transition: width .15s, height .15s, opacity .2s; }
-#cur-ring { position: fixed; left: 0; top: 0; translate: -60px -60px; will-change: translate; width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--cur-fill); box-shadow: 0 0 0 1.25px var(--cur-edge), inset 0 0 0 1.25px var(--cur-edge); transform: translate(-50%, -50%) scale(var(--cs, 1)); display: grid; place-items: center; transition: width .25s, height .25s, background-color .25s, transform .15s, opacity .2s; }
-#cur-glyph { font-size: 15px; line-height: 1; color: #FFF; opacity: 0; transition: opacity .15s; }
-#cur.off #cur-dot, #cur.off #cur-ring { opacity: 0; }
-#cur.link #cur-ring { width: 20px; height: 20px; }
-#cur.link #cur-dot { width: 4px; height: 4px; }
-#cur.zoom #cur-ring { width: 42px; height: 42px; background: rgba(12, 13, 14, .85); }
-#cur.zoom #cur-dot { opacity: 0; }
-#cur.zoom #cur-glyph { opacity: 1; }
-#cur.brush #cur-ring { width: 14px; height: 14px; }
-#cur.brush #cur-dot { width: 3px; height: 3px; }
-#cur.down #cur-ring { --cs: .8; }
+/* One circle, pinned to the pointer (no trailing). It grows and shows an icon for what a click will do. */
+#cur-dot { display: none; }
+#cur-ring { position: fixed; left: 0; top: 0; translate: -60px -60px; will-change: translate; width: 12px; height: 12px; border-radius: 50%; background: var(--cur-fill); border: 0; box-shadow: 0 0 0 1.25px var(--cur-edge); transform: translate(-50%, -50%) scale(var(--cs, 1)); display: grid; place-items: center; color: var(--cur-edge); transition: width .22s cubic-bezier(.2, .8, .2, 1), height .22s cubic-bezier(.2, .8, .2, 1), background-color .2s ease, transform .15s ease, opacity .2s ease; }
+#cur-glyph { display: grid; place-items: center; opacity: 0; transform: scale(.6); transition: opacity .15s ease, transform .22s cubic-bezier(.2, .8, .2, 1); }
+#cur-glyph svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#cur.off #cur-ring { opacity: 0; }
+#cur.icon #cur-ring { width: 44px; height: 44px; }
+#cur.icon #cur-glyph { opacity: 1; transform: none; }
+#cur.small #cur-ring { width: 22px; height: 22px; }
+#cur.brush #cur-ring { width: 16px; height: 16px; background: transparent; box-shadow: 0 0 0 1.5px var(--cur-fill), 0 0 0 2.75px var(--cur-edge); }
+#cur.down #cur-ring { --cs: .86; }
 .lb-open #cur #cur-dot, .lb-open #cur #cur-ring { opacity: 0; }
 .has-cursor.lb-open * { cursor: zoom-out !important; }
 
@@ -2907,10 +2906,11 @@ document.addEventListener("keydown", e => {
   const j = e.key === "Home" ? 0 : e.key === "End" ? n - 1 : (i + (e.key === "ArrowRight" ? 1 : -1) + n) % n;
   selectBux(OTHER[j].id, true);
 });
-/* Custom cursor: ink dot + trailing ring with link / zoom / brush states */
+/* Custom cursor: one circle that sits exactly on the pointer. Over something clickable it grows and shows
+   what a click will do: open, go to another site, email, enlarge, step left / right, expand, replay, and so on. */
 (function () {
   if (!matchMedia("(pointer: fine)").matches) return;
-  const cur = $("#cur"), dot = $("#cur-dot"), ring = $("#cur-ring"), glyph = $("#cur-glyph");
+  const cur = $("#cur"), ring = $("#cur-ring"), glyph = $("#cur-glyph");
   if (!cur) return;
   cur.classList.add("off");
   // Visitors can switch the custom cursor off; the choice is remembered.
@@ -2932,16 +2932,54 @@ document.addEventListener("keydown", e => {
       enabled = !enabled;
       try { localStorage.setItem("cursor", enabled ? "on" : "off"); } catch (e) {}
       apply();
-      if (enabled) { rx = x; ry = y; dot.style.translate = ring.style.translate = x + "px " + y + "px"; cur.classList.remove("off"); }
+      if (enabled) { ring.style.translate = x + "px " + y + "px"; cur.classList.remove("off"); }
     });
   }
-  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let x = -60, y = -60, rx = -60, ry = -60, moving = false;
-  const step = () => {
-    rx += (x - rx) * .18; ry += (y - ry) * .18;
-    if (Math.abs(x - rx) < .15 && Math.abs(y - ry) < .15) { rx = x; ry = y; moving = false; }
-    ring.style.translate = rx.toFixed(1) + "px " + ry.toFixed(1) + "px";
-    if (moving) requestAnimationFrame(step);
+  const P = d => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+  const ICONS = {
+    go: P('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+    out: P('<path d="M8 16L16 8M9 8h7v7"/>'),
+    mail: P('<rect x="4" y="6" width="16" height="12" rx="2"/><path d="M4.5 7l7.5 6 7.5-6"/>'),
+    zoom: P('<path d="M12 6v12M6 12h12"/>'),
+    left: P('<path d="M15 6l-6 6 6 6"/>'),
+    right: P('<path d="M9 6l6 6-6 6"/>'),
+    down: P('<path d="M12 5v14M6 13l6 6 6-6"/>'),
+    open: P('<path d="M12 6v12M6 12h12"/>'),
+    close: P('<path d="M6 12h12"/>'),
+    flip: P('<rect x="7" y="7" width="11" height="12" rx="1.5"/><path d="M5 15V6a1 1 0 0 1 1-1h9"/>'),
+    replay: P('<path d="M5 12a7 7 0 1 0 2.1-5"/><path d="M5 4v4h4"/>'),
+    theme: P('<circle cx="12" cy="12" r="7"/><path d="M12 5a7 7 0 0 0 0 14z" fill="currentColor" stroke="none"/>'),
+    file: P('<path d="M12 4v11M7 10l5 5 5-5M5 19h14"/>'),
+    eye: P('<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/>'),
+    tab: P('<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 9h16"/>')
+  };
+  // what a click on this element would do
+  const context = t => {
+    if (t.closest(".ascii-reveal, .big-name")) return ["brush"];
+    const el = t.closest("a, button, summary, [data-jump], [data-zoom], figure .img.fit, .xp-card");
+    if (!el) return [""];
+    if (el.matches("figure .img.fit, [data-zoom]")) return ["icon", "zoom"];
+    if (el.matches(".xp-card")) return ["icon", "eye"];
+    if (el.matches(".pk-go")) return ["icon", el.dataset.d < 0 ? "left" : "right"];
+    if (el.matches(".pp-stack")) return ["icon", "flip"];
+    if (el.matches(".proj-toggle")) return ["icon", el.getAttribute("aria-expanded") === "true" ? "close" : "open"];
+    if (el.matches(".proj-all")) return ["icon", /Collapse/.test(el.textContent) ? "close" : "open"];
+    if (el.matches(".dots button")) return ["icon", "down"];
+    if (el.matches(".xp-replay")) return ["icon", "replay"];
+    if (el.matches("#mode")) return ["icon", "theme"];
+    if (el.matches("[role=tab], .bux-card")) return ["icon", "tab"];
+    if (el.matches("#cur-toggle")) return ["small"];
+    const href = el.getAttribute("href") || "";
+    if (href.startsWith("mailto:")) return ["icon", "mail"];
+    if (/\.pdf\b|format=pdf/.test(href)) return ["icon", "file"];
+    if (/^https?:/.test(href) || el.target === "_blank") return ["icon", "out"];
+    if (el.matches("a")) return ["icon", "go"];
+    return ["small"];
+  };
+  let x = -60, y = -60, mode = "", icon = "", over = null;
+  const set = ([m, ic]) => {
+    if (m !== mode) { ["icon", "small", "brush"].forEach(k => cur.classList.toggle(k, k === m)); mode = m; }
+    if (ic && ic !== icon) { glyph.innerHTML = ICONS[ic]; icon = ic; }
   };
   if (btn) apply(); else document.body.classList.add("has-cursor");
   addEventListener("pointermove", e => {
@@ -2949,27 +2987,15 @@ document.addEventListener("keydown", e => {
     x = e.clientX; y = e.clientY;
     if (!enabled) return;
     cur.classList.remove("off");
-    dot.style.translate = x + "px " + y + "px";
-    if (still) { rx = x; ry = y; ring.style.translate = x + "px " + y + "px"; }
-    else if (!moving) { moving = true; requestAnimationFrame(step); }
+    ring.style.translate = x + "px " + y + "px";
   }, { passive: true });
   addEventListener("pointerdown", () => cur.classList.add("down"), true);
-  addEventListener("pointerup", () => cur.classList.remove("down"), true);
+  // after a click the thing under the pointer may have changed (expanded, flipped, switched), so read it again
+  addEventListener("pointerup", () => { cur.classList.remove("down"); requestAnimationFrame(() => over && over.isConnected && set(context(over))); }, true);
   document.documentElement.addEventListener("pointerleave", () => cur.classList.add("off"));
   document.addEventListener("pointerout", e => { if (!e.relatedTarget) cur.classList.add("off"); });
   addEventListener("blur", () => cur.classList.add("off"));
-  document.addEventListener("pointerover", e => {
-    const t = e.target;
-    if (!t.closest) return;
-    let mode = "", g = "";
-    if (t.closest(".ascii-reveal, .big-name")) mode = "brush";
-    else if (t.closest("figure .img.fit, .brand-page [data-zoom]")) { mode = "zoom"; g = "+"; }
-    else if (t.closest("a, button, summary, [data-jump]")) mode = "link";
-    cur.classList.toggle("link", mode === "link");
-    cur.classList.toggle("zoom", mode === "zoom");
-    cur.classList.toggle("brush", mode === "brush");
-    if (g) glyph.textContent = g;
-  });
+  document.addEventListener("pointerover", e => { const t = e.target; if (!t.closest) return; over = t; set(context(t)); });
   const lb = $("#lb");
   if (lb) lb.addEventListener("close", () => document.body.classList.remove("lb-open"));
 })();
