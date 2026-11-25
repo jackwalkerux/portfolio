@@ -679,6 +679,11 @@ figure .img.fit img { cursor: zoom-in; }
 .penny-spin .soft { opacity: .45; } .penny-spin .lt { color: #16181D; font-weight: 800; opacity: 1; }
 :root[data-theme="dark"] .penny-spin .pz { color: #8F897E; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .penny-spin .pz { color: #8F897E; } }
+/* Quarters card: a small Penny badge that spins while you hover the card */
+.shot { position: relative; }
+.card-penny { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: color-mix(in srgb, var(--bg) 88%, transparent); box-shadow: 0 4px 16px rgba(0, 0, 0, .12); pointer-events: none; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.card:hover .card-penny { transform: scale(1.06); }
+.card-penny .penny-spin { font-size: 5.4px; line-height: 1; }
 .penny-fig { margin: 0 0 8px; display: grid; justify-items: center; }
 .penny-fig .penny-spin { font-size: clamp(7px, 1vw, 10px); }
 .proto-msg { gap: 14px; align-content: center; }
@@ -1835,7 +1840,7 @@ const LOCK = '<span class="lock" aria-hidden="true"><span><svg viewBox="0 0 24 2
 function card(p) {
   const tag = p.locked ? `div aria-disabled="true" title="Coming soon"` : `a href="${p.href || "#" + p.id}"`; // locked work can't be opened for now
   return `<${tag} class="card${p.highlight ? " hl" : ""}${p.locked ? " locked" : ""}">
-    <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked ? LOCK : ""}</div>
+    <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked ? LOCK : ""}${p.id === "quarters" ? '<span class="card-penny" aria-hidden="true"><pre class="penny-spin" data-cols="26" data-hover></pre></span>' : ""}</div>
     <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h2>
     <p>${esc(p.summary)}</p>
     <span class="meta">${p.highlight ? '<span class="hl-tag">Highlighted Work</span> · ' : ""}${esc(p.meta)}</span>
@@ -2498,7 +2503,7 @@ const STILL = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
    quarters (each partly filled, like the app's progress), the roommates' letters and the green status light.
    Back: brushed metal. The rim shows on the side turning away. Returns a stop function. */
 const PENNY_Q = [["qa", "A", .62], ["qn", "N", .78], ["qy", "Y", .45], ["qm", "M", .86]];
-function pennySpin(pre, { cols = 52, speed = 1 } = {}) {
+function pennySpin(pre, { cols = 52, speed = 1, hover = null } = {}) {
   const W = cols, H = Math.round(cols * .52) | 1, cx = (W - 1) / 2, cy = (H - 1) / 2, R = (W - 4) / 2, RY = R * .5;
   const draw = a => {
     const ca = Math.cos(a), sa = Math.sin(a), w = Math.max(.035, Math.abs(ca)), front = ca >= 0, rim = 2.2 * sa;
@@ -2535,6 +2540,27 @@ function pennySpin(pre, { cols = 52, speed = 1 } = {}) {
     pre.innerHTML = out;
   };
   if (STILL()) { draw(.45); return () => {}; }
+  if (hover) {
+    // still until hovered; spins up while the pointer is on it, then eases round to face the front again
+    const REST = .45, TAU = Math.PI * 2; let a = REST, v = 0, inside = false, raf = 0, last = 0, live = true;
+    const tick = t => {
+      if (!live) return;
+      const dt = Math.min(50, t - (last || t)) / 1000; last = t;
+      if (inside) { v += (4.2 - v) * Math.min(1, dt * 4); a += v * dt; }
+      else {
+        const target = REST + Math.ceil((a - REST) / TAU) * TAU, left = target - a; // next time it faces front
+        if (left < .01) { a = target; v = 0; draw(a); raf = 0; return; }
+        a += Math.min(left, Math.max(.6, Math.min(v, left * 4)) * dt);
+      }
+      draw(a); raf = requestAnimationFrame(tick);
+    };
+    const go = () => { if (!raf) { last = 0; raf = requestAnimationFrame(tick); } };
+    const enter = () => { inside = true; go(); }, leave = () => { inside = false; go(); };
+    hover.addEventListener("pointerenter", enter); hover.addEventListener("pointerleave", leave);
+    hover.addEventListener("focus", enter); hover.addEventListener("blur", leave);
+    draw(REST);
+    return () => { live = false; cancelAnimationFrame(raf); hover.removeEventListener("pointerenter", enter); hover.removeEventListener("pointerleave", leave); hover.removeEventListener("focus", enter); hover.removeEventListener("blur", leave); };
+  }
   let raf = 0, on = true, t0 = performance.now();
   const f = t => { if (!on) return; draw(.45 + (t - t0) / 1600 * speed); raf = requestAnimationFrame(f); };
   // only spin while it's on screen
@@ -2545,7 +2571,7 @@ function pennySpin(pre, { cols = 52, speed = 1 } = {}) {
 let pennyStops = [];
 function initPennies() {
   pennyStops.forEach(f => f()); pennyStops = [];
-  document.querySelectorAll("#app pre.penny-spin:not(#xp-penny pre)").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52 })));
+  document.querySelectorAll("#app pre.penny-spin:not(#xp-penny pre)").forEach(pre => pennyStops.push(pennySpin(pre, { cols: +pre.dataset.cols || 52, hover: pre.hasAttribute("data-hover") ? pre.closest(".card") : null })));
 }
 
 /* Footer trail: the three mountains side by side as one thin ridge. The green trail covers the climbs I've done
@@ -2603,7 +2629,7 @@ function initLost() {
 const SCRAMBLE_POOL = "@#%*+=-:;!?/\\<>[]";
 function scrambleIn(root) {
   if (STILL() || !root) return;
-  const targets = [...root.querySelectorAll("h1:not(.big-name), .cs-head .sum, .intro > p:first-of-type")].slice(0, 3);
+  const targets = [...root.querySelectorAll("h1:not(.big-name), .cs-head .sum, .intro > p:first-of-type, .about .lead")].slice(0, 3);
   const nodes = [];
   targets.forEach(t => { const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (n.nodeValue.trim()) nodes.push([n, n.nodeValue]); });
   if (!nodes.length) return;
