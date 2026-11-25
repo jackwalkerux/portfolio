@@ -531,8 +531,8 @@ figure .img.fit img { cursor: zoom-in; }
 .cs-quarters .recs li { grid-template-columns: 28px minmax(0, 1fr); }
 /* Quarters page: app blue accent, numbered section labels, open layout (no boxes) */
 .cs-quarters { --link: #255A9B; }
-:root[data-theme="dark"] .cs-quarters { --link: #8DB2E8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cs-quarters { --link: #8DB2E8; } }
+:root[data-theme="dark"] .cs-quarters { --link: #6B98DD; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cs-quarters { --link: #6B98DD; } }
 .cs-quarters .proto-h { color: var(--link); }
 .cs-quarters .cs-body { gap: 112px; margin-top: 96px; counter-reset: qsec; }
 .cs-quarters .sec { border-top: 1px solid var(--line); padding-top: 28px; gap: 28px; counter-increment: qsec; }
@@ -848,8 +848,7 @@ const FEATURED = [
     sections: [
       { h: "At a glance", blocks: [
         { p: "I led a five-person SCAD team designing Quarters: one app for the house, and one Penny for the fridge. The app holds rent, bills, chores and the house rules. The Penny shows how the house is doing, one quarter per roommate, without anyone sending a text." },
-        { nums: [["70+", "survey responses"], ["10", "interviews"], ["87.5", "SUS in round 2, up from 80.7"], ["+71", "NPS in round 2, up from +43"]] },
-        { role: ["Project lead for a team of five: branding and UI, UX research, UX design and interaction design."] } ] },
+        { nums: [["70+", "survey responses"], ["10", "interviews"], ["87.5", "SUS in round 2, up from 80.7"], ["+71", "NPS in round 2, up from +43"]] } ] },
       { h: "The problem", blocks: [
         { p: "Roommates juggle five apps and a group chat to keep a house running, and still nobody's in charge. Usually one person ends up holding the lease and chasing everyone else." },
         { qcols: [{ h: "Maya, 22", d: "Senior and part-time barista. The lease and every bill are in her name." }, { h: "Alex, 21", d: "Server with irregular shifts. Doesn't know what he owes until someone's already mad." }] },
