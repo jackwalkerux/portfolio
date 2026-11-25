@@ -2056,7 +2056,6 @@ const PK_ARROW = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d 
 const peakCard = (pk, i) => `<article class="peak ${pk.done ? "done" : "prog"}" data-i="${i}" aria-roledescription="carousel" aria-label="Mountains">
     <div class="peak-side">
       <div class="peak-info" aria-live="polite">${peakInfo(pk)}</div>
-      <p class="peak-now" aria-live="polite"></p>
     </div>
     <div class="peak-mid">
       <div class="peak-art" role="img" aria-label="${esc(peakLabel(pk))}"><pre>${peakArt(pk)}</pre></div>
@@ -2154,7 +2153,8 @@ function initPeaks() {
   const card = sec.querySelector(".peak"), pre = card.querySelector(".peak-art pre"), art = card.querySelector(".peak-art");
   const info = card.querySelector(".peak-info"), pics = card.querySelector(".peak-pics"), count = card.querySelector(".pk-count b");
   initStack(pics.querySelector(".peak-photos"));
-  const skyFor = peakSky(card); skyFor(PEAKS[0]);
+  const PEAK_WEATHER = false; // pinned for later: live weather over the ridge (peakSky). Set true to bring it back.
+  const skyFor = PEAK_WEATHER ? peakSky(card) : () => {}; skyFor(PEAKS[0]);
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let i = 0, raf = 0, swapT = 0, auto = !still, hover = false;
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
