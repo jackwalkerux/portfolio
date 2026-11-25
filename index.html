@@ -278,7 +278,12 @@ main { padding-block: 56px 96px; }
 .pk-go:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 .pk-count { font: 600 14px var(--font); font-variant-numeric: tabular-nums; color: var(--muted); min-width: 2.6em; text-align: center; }
 .pk-count b { color: var(--ink); }
-.peak-art { touch-action: pan-y; }
+.peak-art { touch-action: pan-y; position: relative; }
+/* weather drawn over the ridge, in the same character grid */
+.peak-art pre.peak-wx { position: absolute; inset: 0; pointer-events: none; color: transparent; }
+.peak-wx .wsn { color: #F2B92E; } .peak-wx .wmo { color: color-mix(in srgb, var(--ink) 55%, var(--bg)); } .peak-wx .wst { color: color-mix(in srgb, var(--ink) 35%, var(--bg)); } .peak-wx .wst.on { color: var(--ink); }
+.peak-wx .wcl { color: color-mix(in srgb, var(--ink) 40%, var(--bg)); } .peak-wx .wcd { color: color-mix(in srgb, var(--ink) 62%, var(--bg)); } .peak-wx .wrn { color: #6F95DD; } .peak-wx .wsw { color: var(--ink); }
+.peak-now { font: 600 13.5px var(--font); color: var(--muted); min-height: 1.2em; margin-top: -6px; }
 @media (prefers-reduced-motion: reduce) { .peak-info, .peak-pics { transition: none; } }
 .peak-art .dn { color: var(--ridge); }
 .peaks.on .peak-art .dn { animation: peakDescend 2.8s ease-in-out infinite; animation-delay: calc(1.8s + var(--d) * 70ms); }
@@ -1045,7 +1050,6 @@ footer > .wrap { position: relative; z-index: 1; }
     <a href="#beyond-ux">Beyond UX</a>
     <a href="#brand">My Brand</a>
     <a href="#about">About</a>
-    <a href="#experiments">Experiments</a>
     <a href="https://docs.google.com/document/d/1W2idFMJRs5636LlhtmxSSqJZcpYce-FCKtDAANgGB-8/export?format=pdf" target="_blank" rel="noopener">Résumé (PDF)</a>
   </div>
 </div>
@@ -1337,19 +1341,22 @@ const OTHER = [
 
 const CV = {
   experience: [
-    { when: "Jun to Aug 2026", title: "UX/UI Design Intern", org: "Stewart Title", bullets: ["Led a redesign of Connect Close, Stewart Title's title production software, with product managers, engineers and designers", "Tested designs through A/B testing and moderated user testing", "Delivered developer-ready designs, scheduled for implementation in Q4 2026"] },
-    { when: "Mar to Jun 2026", title: "SCADpro × Amazon Music", org: "Client project", bullets: ["Designed new ways for young adults to discover and engage with Amazon Music across Amazon", "Designed touchpoints connecting Amazon Music with Prime Video, Retail, Audible, Kindle and Alexa+"] },
-    { when: "Jun to Aug 2024", title: "Design Intern", org: "Switch Design Studio & Autside, Dallas", bullets: ["Designed web pages, mockups and renders for the Autside storefront", "Supported the Autside 100 launch and helped improve the Shopify store"] }
+    { when: "Jun to Aug 2026", title: "UX/UI Design Intern", org: "Stewart Title", bullets: ["Led a redesign of Connect Close, Stewart Title's title production software, with product managers, engineers and designers", "Conducted in-depth primary research, plus secondary research on title software and its end users", "Tested designs through A/B testing and moderated user testing", "Delivered developer-ready designs, scheduled for implementation in Q4 2026"] },
+    { when: "Mar to Jun 2026", title: "SCADpro × Amazon Music", org: "Client project", bullets: ["Designed new ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem", "Designed touchpoints connecting Amazon Music with Prime Video, Retail, Audible, Kindle and Alexa+ for one unified entertainment experience that reaches beyond current listeners"] },
+    { when: "Jun to Aug 2024", title: "Design Intern", org: "Switch Design Studio & Autside, Dallas", bullets: ["Designed mockups and renders for the Autside digital storefront", "Designed web pages and interactive experiences for the Autside website", "Supported the launch of the Autside 100 campaign and built out the business-to-business program and lineup", "Helped build and improve the Autside Shopify storefront"] }
   ],
   education: [
-    { when: "2023 to May 2027", title: "Savannah College of Art & Design", org: "BFA, UX Design · GPA 3.81 · Dean's Honor List" }
+    { when: "Sep 2023 to May 2027", title: "Savannah College of Art & Design", org: "BFA, UX Design (expected May 2027) · GPA 3.81 · Dean's Honor List" }
+  ],
+  projects: [
+    { when: "Fall 2026", title: "Quarters: Roommate App & Companion Device", org: "Project lead · SCAD", bullets: ["Led a SCAD team of 5 designing an iPhone app and smart fridge magnet for splitting rent and chores", "Built personas and journey maps, UI and prototypes, then user tested them"] }
   ],
   service: [
     { when: "2019 to 2023", title: "Young Men's Service League", org: "Castle Hills, TX", bullets: ["Communications Committee, 2022 to 2023", "Meetings Committee Leader, 2019 to 2022"] },
     { when: "2019 to 2023", title: "Volunteer, North Texas", org: "85 service hours with Feed My Starving Children, CCA Food Pantry, Hope Supply and Honor Flight" }
   ],
   skills: [
-    { plain: true, when: "Methods", title: "Wireframing, prototyping, design systems, user testing, A/B testing, design handoff" },
+    { plain: true, when: "Methods", title: "User research, A/B testing, moderated user testing, wireframing, prototyping, design handoff" },
     { plain: true, when: "Tools", title: "Figma, Illustrator, Photoshop, InDesign, Lightroom, Adobe XD, After Effects, Rhino, KeyShot, HTML, CSS, JavaScript" },
     { plain: true, when: "Certifications", title: "Adobe Certified Professional, Creative Cloud · Adobe Illustrator · Microsoft Office Specialist: Word, Excel, PowerPoint" }
   ]
@@ -2043,6 +2050,7 @@ const PK_ARROW = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d 
 const peakCard = (pk, i) => `<article class="peak ${pk.done ? "done" : "prog"}" data-i="${i}" aria-roledescription="carousel" aria-label="Mountains">
     <div class="peak-side">
       <div class="peak-info" aria-live="polite">${peakInfo(pk)}</div>
+      <p class="peak-now" aria-live="polite"></p>
     </div>
     <div class="peak-mid">
       <div class="peak-art" role="img" aria-label="${esc(peakLabel(pk))}"><pre>${peakArt(pk)}</pre></div>
@@ -2074,6 +2082,65 @@ function initStack(box) {
   lay();
 }
 let peakTimer = 0;
+/* Live weather on the mountain card: the sky over each peak follows its real current conditions (Open-Meteo,
+   no key needed): sun or moon by local daylight, clouds, rain or snow. If the weather can't be fetched, it falls
+   back to a clear sky with sun or moon by the peak's local time. */
+const PEAK_COORDS = { "Guadalupe Peak": [31.8913, -104.8607], "Emory Peak": [29.2459, -103.301], "Huckleberry Peak": [48.642, -114.146] };
+const wxCache = {};
+function peakWeather(pk) {
+  if (wxCache[pk.name]) return wxCache[pk.name];
+  const [lat, lon] = PEAK_COORDS[pk.name] || [0, 0];
+  const guess = () => { const h = (new Date().getUTCHours() + lon / 15 + 24) % 24; return { kind: h > 6.5 && h < 19 ? "day" : "night", live: false }; };
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=weather_code,is_day,temperature_2m&temperature_unit=fahrenheit`;
+  const ctl = "AbortController" in window ? new AbortController() : null; setTimeout(() => ctl && ctl.abort(), 4000);
+  return (wxCache[pk.name] = fetch(url, ctl ? { signal: ctl.signal } : {}).then(r => r.ok ? r.json() : Promise.reject()).then(j => {
+    const c = j.current || {}, code = c.weather_code, day = c.is_day === 1;
+    const kind = [71, 73, 75, 77, 85, 86].includes(code) ? "snow" : (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || code >= 95 ? "rain" : [3, 45, 48].includes(code) ? "cloud" : day ? "day" : "night";
+    const words = { snow: "Snow", rain: code >= 95 ? "Storms" : "Rain", cloud: code >= 45 ? "Fog" : "Cloudy", day: code > 0 ? "Partly cloudy" : "Clear", night: code > 0 ? "Partly cloudy night" : "Clear night" }[kind];
+    return { kind, partly: code === 1 || code === 2, live: true, text: `${words} · ${Math.round(c.temperature_2m)}°F` };
+  }).catch(guess));
+}
+function peakSky(card) {
+  const art = card.querySelector(".peak-art"), now = card.querySelector(".peak-now");
+  const sky = document.createElement("pre"); sky.className = "peak-wx"; sky.setAttribute("aria-hidden", "true"); art.appendChild(sky);
+  const W = PK_W, H = PK_H, still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let ground = Array(W).fill(H), kind = "day", partly = false, parts = [], t = 0, timer = 0, seq = 0;
+  const hash = (x, y) => ((Math.sin(x * 127.1 + y * 311.7) * 43758.5) % 1 + 1) % 1;
+  const stars = Array.from({ length: 22 }, (_, i) => [(i * 37 + (i % 3) * 11) % W, (i * 13) % 6, i]);
+  const tick = () => {
+    t++;
+    const G = Array.from({ length: H }, () => Array(W).fill(null));
+    const put = (y, x, ch, c) => { x = Math.round(x); y = Math.round(y); if (y >= 0 && y < H && x >= 0 && x < W && y < ground[x] - 1) G[y][x] = [ch, c]; };
+    const sprite = (rows, y0, x0, c) => rows.forEach((r, i) => [...r].forEach((ch, j) => ch !== " " && put(y0 + i, x0 + j, ch, c)));
+    if (kind === "night") { stars.forEach(([x, y, i]) => { const tw = (t + i * 7) % 23; put(y, x, tw < 2 ? "+" : tw < 5 ? "*" : "·", tw < 5 ? "wst on" : "wst"); }); sprite(["  _.._ ", " .' .-'", "/  /   ", "\\  '.  ", " '._'-."], 0, 55, "wmo"); }
+    if (kind === "day") { const r = t % 8 < 4; sprite(r ? ["  \\ | /  ", "-- ( ) --", "  / | \\  "] : [" .  |  . ", "-- ( ) --", " '  |  ' "], 0, 53, "wsn"); }
+    if (kind === "cloud" || kind === "rain" || kind === "snow" || partly) {
+      const heavy = kind !== "day" && kind !== "night";
+      (heavy ? [[t * .18, 0, 2], [t * .12 + 26, 2, 1], [t * .22 + 48, 1, 2]] : [[t * .1 + 10, 1, 1]]).forEach(([cx, cy, sz]) =>
+        sprite(sz > 1 ? ["    .---.     ", " .-(     )-.  ", "(___________)_"] : ["  .--.  ", " (    ).", "(______)"], cy, (cx % (W + 20)) - 16, kind === "rain" ? "wcd" : "wcl"));
+    }
+    if (kind === "rain") {
+      for (let i = 0; i < 4; i++) parts.push([Math.random() * (W + 10), 2]);
+      parts = parts.filter(p => { p[1] += 1.1; p[0] -= .45; const x = Math.round(p[0]); return x >= 0 && x < W && p[1] < ground[x] - 1; });
+      parts.forEach(([x, y]) => put(y, x, hash(Math.round(x), 1) > .5 ? "/" : "'", "wrn"));
+    }
+    if (kind === "snow") {
+      for (let i = 0; i < 2; i++) parts.push([Math.random() * W, 2]);
+      parts = parts.filter(p => { p[1] += .3; p[0] += Math.sin(t * .08 + p[1] * 2) * .35; const x = Math.round(p[0]); return x >= 0 && x < W && p[1] < ground[x] - 1; });
+      parts.forEach(([x, y]) => put(y, x, hash(Math.round(x), Math.round(y)) > .6 ? "*" : "·", "wsw"));
+    }
+    sky.innerHTML = G.map(r => r.map(c => c ? `<span class="${c[1]}">${esc(c[0])}</span>` : " ").join("")).join("\n");
+  };
+  const run = () => { clearInterval(timer); tick(); if (!still) timer = setInterval(() => { if (!sky.isConnected) return clearInterval(timer); if (!document.hidden) tick(); }, 90); };
+  // follow the card: a new peak brings its own sky
+  const show = pk => {
+    const my = ++seq; ground = peakProfile(pk).r; parts = [];
+    if (now) now.textContent = "";
+    peakWeather(pk).then(w => { if (my !== seq) return; kind = w.kind; partly = !!w.partly; if (now) now.textContent = w.live ? `Right now: ${w.text}` : ""; run(); });
+  };
+  return show;
+}
+
 function initPeaks() {
   clearInterval(peakTimer);
   const sec = document.querySelector(".peaks");
@@ -2081,6 +2148,7 @@ function initPeaks() {
   const card = sec.querySelector(".peak"), pre = card.querySelector(".peak-art pre"), art = card.querySelector(".peak-art");
   const info = card.querySelector(".peak-info"), pics = card.querySelector(".peak-pics"), count = card.querySelector(".pk-count b");
   initStack(pics.querySelector(".peak-photos"));
+  const skyFor = peakSky(card); skyFor(PEAKS[0]);
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let i = 0, raf = 0, swapT = 0, auto = !still, hover = false;
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -2088,7 +2156,7 @@ function initPeaks() {
     const from = peakProfile(PEAKS[i]);
     i = (i + d + PEAKS.length) % PEAKS.length;
     const pk = PEAKS[i], to = peakProfile(pk);
-    count.textContent = i + 1; card.dataset.i = i;
+    count.textContent = i + 1; card.dataset.i = i; skyFor(pk);
     art.setAttribute("aria-label", peakLabel(pk));
     // text and photos fade out, swap, fade back in
     card.classList.add("swap"); clearTimeout(swapT);
@@ -2849,14 +2917,19 @@ function initClimbRail() {
   const ridge = y => WD - 2 - xs[Math.max(0, Math.min(N - 1, Math.round(y)))];
   // the height a closed project would add if it were open (0 for anything already open)
   const hidden = s => s.classList.contains("proj") && s.classList.contains("closed") ? ((s.querySelector(".proj-inner") || {}).offsetHeight || 0) : 0;
-  const layout = () => {
+  // fixRows: place the dots. Done once when the page opens and again only if the window is resized; opening or
+  // closing sections later never moves them (only the trail's path between them adapts).
+  let fixed = false;
+  const layout = fixRows => {
     const head = document.querySelector(".top"), top = head ? head.offsetHeight : 60;
     el.style.top = top + "px";
     const n = Math.max(20, Math.floor((innerHeight - top) / LH));
-    if (n !== N) { N = n; xs = profile(N); S = Math.round(N * .88); }
+    if (n !== N) { N = n; xs = profile(N); S = Math.round(N * .88); fixRows = true; }
     max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
     const off = bux ? bux.collapsedBottom() + 16 : innerHeight * .3;
     secY = secs.map(s => Math.min(max, Math.max(0, s.getBoundingClientRect().top + scrollY - off)));
+    if (fixed && !fixRows) { drawn = ""; draw(); return; }
+    fixed = true;
     // where each section would start if every section were open: the same no matter which ones are open now
     let extra = 0; const vY = secs.map((s, i) => { const v = secY[i] + extra; extra += hidden(s); return v; });
     const vMax = max + extra;
@@ -2897,12 +2970,13 @@ function initClimbRail() {
     if (s.classList.contains("proj") && s.classList.contains("closed")) { setProj(s, true); syncProjAll(s.closest(".bux-piece")); }
     scrollTo({ top: s.getBoundingClientRect().top + scrollY - (bux ? bux.collapsedBottom() : 80) - 16, behavior: "smooth" });
   });
-  let pending = 0; const relayout = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(layout); };
+  let pending = 0; const relayout = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => layout(false)); };
+  const resized = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => layout(true)); };
   const ro = new ResizeObserver(relayout); ro.observe(document.getElementById("app"));
   const onScroll = () => draw();
-  addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", relayout);
-  climbRail = { el, stop: () => { ro.disconnect(); removeEventListener("scroll", onScroll); removeEventListener("resize", relayout); cancelAnimationFrame(pending); el.remove(); } };
-  layout();
+  addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", resized);
+  climbRail = { el, stop: () => { ro.disconnect(); removeEventListener("scroll", onScroll); removeEventListener("resize", resized); cancelAnimationFrame(pending); el.remove(); } };
+  layout(true);
 }
 
 // B. Weather on the mountain, refined: a deeper sky band, a sun with turning rays, a crescent moon, layered clouds,
@@ -3222,6 +3296,7 @@ function viewAbout() {
     <div class="cv">
       <section><h2>Experience</h2>${CV.experience.map(row).join("")}</section>
       <section><h2>Education</h2>${CV.education.map(row).join("")}</section>
+      <section><h2>Projects</h2>${CV.projects.map(row).join("")}</section>
       <section><h2>Skills</h2>${CV.skills.map(row).join("")}</section>
       <section><h2>Leadership &amp; service</h2>${CV.service.map(row).join("")}</section>
       <section id="contact"><h2>Contact</h2>
@@ -3428,7 +3503,7 @@ function render() {
   else if (id === "about") { html = viewAbout(); nav = "about"; }
   else if (id === "home-3") { html = viewHome(true); }
   else if (id === "brand") { html = viewBrand(); nav = "brand"; }
-  else if (id === "experiments") { html = viewExperiments(); nav = ""; }
+  else if (id === "lab") { html = viewExperiments(); nav = ""; } // unlisted: the Experiments page, only at #lab
   else if (id && !["projects", "peaks"].includes(id) && !ALL.some(x => x.id === id)) { html = viewLost(); nav = ""; }
   else html = viewHome();
   document.body.classList.toggle("brand-mode", id === "brand");
@@ -3439,13 +3514,13 @@ function render() {
   $("#app").innerHTML = html;
   if (!firstRender) scrambleIn($("#app"));
   document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === nav) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-  const page = p ? p.title : isBux ? "Beyond UX" : id === "about" ? "About" : id === "brand" ? "My Brand" : id === "experiments" ? "Experiments" : "";
+  const page = p ? p.title : isBux ? "Beyond UX" : id === "about" ? "About" : id === "brand" ? "My Brand" : id === "lab" ? "Experiments" : "";
   document.title = page ? `${page} · Jack Walker` : "Jack Walker's Portfolio";
   const crumb = document.getElementById("crumb");
   if (crumb) crumb.innerHTML = p ? `<a href="#projects">UX Projects</a><i aria-hidden="true">/</i><b aria-current="page">${esc(p.title)}</b>`
-    : isBux ? '<b aria-current="page">Beyond UX</b>' : id === "about" ? '<b aria-current="page">About</b>' : id === "brand" ? '<b aria-current="page">My Brand</b>' : id === "experiments" ? '<b aria-current="page">Experiments</b>' : "";
+    : isBux ? '<b aria-current="page">Beyond UX</b>' : id === "about" ? '<b aria-current="page">About</b>' : id === "brand" ? '<b aria-current="page">My Brand</b>' : id === "lab" ? '<b aria-current="page">Experiments</b>' : "";
   // Coming back home lands you where you left off: on the project you opened, or the project grid.
-  const home = !p && !isBux && id !== "about" && id !== "brand" && id !== "experiments";
+  const home = !p && !isBux && id !== "about" && id !== "brand" && id !== "lab";
   const card = home && cameFrom ? document.querySelector(`.card[href="#${cameFrom.id}"]`) : null;
   if (card) card.scrollIntoView({ block: "center" });
   else if (id === "projects") document.getElementById("projects").scrollIntoView({ block: "start" });
