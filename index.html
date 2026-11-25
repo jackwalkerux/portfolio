@@ -952,7 +952,7 @@ footer > .wrap { position: relative; z-index: 1; }
 .f-col h3 { font-size: 15px; font-weight: 700; color: var(--muted); }
 .f-col a { color: var(--ink); text-decoration: none; font-size: 16px; }
 .f-col a:hover { color: var(--link); }
-.f-base { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-block: 20px calc(20px + env(safe-area-inset-bottom, 0px)); font-size: 14px; color: var(--muted); }
+.f-base { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; border-top: 1px solid color-mix(in srgb, var(--ink) 32%, var(--bg)); /* stands out from the topo lines behind */ padding-block: 20px calc(20px + env(safe-area-inset-bottom, 0px)); font-size: 14px; color: var(--muted); }
 
 @media (max-width: 860px) {
   .cards, .more .cards, .featured.three .cards, .more.four .cards { grid-template-columns: 1fr; gap: 44px; }
