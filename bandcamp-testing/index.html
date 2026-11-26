@@ -2252,7 +2252,7 @@ function initPeaks() {
 // three = the 3-wide preview (#home-3): Quarters, Amazon Music and Stewart Title as the big three; the rest move to More work
 function viewHome(three = false) {
   const byId = id => ALL.find(x => x.id === id);
-  const big = three ? ["quarters", "amazon-music", "stewart-title"].map(byId) : FEATURED;
+  const big = three ? ["quarters", "stewart-title", "amazon-music"].map(byId) : FEATURED;
   const rest = (three ? [...FEATURED, ...MORE].filter(x => !big.includes(x)) : MORE).filter(x => !x.hidden); // hidden: no card (Bandcamp lives in Beyond UX, Research)
   return `${three ? '<p class="preview-note">Preview: 3-wide home layout · <a href="#">Back to the current home page</a></p>' : ""}<section class="intro has-portrait">
       <div class="intro-text">
