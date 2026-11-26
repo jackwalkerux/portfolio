@@ -825,6 +825,10 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .xp-markbox canvas { position: absolute; opacity: 0; transition: opacity .12s ease; pointer-events: none; }
 .xp-markbox.on canvas { opacity: 1; }
 /* same type as the summary above it, with a lock in front */
+.card .card-note { color: var(--notice); }
+.cs-head .sum-row { display: grid; grid-template-columns: repeat(2, minmax(0, 40ch)); gap: 56px; align-items: start; }
+.cs-head .sum-row .notice { margin-top: 0; }
+@media (max-width: 760px) { .cs-head .sum-row { grid-template-columns: 1fr; gap: 14px; } }
 .cs-head .notice { color: var(--notice); display: flex; gap: 10px; align-items: flex-start; max-width: 40ch; margin-top: 12px; font-size: 21px; line-height: 1.5; font-weight: 350; }
 .cs-head .notice svg { flex: none; width: 20px; height: 20px; margin-top: 6px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
@@ -1163,16 +1167,15 @@ const FEATURED = [
         { quote: "Now picture every house like hers. Every rent paid on time. Every chore with a name on it. Every group chat back to being a group chat." } ] }
     ]},
   { id: "amazon-music", protected: "0d0fa5f5d36a2fc2c5d61338f6c5ba3c7dc2e6bda4a47f5b04cc807ba79d7d12", // password-gated (NDA); add ?draft before the # to see the "To add" notes
-    title: "Amazon Music", sub: "SCADpro", tilt: true, notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
+    title: "Amazon Music", sub: "SCADpro", tilt: true, cardNote: "Under NDA, so the details stay private.", notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
     meta: "SCADpro client project · Spring 2026", hero: "cover-amazon-music",
     facts: { Role: "UX Designer", Team: "SCADpro × Amazon Music", Timeline: "Mar to Jun 2026", Tools: "Figma" },
     sections: [
       { h: "At a glance", blocks: [
         { p: "Through SCADpro, our team worked with Amazon Music on how young adults discover, experience and engage with music. I designed touchpoints connecting Amazon Music with Prime Video, Retail, Audible, Kindle and Alexa+, for one entertainment experience that reaches beyond current listeners." },
-        { p: "I was a UX designer on a team of students from around 15 different majors." },
+        { p: "I was a UX designer on a team of students from around 15 different majors. I personally worked on a large number of still screens, prototypes and mockups across many devices and screen formats, from Kindles to smart TVs and Alexa." },
         { figs: [["am-uxteam", "The UX design team"], ["am-badge", "My SCADpro × Amazon Music badge"], ["am-portrait", "Me, at the team photo shoot"]], kind: "team" },
-        { todo: "What Amazon Music asked for, in general terms you're allowed to share: who the audience was and what the team set out to change." },
-        { todo: "2 to 4 bullets of what you personally did. This becomes the My role block." } ] },
+        { todo: "What Amazon Music asked for, in general terms you're allowed to share: who the audience was and what the team set out to change." } ] },
       { h: "How we worked", blocks: [
         { steps: [["Check-in 1", "", "Early research and a first concept check-in."], ["Midpoint", "", "We presented multiple concepts and decided which one to hone in on."], ["Check-in 2", "", "A refined version of that idea, with research to back it up."], ["Final presentation", "", "Our final deliverables and what we created."]] },
         { figs: [["am-workshop", "Synthesis workshop at SCADpro", { x: 14.3, y: 27, alt: "I'm presenting at the board, far left in the green shirt" }], ["am-board", "Personalized discovery ideas from our intercept interviews in Forsyth Park, where we asked people how they find and listen to music"]], kind: "sbs" },
@@ -1980,7 +1983,7 @@ function card(p) {
   return `<${tag} class="card${p.highlight ? " hl" : ""}${p.locked ? " locked" : ""}${p.protected ? " protected" : ""}">
     <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked || p.protected ? LOCK : ""}</div>
     <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h2>
-    <p>${esc(p.summary)}</p>
+    <p>${esc(p.summary)}${p.cardNote ? ` <span class="card-note">${esc(p.cardNote)}</span>` : ""}</p>
     <span class="meta">${p.highlight ? '<span class="hl-tag">Highlighted Work</span> · ' : ""}${esc(p.meta)}</span>${p.id === "quarters" ? '<span class="card-penny" aria-hidden="true"><pre class="penny-spin" data-cols="22" data-hover></pre></span>' : CARD_LOGO[p.id] ? `<span class="card-penny" aria-hidden="true"><pre class="logo-spin" data-logo="${CARD_LOGO[p.id][0]}" data-cols="${CARD_LOGO[p.id][1]}"></pre></span>` : ""}
   </${p.locked ? "div" : "a"}>`;
 }
@@ -2290,7 +2293,7 @@ function viewCase(p) {
     <a class="back" href="#projects"><span aria-hidden="true">&larr;</span> All projects</a>
     <header class="cs-head">
       <h1>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h1>
-      <p class="sum">${esc(p.summary)}</p>${p.notice ? `<p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg><span>${esc(p.notice)}</span></p>` : ""}
+      ${p.notice ? '<div class="sum-row">' : ""}<p class="sum">${esc(p.summary)}</p>${p.notice ? `<p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg><span>${esc(p.notice)}</span></p></div>` : ""}
     </header>
     <dl class="facts">${Object.entries(p.facts).filter(([, v]) => DRAFT || !/^Add\b/.test(v)).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
     ${ASSETS[p.hero] ? `<div class="hero">${media(p.hero, p.title + " cover", true)}</div>` : ""}
