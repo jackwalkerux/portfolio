@@ -135,16 +135,14 @@ main { padding-block: 56px 96px; }
 #cur { display: none; }
 .has-cursor #cur { display: block; position: fixed; inset: 0; z-index: 99; pointer-events: none; }
 .has-cursor * { cursor: none !important; }
-/* One circle, pinned to the pointer (no trailing). It grows and shows an icon for what a click will do. */
+/* One circle, pinned to the pointer (no trailing). It stays one size and shows an icon for what a click will do. */
 #cur-dot { display: none; }
-#cur-ring { position: fixed; left: 0; top: 0; translate: -60px -60px; will-change: translate; width: 12px; height: 12px; border-radius: 50%; background: var(--cur-fill); border: 0; box-shadow: 0 0 0 1.25px var(--cur-edge); transform: translate(-50%, -50%) scale(var(--cs, 1)); display: grid; place-items: center; color: var(--cur-edge); transition: width .22s cubic-bezier(.2, .8, .2, 1), height .22s cubic-bezier(.2, .8, .2, 1), background-color .2s ease, transform .15s ease, opacity .2s ease; }
+#cur-ring { position: fixed; left: 0; top: 0; translate: -60px -60px; will-change: translate; width: 26px; height: 26px; border-radius: 50%; background: var(--cur-fill); border: 0; box-shadow: 0 0 0 1.25px var(--cur-edge); transform: translate(-50%, -50%) scale(var(--cs, 1)); display: grid; place-items: center; color: var(--cur-edge); transition: background-color .2s ease, transform .15s ease, opacity .2s ease; }
 #cur-glyph { display: grid; place-items: center; opacity: 0; transform: scale(.6); transition: opacity .15s ease, transform .22s cubic-bezier(.2, .8, .2, 1); }
-#cur-glyph svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#cur-glyph svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 #cur.off #cur-ring { opacity: 0; }
-#cur.icon #cur-ring { width: 44px; height: 44px; }
 #cur.icon #cur-glyph { opacity: 1; transform: none; }
-#cur.small #cur-ring { width: 22px; height: 22px; }
-#cur.brush #cur-ring { width: 16px; height: 16px; background: transparent; box-shadow: 0 0 0 1.5px var(--cur-fill), 0 0 0 2.75px var(--cur-edge); }
+#cur.brush #cur-ring { background: transparent; box-shadow: 0 0 0 1.5px var(--cur-fill), 0 0 0 2.75px var(--cur-edge); }
 #cur.down #cur-ring { --cs: .86; }
 .lb-open #cur #cur-dot, .lb-open #cur #cur-ring { opacity: 0; }
 .has-cursor.lb-open * { cursor: zoom-out !important; }
@@ -3888,11 +3886,13 @@ document.addEventListener("keydown", e => {
     theme: P('<circle cx="12" cy="12" r="7"/><path d="M12 5a7 7 0 0 0 0 14z" fill="currentColor" stroke="none"/>'),
     file: P('<path d="M12 4v11M7 10l5 5 5-5M5 19h14"/>'),
     eye: P('<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/>'),
-    tab: P('<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 9h16"/>')
+    tab: P('<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 9h16"/>'),
+    lock: P('<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>')
   };
   // what a click on this element would do
   const context = t => {
     if (t.closest(".ascii-reveal, .big-name")) return ["brush"];
+    if (t.closest(".card.locked, [aria-disabled=true]")) return ["icon", "lock"]; // locked work: can't be opened yet
     const el = t.closest("a, button, summary, [data-jump], [data-zoom], figure .img.fit, .xp-card");
     if (!el) return [""];
     if (el.matches("figure .img.fit, [data-zoom]")) return ["icon", "zoom"];
