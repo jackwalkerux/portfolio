@@ -647,8 +647,23 @@ figure .img.fit img { cursor: zoom-in; }
 .psplit .parts > div:last-child { border-bottom: 1px solid var(--line); }
 @media (max-width: 760px) { .psplit { grid-template-columns: 1fr; gap: 28px; } .psplit .pcut img { max-width: 260px; } }
 .cs-link { font-weight: 700; color: var(--link); text-decoration: none; font-size: 17px; } .cs-link:hover { text-decoration: underline; }
-/* No native scrollbar: the section dots (and the trail on Experiments) show where you are */
-html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+/* No native scrollbar: the ASCII scroll line on the right shows where you are. It comes back for anyone whose
+   system asks for more contrast or forced colours, and on narrow screens (where the line is hidden). */
+@media (min-width: 901px) and (forced-colors: none) and (prefers-contrast: no-preference) {
+  html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+}
+/* ASCII scroll line: ':' track, fills green ('|') as you scroll, '#' marks where you are, '+' marks each section */
+.arail { position: fixed; right: clamp(10px, 1.6vw, 22px); top: 50%; transform: translateY(-50%); z-index: 40; width: 24px; transition: opacity .3s ease; }
+.arail.off { opacity: 0; pointer-events: none; }
+.arail pre { margin: 0; font: 700 11px/12px ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: color-mix(in srgb, var(--muted) 45%, transparent); text-align: center; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+.arail pre .fill, .arail pre .hd { color: var(--link); }
+.arail pre .mk { color: var(--muted); } .arail pre .mk.fill { color: var(--link); }
+.arail-hits { position: absolute; inset: 0; pointer-events: none; }
+.arail-hits button { position: absolute; left: 0; width: 24px; height: 14px; margin-top: -1px; padding: 0; border: 0; background: none; cursor: pointer; pointer-events: auto; border-radius: 4px; }
+.arail-hits button:hover .dot-l, .arail-hits button:focus-visible .dot-l { opacity: 1; transform: translate(0, -50%); }
+.arail-hits button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.arail-hits button[aria-current] .dot-l { border-color: var(--link); }
+@media (max-width: 900px) { .arail { display: none; } }
 /* Imagined peaks, at the end of About */
 .imagined { margin-top: 96px; border-top: 1px solid var(--line); padding-top: 32px; display: grid; gap: 10px; }
 .imagined h2 { font-size: 20px; } .imagined > p { color: var(--muted); font-size: 15.5px; }
@@ -2475,7 +2490,7 @@ function selectBux(id, focusTab) {
   });
   setRoute("beyond-ux/" + id, true);
   lastId = "beyond-ux/" + id;
-  initDots();
+  initAsciiRail();
   // If we're already scrolled into the content, jump to the top of the new section (just under the squished cards)
   const top = panel.getBoundingClientRect().top, under = bux ? bux.collapsedBottom() : 140;
   if (top < under) window.scrollTo(0, window.scrollY + top - under - 16);
@@ -3025,6 +3040,64 @@ function xpClimb(el) {
     pre.innerHTML = climbArt(xs, WD, Math.round(k * (N - 1)), ticks, k > .98);
   };
   page.addEventListener("scroll", draw, { passive: true }); draw();
+}
+/* ASCII scroll line: one thin column of characters on the right edge of every page. It fills in with the
+   accent colour as you scroll, and each section gets a '+' you can hover (name) or click (jump). Click or drag
+   along the line to scroll, like a scrollbar. */
+let asciiRail = null;
+function initAsciiRail() {
+  if (asciiRail) { asciiRail.stop(); asciiRail = null; }
+  const secs = [...document.querySelectorAll("#app .xp-grid > .xp, #app .cs-body > .sec, #app .bux-panel .projs > .proj")];
+  const names = secs.map(s => ((s.querySelector(":scope > h2, .proj-title, h3") || {}).textContent || "").trim());
+  const ROWS = 30, LH = 12;
+  const el = document.createElement("nav"); el.className = "arail off"; el.setAttribute("aria-label", "Sections on this page");
+  el.innerHTML = `<pre aria-hidden="true"></pre><div class="arail-hits">${names.map((n, i) => `<button type="button" data-i="${i}" aria-label="${esc(n)}"><span class="dot-l">${esc(n)}</span></button>`).join("")}</div>`;
+  document.body.appendChild(el);
+  const pre = el.querySelector("pre"), btns = [...el.querySelectorAll(".arail-hits button")];
+  const accentFrom = document.querySelector("#app .cs, #app > *") || document.body;
+  el.style.setProperty("--link", getComputedStyle(accentFrom).getPropertyValue("--link")); // the page's accent (blue on Quarters)
+  const max = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  const offset = () => (bux ? bux.collapsedBottom() : 80) + 16;
+  let pending = 0, last = "", lock = -1;
+  const draw = () => {
+    pending = 0;
+    const m = max();
+    el.classList.toggle("off", m < innerHeight * .3); // nothing much to scroll: no line
+    const head = Math.round(Math.min(1, Math.max(0, scrollY / m)) * (ROWS - 1));
+    const marks = secs.map(s => Math.min(ROWS - 1, Math.max(0, Math.round((s.getBoundingClientRect().top + scrollY - offset()) / m * (ROWS - 1)))));
+    let cur = -1; const line = innerHeight * .35;
+    secs.forEach((s, i) => { if (s.isConnected && s.getBoundingClientRect().top < line) cur = i; });
+    if (scrollY >= m - 4 && secs.length) cur = secs.length - 1;
+    if (lock >= 0) cur = lock;
+    let out = "";
+    for (let r = 0; r < ROWS; r++) {
+      const mk = marks.includes(r), passed = r <= head;
+      const ch = r === head ? "#" : mk ? "+" : passed ? "|" : ":";
+      const cls = [r === head ? "hd" : passed ? "fill" : "", mk && r !== head ? "mk" : ""].filter(Boolean).join(" ");
+      out += (cls ? `<span class="${cls}">${ch}</span>` : ch) + (r < ROWS - 1 ? "\n" : "");
+    }
+    if (out !== last) { pre.innerHTML = out; last = out; }
+    btns.forEach((b, i) => { b.style.top = marks[i] * LH + "px"; if (i === cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+  };
+  const kick = () => { if (!pending) pending = requestAnimationFrame(draw); };
+  // jump to a section (opening it first if it's a closed Beyond UX project)
+  el.querySelector(".arail-hits").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const i = +b.dataset.i, s = secs[i]; if (!s) return;
+    if (s.classList.contains("proj") && s.classList.contains("closed")) { setProj(s, true); syncProjAll(s.closest(".bux-piece")); }
+    lock = i; kick();
+    scrollTo({ top: scrollY + s.getBoundingClientRect().top - offset(), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    const release = () => { lock = -1; kick(); removeEventListener("scrollend", release); };
+    addEventListener("scrollend", release); setTimeout(release, 1500);
+  });
+  // click or drag along the line to scroll there
+  const seek = e => { const r = pre.getBoundingClientRect(); scrollTo(0, Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)) * max()); };
+  pre.addEventListener("pointerdown", e => { pre.setPointerCapture(e.pointerId); seek(e); e.preventDefault(); });
+  pre.addEventListener("pointermove", e => { if (pre.hasPointerCapture(e.pointerId)) seek(e); });
+  const ro = new ResizeObserver(kick); ro.observe(document.body);
+  addEventListener("scroll", kick, { passive: true }); addEventListener("resize", kick);
+  draw();
+  asciiRail = { el, stop: () => { ro.disconnect(); removeEventListener("scroll", kick); removeEventListener("resize", kick); cancelAnimationFrame(pending); el.remove(); } };
 }
 function initClimbRail() {
   if (climbRail) { climbRail.stop(); climbRail = null; }
@@ -3736,8 +3809,7 @@ function render() {
   initLost();
   initImagined();
   initCountIn();
-  initDots();
-  initClimbRail();
+  initAsciiRail(); // replaces the section dots and the mountain trail (initDots / initClimbRail kept for later)
 }
 
 /* Section dots: a vertical stack on the right edge, one dot per section of the current page.
@@ -3907,6 +3979,7 @@ document.addEventListener("keydown", e => {
   const context = t => {
     if (t.closest(".ascii-reveal, .big-name")) return ["brush"];
     if (t.closest(".card.locked, [aria-disabled=true]")) return ["icon", "lock"]; // locked work: can't be opened yet
+    if (t.closest(".arail pre")) return ["small"];
     const el = t.closest("a, button, summary, [data-jump], [data-zoom], figure .img.fit, .xp-card");
     if (!el) return [""];
     if (el.matches("figure .img.fit, [data-zoom]")) return ["icon", "zoom"];
@@ -3915,7 +3988,7 @@ document.addEventListener("keydown", e => {
     if (el.matches(".pp-stack")) return ["icon", "flip"];
     if (el.matches(".proj-toggle")) return ["icon", el.getAttribute("aria-expanded") === "true" ? "close" : "open"];
     if (el.matches(".proj-all")) return ["icon", /Collapse/.test(el.textContent) ? "close" : "open"];
-    if (el.matches(".dots button")) return ["icon", "down"];
+    if (el.matches(".dots button, .arail-hits button")) return ["icon", "down"];
     if (el.matches(".xp-replay")) return ["icon", "replay"];
     if (el.matches("#mode")) return ["icon", "theme"];
     if (el.matches("[role=tab], .bux-card")) return ["icon", "tab"];
