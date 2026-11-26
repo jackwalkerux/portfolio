@@ -620,6 +620,14 @@ figure .img.fit img { cursor: zoom-in; }
 .figs.team figure:first-child { grid-row: 1 / span 2; }
 .figs.team .img { border-radius: 10px; }
 .figs.team { row-gap: 28px; }
+.img.has-me { container-type: inline-size; }
+.me-pin { position: absolute; inset: 0; pointer-events: none; }
+.me-tag { position: absolute; margin: 0; font: 600 1.85cqw/1.12 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.65), 0 0 6px rgba(0,0,0,.35);
+  left: calc(var(--x) - 3.5ch); top: calc(var(--y) - 5 * 1.12em); white-space: pre; }
+.me-arrow { display: inline-block; animation: me-bob 1.6s ease-in-out infinite; }
+@keyframes me-bob { 50% { transform: translateY(.35em); } }
+@media (prefers-reduced-motion: reduce) { .me-arrow { animation: none; } }
 .figs.sbs { grid-template-columns: 1.778fr 1.333fr; gap: 20px; } /* widths in proportion to each photo, so both stand the same height */
 @media (max-width: 760px) { .figs.team { grid-template-columns: 1fr; gap: 24px; } .figs.team figure:first-child { grid-row: auto; } .figs.team figure:not(:first-child) { max-width: 280px; } .figs.sbs { grid-template-columns: 1fr; } }
 .figs.cut { --n: 1; max-width: 620px; width: 100%; margin-inline: auto; }
@@ -1182,7 +1190,7 @@ const FEATURED = [
         { todo: "Your role in one line (for example: UX designer on a team of N), then 2 to 4 bullets of what you personally did. This becomes the My role block." } ] },
       { h: "How we worked", blocks: [
         { steps: [["Check-in 1", "", ""], ["Midpoint", "", ""], ["Check-in 2", "", ""], ["Final presentation", "", ""]] },
-        { figs: [["am-workshop", "Synthesis workshop at SCADpro"], ["am-board", "Personalized discovery ideas from our intercept interviews in Forsyth Park, where we asked people how they find and listen to music"]], kind: "sbs" },
+        { figs: [["am-workshop", "Synthesis workshop at SCADpro", { x: 14.3, y: 27, alt: "I'm presenting at the board, far left in the green shirt" }], ["am-board", "Personalized discovery ideas from our intercept interviews in Forsyth Park, where we asked people how they find and listen to music"]], kind: "sbs" },
         { todo: "Replace each milestone's line above with one sentence about your part at that stage. Mark the stage you led and it shows as Led by me." } ] },
       { h: "What I designed", blocks: [
         { todo: "Describe the touchpoints you designed at a high level (Prime Video, Retail, Audible, Kindle, Alexa+). Use blurred or cropped screens, or simple redrawn wireframes, only where the NDA allows." },
@@ -1868,7 +1876,7 @@ let portraitWidget = null, aboutTilt = null, pageTilts = [];
 class TiltCard {
   constructor(el, opts = {}) {
     this.flat = !!opts.flat; // flat: sit straight until hovered (no lean toward a far-off cursor)
-    this.el = el; this.img = el.querySelector("img"); this.raf = 0; this.dead = false;
+    this.el = el; this.img = el.querySelector("img"); this.pin = el.querySelector(".me-pin"); this.raf = 0; this.dead = false;
     this.P = { nx: 0, ny: 0, tx: 0, ty: 0, h: 0 }; this.hov = false; this.lx = 0; this.ly = 0;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     this.glare = document.createElement("i"); this.glare.className = "glare"; this.glare.setAttribute("aria-hidden", "true"); el.appendChild(this.glare);
@@ -1897,7 +1905,7 @@ class TiltCard {
     el.style.setProperty("--lift", lift.toFixed(3));
     el.style.setProperty("--sx", (-nx * 14 * lift).toFixed(1) + "px");
     el.style.setProperty("--sy", (20 + -ny * 12 * lift).toFixed(1) + "px");
-    if (this.img) this.img.style.transform = `translate(${(-nx * sx).toFixed(2)}px, ${(-ny * sy).toFixed(2)}px) scale(${Z})`;
+    if (this.img) { const tr = `translate(${(-nx * sx).toFixed(2)}px, ${(-ny * sy).toFixed(2)}px) scale(${Z})`; this.img.style.transform = tr; if (this.pin) this.pin.style.transform = tr; }
     this.kick();
   }
   destroy() {
@@ -1920,12 +1928,18 @@ function media(key, alt, eager) {
   const d = ASSET_DIMS[key];
   return `<img src="${src}" alt="${esc(alt)}"${d ? ` width="${d[0]}" height="${d[1]}"` : ""} decoding="async"${eager ? "" : ' loading="lazy"'}>`;
 }
+// A small ASCII "that's me" tag pinned over a photo; x/y = where the arrow tip lands, in % of the image
+function meCallout(me) {
+  const t = me.text || "that's me!", bar = "-".repeat(t.length + 2);
+  const art = `.${bar}.\n| ${t} |\n'${bar}'\n`;
+  return `<div class="me-pin" aria-hidden="true"><pre class="me-tag" style="--x:${me.x}%;--y:${me.y}%">${esc(art)}<span class="me-arrow">   |\n   V</span></pre></div>`;
+}
 function figs(list, n, kind) {
   const cols = n || (list.length === 4 ? 2 : Math.min(3, list.length));
   const cls = "figs" + (kind ? " " + kind : "") + (!kind && cols === 1 ? " one" : "");
   const style = kind ? "" : ' style="--n:' + cols + '"';
-  return `<div class="${cls}"${style}>${list.map(([k, c]) =>
-    `<figure><div class="img fit">${media(k, c)}</div>${c ? `<figcaption>${esc(c)}</figcaption>` : ""}</figure>`).join("")}</div>`;
+  return `<div class="${cls}"${style}>${list.map(([k, c, me]) =>
+    `<figure><div class="img fit${me ? " has-me" : ""}">${media(k, me ? c + ". " + me.alt : c)}${me ? meCallout(me) : ""}</div>${c ? `<figcaption>${esc(c)}</figcaption>` : ""}</figure>`).join("")}</div>`;
 }
 const todo = t => `<p class="todo"><b>To add:</b> ${esc(t)}</p>`;
 function block(b) {
