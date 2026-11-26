@@ -3826,7 +3826,8 @@ document.addEventListener("keydown", e => {
   // Visitors can switch the custom cursor off; the choice is remembered.
   const btn = $("#cur-toggle");
   let enabled = true;
-  try { enabled = localStorage.getItem("cursor") !== "off"; } catch (e) {}
+  enabled = false; // off by default; visitors can turn it on with the cursor button, and that choice is remembered
+  try { enabled = localStorage.getItem("cursor") === "on"; } catch (e) {}
   const ICON_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5l11.5 9-5.2.9 2.9 5.8-2.3 1.1-2.9-5.8-4 3.6z"/></svg>';
   const ICON_RING = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></svg>';
   const apply = () => {
@@ -3965,8 +3966,9 @@ document.addEventListener("keydown", e => {
   if (mq.addEventListener) { mq.addEventListener("change", icon); mq.addEventListener("change", syncProtoScheme); }
   btn.addEventListener("click", () => {
     const next = effective() === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem("theme", next); } catch (e) {}
+    // choosing what the system already shows clears the override, so the site goes back to following the system
+    if (next === (mq.matches ? "dark" : "light")) { delete document.documentElement.dataset.theme; try { localStorage.removeItem("theme"); } catch (e) {} }
+    else { document.documentElement.dataset.theme = next; try { localStorage.setItem("theme", next); } catch (e) {} }
     icon();
     if (typeof portraitWidget !== "undefined" && portraitWidget && portraitWidget.source) portraitWidget.resize();
     syncProtoScheme();
