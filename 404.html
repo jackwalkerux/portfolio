@@ -647,11 +647,7 @@ figure .img.fit img { cursor: zoom-in; }
 .psplit .parts > div:last-child { border-bottom: 1px solid var(--line); }
 @media (max-width: 760px) { .psplit { grid-template-columns: 1fr; gap: 28px; } .psplit .pcut img { max-width: 260px; } }
 .cs-link { font-weight: 700; color: var(--link); text-decoration: none; font-size: 17px; } .cs-link:hover { text-decoration: underline; }
-/* No native scrollbar: the ASCII scroll line on the right shows where you are. It comes back for anyone whose
-   system asks for more contrast or forced colours, and on narrow screens (where the line is hidden). */
-@media (min-width: 901px) and (forced-colors: none) and (prefers-contrast: no-preference) {
-  html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
-}
+/* Native scrollbar stays on (the hide rule is saved for later, with the ASCII scroll line). */
 /* ASCII scroll line: ':' track, fills green ('|') as you scroll, '#' marks where you are, '+' marks each section */
 .arail { position: fixed; right: clamp(10px, 1.6vw, 22px); top: 50%; transform: translateY(-50%); z-index: 40; width: 24px; transition: opacity .3s ease; }
 .arail.off { opacity: 0; pointer-events: none; }
@@ -2490,7 +2486,7 @@ function selectBux(id, focusTab) {
   });
   setRoute("beyond-ux/" + id, true);
   lastId = "beyond-ux/" + id;
-  initAsciiRail();
+  initDots();
   // If we're already scrolled into the content, jump to the top of the new section (just under the squished cards)
   const top = panel.getBoundingClientRect().top, under = bux ? bux.collapsedBottom() : 140;
   if (top < under) window.scrollTo(0, window.scrollY + top - under - 16);
@@ -3809,7 +3805,9 @@ function render() {
   initLost();
   initImagined();
   initCountIn();
-  initAsciiRail(); // replaces the section dots and the mountain trail (initDots / initClimbRail kept for later)
+  initDots();
+  initClimbRail(); // only runs on the unlisted #lab page
+  // initAsciiRail(); // saved for later: ASCII scroll line (would replace the dots)
 }
 
 /* Section dots: a vertical stack on the right edge, one dot per section of the current page.
