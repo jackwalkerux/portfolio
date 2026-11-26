@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<base href="/">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Jack Walker — UX designer. BFA UX Design, Savannah College of Art and Design, May 2027.">
@@ -2438,7 +2439,7 @@ function selectBux(id, focusTab) {
     b.classList.toggle("on", on);
     if (b.getAttribute("role") === "tab") { b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; if (on && focusTab) b.focus(); }
   });
-  history.replaceState(null, "", "#beyond-ux/" + id);
+  setRoute("beyond-ux/" + id, true);
   lastId = "beyond-ux/" + id;
   initDots();
   // If we're already scrolled into the content, jump to the top of the new section (just under the squished cards)
@@ -3611,15 +3612,44 @@ document.addEventListener("submit", async e => {
   if (ok) { try { sessionStorage.setItem("gate:" + p.id, "1"); } catch (err) {} render(); }
   else { msg.textContent = "That password isn't right."; f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake"); inp.select(); }
 });
+/* Routing. On the live site (walkerjack.com) pages have clean addresses like /quarters; in previews (and anywhere
+   else) they fall back to #quarters. In-page spots on the home page (#projects, #peaks) stay as # anchors.
+   Old #links still work: they're swapped for the clean address on arrival. */
+const PATHS = /(^|\.)walkerjack\.com$|github\.io$/.test(location.hostname) || /[?&]paths\b/.test(location.search);
+const ANCHORS = ["projects", "peaks"];
+const routeHref = r => !PATHS ? "#" + r : !r ? "/" : ANCHORS.includes(r) ? "/#" + r : "/" + r;
+function getRoute() {
+  if (!PATHS) return location.hash.replace(/^#/, "");
+  const p = decodeURIComponent(location.pathname.replace(/index\.html$/, "").replace(/^\/+|\/+$/g, ""));
+  if (p) return p;
+  const h = location.hash.replace(/^#/, "");
+  if (h && !ANCHORS.includes(h)) history.replaceState(null, "", "/" + h + location.search);
+  return h;
+}
+function setRoute(r, replace) {
+  const u = PATHS ? routeHref(r) + (ANCHORS.includes(r) ? "" : location.search) : "#" + r;
+  history[replace ? "replaceState" : "pushState"](null, "", PATHS && ANCHORS.includes(r) ? "/" + location.search + "#" + r : u);
+}
+function cleanLinks(root) { if (PATHS) root.querySelectorAll('a[href^="#"]').forEach(a => a.setAttribute("href", routeHref(a.getAttribute("href").slice(1)))); }
+document.addEventListener("click", e => {
+  if (!PATHS || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest("a[href]"); if (!a || a.target === "_blank") return;
+  const h = a.getAttribute("href");
+  if (!/^\/(?!\/)|^#/.test(h) || /\.(pdf|html?)$/.test(h)) return;
+  e.preventDefault();
+  setRoute(h.replace(/^\/?#?/, "").replace(/\/+$/, ""));
+  render();
+});
+addEventListener("popstate", () => { if (PATHS) render(); });
 function render() {
-  const moved = ALL.find(x => x.href && x.id === location.hash.slice(1));
-  if (moved) history.replaceState(null, "", moved.href);
-  const id = location.hash.replace(/^#/, "");
+  const moved = ALL.find(x => x.href && x.id === getRoute());
+  if (moved) setRoute(moved.href.replace(/^#/, ""), true);
+  const id = getRoute();
   const [base, sub] = id.split("/");
   const isBux = base === "beyond-ux" || id === "other-work";
   const p = ALL.find(x => x.id === id && !x.locked && !x.href);
   DRAFT = /[?&]draft\b/.test(location.search); document.body.classList.toggle("draft-off", !DRAFT); // ?draft shows the "To add" notes
-  if (!p && ALL.some(x => x.id === id)) history.replaceState(null, "", location.pathname + location.search);
+  if (!p && ALL.some(x => x.id === id)) setRoute("", true);
   const cameFrom = ALL.find(x => x.id === lastId);
   lastId = id;
   let html, nav = "work";
@@ -3638,6 +3668,7 @@ function render() {
   if (aboutTilt) { aboutTilt.destroy(); aboutTilt = null; }
   const firstRender = !$("#app").children.length;
   $("#app").innerHTML = html;
+  cleanLinks($("#app"));
   if (!firstRender) scrambleIn($("#app"));
   document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === nav) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   const page = p ? p.title : isBux ? "Beyond UX" : id === "about" ? "About" : id === "brand" ? "My Brand" : id === "lab" ? "Experiments" : "";
@@ -3647,7 +3678,7 @@ function render() {
     : isBux ? '<b aria-current="page">Beyond UX</b>' : id === "about" ? '<b aria-current="page">About</b>' : id === "brand" ? '<b aria-current="page">My Brand</b>' : id === "lab" ? '<b aria-current="page">Experiments</b>' : "";
   // Coming back home lands you where you left off: on the project you opened, or the project grid.
   const home = !p && !isBux && id !== "about" && id !== "brand" && id !== "lab";
-  const card = home && cameFrom ? document.querySelector(`.card[href="#${cameFrom.id}"]`) : null;
+  const card = home && cameFrom ? document.querySelector(`.card[href="${routeHref(cameFrom.id)}"]`) : null;
   if (card) card.scrollIntoView({ block: "center" });
   else if (id === "projects") document.getElementById("projects").scrollIntoView({ block: "start" });
   else window.scrollTo(0, 0);
@@ -3940,7 +3971,8 @@ document.addEventListener("keydown", e => {
     syncProtoScheme();
   });
 })();
-addEventListener("hashchange", render);
+addEventListener("hashchange", () => { if (!PATHS || ANCHORS.includes(location.hash.slice(1))) render(); });
+cleanLinks(document.querySelector(".top") || document); cleanLinks(document.querySelector("footer") || document);
 footerTopo();
 render();
 </script>
