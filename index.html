@@ -616,7 +616,7 @@ figure .img.fit img { cursor: zoom-in; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .figs.evo figure:first-child img { filter: invert(1); } }
 @media (max-width: 760px) { .figs.evo { grid-template-columns: 1fr; gap: 32px; } .figs.evo figure:last-child { max-width: 200px; margin-inline: auto; } }
 /* team cut-out beside a portrait, bottoms aligned, no frames */
-.figs.team { grid-template-columns: minmax(0, 1fr) minmax(0, 260px); gap: 40px; align-items: end; max-width: 900px; margin-inline: auto; width: 100%; }
+.figs.team { grid-template-columns: minmax(0, 1fr) minmax(0, 260px); gap: 40px; align-items: end; max-width: 900px; width: 100%; } /* starts on the text's left edge */
 .figs.team figure:first-child { grid-row: 1 / span 2; }
 .figs.team .img { border-radius: 10px; }
 .figs.team { row-gap: 28px; }
