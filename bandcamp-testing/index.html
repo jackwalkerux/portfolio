@@ -842,6 +842,7 @@ figure .img.fit img { cursor: zoom-in; }
 .xp-markbox canvas { position: absolute; opacity: 0; transition: opacity .12s ease; pointer-events: none; }
 .xp-markbox.on canvas { opacity: 1; }
 /* same type as the summary above it, with a lock in front */
+.card .card-note-below { max-width: none; text-wrap: balance; margin: -4px 0 0; font-size: 15px; font-weight: 500; color: var(--muted); }
 .card h2 .card-note { display: inline-block; color: var(--muted); font-size: .62em; font-weight: 400; letter-spacing: 0; vertical-align: .12em; margin-left: 4px; } /* inline-block: keeps the card hover underline/colour off it */
 .cs-head .sum-row { display: grid; grid-template-columns: repeat(2, minmax(0, 40ch)); gap: 56px; align-items: start; }
 .cs-head .sum-row .notice { margin-top: 0; }
@@ -1205,7 +1206,7 @@ const FEATURED = [
       { h: "Reflection", blocks: [
         { p: "I have never worked in such a multifaceted team before. We had marketers, writers, sound designers, service designers, and many more. Getting to work with a team like this really enlightened me to so many more processes, and built my collaboration skills more than anything. A team of this size requires a lot of alignment and planning, so seeing a project like this executed to its fullest potential was a joy." } ] }
     ]},
-  { id: "stewart-title", locked: true, title: "Stewart Title", sub: "Connect Close", summary: "A redesign of Connect Close, Stewart Title's title production software, taken from first insights to developer-ready designs.",
+  { id: "stewart-title", locked: true, cardNoteBelow: "Product is still in production, not ready to be shown.", title: "Stewart Title", sub: "Connect Close", summary: "A redesign of Connect Close, Stewart Title's title production software, taken from first insights to developer-ready designs.",
     meta: "UX/UI design intern · Summer 2026", hero: "cover-stewart-title",
     facts: { Role: "UX/UI design intern", Team: "PMs, engineers, designers", Timeline: "Jun to Aug 2026", Tools: "Figma" },
     sections: [
@@ -2002,7 +2003,7 @@ function card(p) {
   return `<${tag} class="card${p.highlight ? " hl" : ""}${p.locked ? " locked" : ""}${p.protected ? " protected" : ""}">
     <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked || p.protected ? LOCK : ""}</div>
     <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}${p.cardNote ? ` <small class="card-note">(${esc(p.cardNote)})</small>` : ""}</h2>
-    <p>${esc(p.summary)}</p>
+    ${p.cardNoteBelow ? `<p class="card-note-below">${esc(p.cardNoteBelow)}</p>` : ""}<p>${esc(p.summary)}</p>
     <span class="meta">${p.highlight ? '<span class="hl-tag">Highlighted Work</span> · ' : ""}${esc(p.meta)}</span>${p.id === "quarters" ? '<span class="card-penny" aria-hidden="true"><pre class="penny-spin" data-cols="22" data-hover></pre></span>' : CARD_LOGO[p.id] ? `<span class="card-penny" aria-hidden="true"><pre class="logo-spin" data-logo="${CARD_LOGO[p.id][0]}" data-cols="${CARD_LOGO[p.id][1]}"></pre></span>` : ""}
   </${p.locked ? "div" : "a"}>`;
 }
