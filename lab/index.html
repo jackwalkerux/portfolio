@@ -189,6 +189,8 @@ main { padding-block: 56px 96px; }
 .card.capstone { grid-column: 1 / -1; align-content: center; justify-items: center; text-align: center; gap: 8px; min-height: 220px; padding: 40px 24px; border: 2px dashed color-mix(in srgb, var(--muted) 45%, transparent); border-radius: 12px; background: repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in srgb, var(--wash) 70%, transparent) 14px 28px); }
 .card.capstone h2 { font-size: 28px; font-weight: 800; color: var(--ink); text-decoration: none; }
 .card.capstone .peak-status { margin: 0; }
+.card.capstone + .card.capstone, .card.capstone:has(+ .card.capstone) { grid-column: auto; } /* two placeholders sit side by side */
+.card.capstone .tease { margin: 0 0 4px; text-align: center; }
 .card.capstone:hover h2 { color: var(--ink); text-decoration: none; }
 .card:hover h2 { color: var(--link); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .card.hl { border: 1.5px solid var(--link); border-radius: 14px; padding: 16px; margin: -16px; }
@@ -2277,6 +2279,12 @@ function viewHome(three = false) {
         <h2>Capstone</h2>
         <span class="peak-status"><b aria-hidden="true">[<i>&gt;</i>]</b> In progress</span>
         <span class="meta">Project lead · SCAD BFA UX Design · Coming 2027</span>
+      </div>
+      <div class="card capstone" aria-label="Personal project, ideating">
+        <h2>Personal Project</h2>
+        <p class="tease">A desk lamp that does more than light the page.</p>
+        <span class="peak-status"><b aria-hidden="true">[<i>&gt;</i>]</b> Ideating</span>
+        <span class="meta">Software, UI, product and industrial design</span>
       </div>
     </div></section>
     <section class="more${three ? " four" : ""}"><h2>More work</h2><div class="cards">${rest.map(card).join("")}
