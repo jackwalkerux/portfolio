@@ -628,8 +628,9 @@ figure .img.fit img { cursor: zoom-in; }
 .me-arrow { display: inline-block; animation: me-bob 1.6s ease-in-out infinite; }
 @keyframes me-bob { 50% { transform: translateY(.35em); } }
 @media (prefers-reduced-motion: reduce) { .me-arrow { animation: none; } }
+.figs.row3 { grid-template-columns: 1.499fr .667fr .562fr; gap: 20px; } /* widths in proportion to each photo: one even row */
 .figs.sbs { grid-template-columns: 1.778fr 1.333fr; gap: 20px; } /* widths in proportion to each photo, so both stand the same height */
-@media (max-width: 760px) { .figs.team { grid-template-columns: 1fr; gap: 24px; } .figs.team figure:first-child { grid-row: auto; } .figs.team figure:not(:first-child) { max-width: 280px; } .figs.sbs { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .figs.team { grid-template-columns: 1fr; gap: 24px; } .figs.team figure:first-child { grid-row: auto; } .figs.team figure:not(:first-child) { max-width: 280px; } .figs.sbs { grid-template-columns: 1fr; } .figs.row3 { grid-template-columns: .667fr .562fr; } .figs.row3 figure:first-child { grid-column: 1 / -1; } }
 .figs.cut { --n: 1; max-width: 620px; width: 100%; margin-inline: auto; }
 .figs.cut .img { background: transparent; border-radius: 0; }
 .figs.cut figcaption { text-align: center; }
@@ -1192,14 +1193,10 @@ const FEATURED = [
         { steps: [["Check-in 1", "", ""], ["Midpoint", "", ""], ["Check-in 2", "", ""], ["Final presentation", "", ""]] },
         { figs: [["am-workshop", "Synthesis workshop at SCADpro", { x: 14.3, y: 27, alt: "I'm presenting at the board, far left in the green shirt" }], ["am-board", "Personalized discovery ideas from our intercept interviews in Forsyth Park, where we asked people how they find and listen to music"]], kind: "sbs" },
         { todo: "Replace each milestone's line above with one sentence about your part at that stage. Mark the stage you led and it shows as Led by me." } ] },
-      { h: "What I designed", blocks: [
-        { todo: "Describe the touchpoints you designed at a high level (Prime Video, Retail, Audible, Kindle, Alexa+). Use blurred or cropped screens, or simple redrawn wireframes, only where the NDA allows." },
-        { todo: "Photos of you working: workshops, presenting, sketching. These show your involvement without showing the product." },
-        { figs: [["am-demo", "Demoing our work"]], kind: "narrow" } ] },
       { h: "Outcome", blocks: [
         { todo: "How the final presentation went and any feedback from Amazon you can share. Skip numbers or plans that are confidential." },
-        { figs: [["am-team", "The SCADpro × Amazon Music team"]], n: 1 },
-        { figs: [["am-shoot", "Behind the scenes at the team photo shoot"]], kind: "small" } ] },
+        { todo: "Describe the touchpoints you designed at a high level (Prime Video, Retail, Audible, Kindle, Alexa+). Use blurred or cropped screens, or simple redrawn wireframes, only where the NDA allows." },
+        { figs: [["am-team", "The SCADpro × Amazon Music team"], ["am-demo", "Demoing our work"], ["am-shoot", "Behind the scenes at the team photo shoot"]], kind: "row3" } ] },
       { h: "Reflection", blocks: [
         { todo: "A few sentences in your own voice: what you learned working with a real client under NDA." } ] }
     ]},
