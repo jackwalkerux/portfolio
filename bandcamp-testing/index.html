@@ -614,8 +614,8 @@ figure .img.fit img { cursor: zoom-in; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .figs.evo figure:first-child img { filter: invert(1); } }
 @media (max-width: 760px) { .figs.evo { grid-template-columns: 1fr; gap: 32px; } .figs.evo figure:last-child { max-width: 200px; margin-inline: auto; } }
 /* team cut-out beside a portrait, bottoms aligned, no frames */
-.figs.team { grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: end; max-width: 820px; margin-inline: auto; width: 100%; }
-.figs.team figure:first-child .img { background: transparent; border-radius: 0; }
+.figs.team { grid-template-columns: minmax(0, 1fr) minmax(0, 210px); gap: 40px; align-items: end; max-width: 900px; margin-inline: auto; width: 100%; }
+.figs.team figure:first-child .img { background: transparent; border-radius: 0; overflow: visible; box-shadow: none; } /* a cut-out: no frame, no rectangular shadow */
 .figs.team figure:last-child .img { border-radius: 10px; }
 @media (max-width: 760px) { .figs.team { grid-template-columns: 1fr; gap: 24px; } .figs.team figure:last-child { max-width: 280px; } }
 .figs.cut { --n: 1; max-width: 620px; width: 100%; margin-inline: auto; }
@@ -960,6 +960,7 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .about .photo img { width: 100%; height: 100%; object-fit: cover; }
 .about .photo.tiltcard { position: relative; }
 .tiltcard .media-inner, .tiltcard img { transform-origin: 50% 50%; }
+.cs-body figure .img.tiltcard, .hero.tiltcard { position: relative; will-change: transform; }
 .about h1 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em; }
 .about .lead { font-size: 20px; line-height: 1.55; max-width: 46ch; margin-top: 18px; }
 .cv { display: grid; gap: 72px; margin-top: 80px; }
@@ -1166,7 +1167,7 @@ const FEATURED = [
         { p: "I delivered developer-ready designs, which are scheduled for implementation in Q4 2026." } ] }
     ]},
   { id: "amazon-music", protected: "0d0fa5f5d36a2fc2c5d61338f6c5ba3c7dc2e6bda4a47f5b04cc807ba79d7d12", // password-gated (NDA); add ?draft before the # to see the "To add" notes
-    title: "Amazon Music", sub: "SCADpro", notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
+    title: "Amazon Music", sub: "SCADpro", tilt: true, notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
     meta: "SCADpro client project · Spring 2026", hero: "cover-amazon-music",
     facts: { Role: "UX Designer", Team: "SCADpro × Amazon Music", Timeline: "Mar to Jun 2026", Tools: "Figma" },
     sections: [
@@ -1856,7 +1857,7 @@ class AsciiReveal {
     }, { passive: false });
   }
 }
-let portraitWidget = null, aboutTilt = null;
+let portraitWidget = null, aboutTilt = null, pageTilts = [];
 /* The home headshot's card behaviour without the ASCII: a gentle lean toward the cursor anywhere on the page;
    hovering tilts it further toward the cursor, lifts it with a shadow, moves a glare with the card's angle and
    shifts the photo inside for depth; leaving eases it back. Same numbers as the home headshot. */
@@ -3669,6 +3670,7 @@ function render() {
   document.body.classList.toggle("quarters-mode", id === "quarters");
   if (portraitWidget) { portraitWidget.destroy(); portraitWidget = null; }
   if (aboutTilt) { aboutTilt.destroy(); aboutTilt = null; }
+  pageTilts.forEach(t => t.destroy()); pageTilts = [];
   const firstRender = !$("#app").children.length;
   $("#app").innerHTML = html;
   cleanLinks($("#app"));
@@ -3689,6 +3691,8 @@ function render() {
   if (pel) portraitWidget = new AsciiReveal(pel, ASSETS["jack-walker-headshot"], ASCII_CFG);
   const apel = document.getElementById("about-photo");
   if (apel) aboutTilt = new TiltCard(apel);
+  // pages marked tilt: every photo gets the About headshot's hover (tilt toward the pointer, lift, glare)
+  if (p && p.tilt) document.querySelectorAll("#app .hero, #app .cs-body figure .img").forEach(el => { el.classList.add("tiltcard"); pageTilts.push(new TiltCard(el)); });
   initNameFx();
   if (p && p.proto) mountProto(p.proto);
   initBux();
