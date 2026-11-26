@@ -1205,14 +1205,7 @@ const FEATURED = [
 ];
 
 const MORE = [
-  { id: "savannah-parking", title: "Savannah Parking", summary: "A redesign of how people find and pay for parking in downtown Savannah.",
-    meta: "App redesign · 2026", hero: "cover-savannah-parking",
-    facts: { Timeline: "2026", Platform: "Mobile", Tools: "Figma, Illustrator" },
-    sections: [
-      { h: "Overview", blocks: [
-        { todo: "This one needs a short case study: the problem, two decisions with screens, and the final design. The live parking map on the cover is a good lead image." } ] }
-    ]},
-  { id: "bandcamp-testing", hidden: true, title: "Bandcamp", sub: "Usability Research", summary: "Bandcamp makes new fans work too hard to find music and pay for it. I designed the redesign prototype and wrote the tests that proved it fixed three core problems.",
+  { id: "bandcamp-testing", title: "Bandcamp", sub: "Usability Research", summary: "Bandcamp makes new fans work too hard to find music and pay for it. I designed the redesign prototype and wrote the tests that proved it fixed three core problems.",
     meta: "UX research · Fall 2026", hero: "bc-cover", thumb: "bc-card", href: "#beyond-ux/fridge-research", // the full study lives in Beyond UX › Research
     facts: { "My role": "Prototype designer, test writer, moderator", Team: "5 UX researchers", Timeline: "Fall 2026 · 10 weeks", Methods: "Heuristic review, moderated + unmoderated testing" },
     sections: [
@@ -1250,6 +1243,13 @@ const MORE = [
         { p: "We presented these findings and validated recommendations at our final presentation." } ] },
       { h: "Reflection", blocks: [
         { p: "This was a super interesting project. It let me research at a depth I haven't been able to before. Bandcamp had very unique problems centred on navigation, and testing for that was a challenge: when navigation works, participants don't tend to comment on it, even when prompted." } ] }
+    ]},
+  { id: "savannah-parking", hidden: true, title: "Savannah Parking", // hidden for now: no card, not in Next project summary: "A redesign of how people find and pay for parking in downtown Savannah.",
+    meta: "App redesign · 2026", hero: "cover-savannah-parking",
+    facts: { Timeline: "2026", Platform: "Mobile", Tools: "Figma, Illustrator" },
+    sections: [
+      { h: "Overview", blocks: [
+        { todo: "This one needs a short case study: the problem, two decisions with screens, and the final design. The live parking map on the cover is a good lead image." } ] }
     ]},
   { id: "nest-thermostat", title: "Nest Thermostat", summary: "A redesign of the Nest Thermostat app and device screen to feel greener and more affordable.",
     meta: "UX/UI design lead · Winter 2025", hero: "cover-nest-thermostat",
@@ -2265,7 +2265,7 @@ function viewHome(three = false) {
 }
 
 function viewCase(p) {
-  const OPEN = ALL.filter(x => !x.locked && !x.href), i = OPEN.indexOf(p), next = OPEN[(i + 1) % OPEN.length];
+  const OPEN = ALL.filter(x => !x.locked && !x.href && !x.hidden), i = OPEN.indexOf(p), next = OPEN[(i + 1) % OPEN.length];
   const inner = `
     <a class="back" href="#projects"><span aria-hidden="true">&larr;</span> All projects</a>
     <header class="cs-head">
