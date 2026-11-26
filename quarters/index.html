@@ -963,7 +963,10 @@ figure .img.fit img { cursor: zoom-in; }
 .proj-all { font: inherit; font-size: 15px; font-weight: 600; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 .proj-all:hover { color: var(--link); border-color: var(--link); }
 .proj-toggle { font: inherit; color: inherit; letter-spacing: inherit; background: none; border: 0; padding: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; text-align: left; cursor: pointer; }
-.proj-toggle:hover .proj-title, .proj-toggle:hover .proj-chev { color: var(--link); }
+/* The header and the line under it both open/close the project. Hovering either turns the title green and the line under it full ink. */
+.proj > .sub-p { cursor: pointer; transition: color .15s; }
+.proj:has(.proj-toggle:hover, > .sub-p:hover) .proj-title, .proj:has(.proj-toggle:hover, > .sub-p:hover) .proj-chev { color: var(--link); }
+.proj:has(.proj-toggle:hover, > .sub-p:hover) > .sub-p { color: var(--ink); }
 .proj-chev { width: 28px; height: 28px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); transition: transform .3s ease, color .15s; }
 .proj.closed .proj-chev { transform: rotate(-90deg); }
 .proj .sub-p { margin-top: 10px; }
@@ -976,7 +979,7 @@ figure .img.fit img { cursor: zoom-in; }
 /* Project index: the number sits in its own column, on the title's baseline, like a table of contents */
 .bux-piece .sub-h { display: grid; grid-template-columns: var(--idx, 64px) minmax(0, 1fr); align-items: baseline; }
 .bux-piece .sub-h::before { content: counter(sub, decimal-leading-zero); font-size: 15px; font-weight: 600; letter-spacing: .04em; color: var(--muted); font-variant-numeric: tabular-nums; transition: color .15s; }
-.bux-piece .proj:has(.proj-toggle:hover) .sub-h::before { color: var(--link); }
+.bux-piece .proj:has(.proj-toggle:hover, > .sub-p:hover) .sub-h::before { color: var(--link); }
 .bux-piece .proj .sub-p { padding-left: var(--idx, 64px); }
 @media (max-width: 560px) { .bux-piece { --idx: 42px; } }
 /* Index number set at the title's size and weight, in grey, so number and title read as one line */
@@ -3900,7 +3903,7 @@ document.addEventListener("click", e => {
   const zt = e.target.closest(".brand-page [data-zoom]");
   if (zt) { openArt(zt); return; }
   if (e.target.closest("#lb")) { $("#lb").close(); return; }
-  const tg = e.target.closest(".proj-toggle");
+  const tg = e.target.closest(".proj-toggle") || (e.target.closest(".proj > .sub-p") && !String(getSelection()).trim() ? e.target.closest(".proj").querySelector(".proj-toggle") : null); // the line under the title toggles too (unless you're selecting its text)
   if (tg) { const sec = tg.closest(".proj"); setProj(sec, sec.classList.contains("closed")); syncProjAll(sec.closest(".bux-piece")); return; }
   const all = e.target.closest(".proj-all");
   if (all) { const root = all.closest(".bux-piece"), open = !!root.querySelector(".proj.closed"); root.querySelectorAll(".proj").forEach(x => setProj(x, open)); syncProjAll(root); return; }
@@ -3978,6 +3981,7 @@ document.addEventListener("keydown", e => {
     if (t.closest(".ascii-reveal, .big-name")) return ["brush"];
     if (t.closest(".card.locked, [aria-disabled=true]")) return ["icon", "lock"]; // locked work: can't be opened yet
     if (t.closest(".arail pre")) return ["small"];
+    const sp = t.closest(".proj > .sub-p"); if (sp) return ["icon", sp.closest(".proj").classList.contains("closed") ? "open" : "close"];
     const el = t.closest("a, button, summary, [data-jump], [data-zoom], figure .img.fit, .xp-card");
     if (!el) return [""];
     if (el.matches("figure .img.fit, [data-zoom]")) return ["icon", "zoom"];
