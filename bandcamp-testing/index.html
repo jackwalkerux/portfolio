@@ -811,6 +811,8 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .xp-markbox { color: var(--ink); }
 .xp-markbox canvas { position: absolute; opacity: 0; transition: opacity .12s ease; pointer-events: none; }
 .xp-markbox.on canvas { opacity: 1; }
+.cs-head .notice { display: flex; gap: 10px; align-items: flex-start; max-width: 60ch; margin-top: 14px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 14.5px; line-height: 1.45; color: var(--muted); }
+.cs-head .notice svg { flex: none; width: 16px; height: 16px; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .src { font-size: 14px; color: var(--muted); margin-top: -12px; }
 .persona { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
 .persona > div { border-top: 2px solid var(--line); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
@@ -1163,13 +1165,12 @@ const FEATURED = [
         { p: "I delivered developer-ready designs, which are scheduled for implementation in Q4 2026." } ] }
     ]},
   { id: "amazon-music", protected: "0d0fa5f5d36a2fc2c5d61338f6c5ba3c7dc2e6bda4a47f5b04cc807ba79d7d12", // password-gated (NDA); add ?draft before the # to see the "To add" notes
-    title: "Amazon Music", sub: "SCADpro", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
+    title: "Amazon Music", sub: "SCADpro", notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
     meta: "SCADpro client project · Spring 2026", hero: "cover-amazon-music",
     facts: { Role: "UX Designer", Team: "SCADpro × Amazon Music", Timeline: "Mar to Jun 2026", Tools: "Figma" },
     sections: [
       { h: "At a glance", blocks: [
         { p: "Through SCADpro, our team worked with Amazon Music on how young adults discover, experience and engage with music. I designed touchpoints connecting Amazon Music with Prime Video, Retail, Audible, Kindle and Alexa+, for one entertainment experience that reaches beyond current listeners." },
-        { p: "This project is under NDA, so this page focuses on my role and process. Product details and screens stay private.", cls: "src" },
         { figs: [["am-uxteam", "The UX design team"], ["am-portrait", "Me, at the team photo shoot"]], kind: "team" },
         { todo: "Your role in one line (for example: UX designer on a team of N), then 2 to 4 bullets of what you personally did. This becomes the My role block." } ] },
       { h: "The brief", blocks: [
@@ -2270,7 +2271,7 @@ function viewCase(p) {
     <a class="back" href="#projects"><span aria-hidden="true">&larr;</span> All projects</a>
     <header class="cs-head">
       <h1>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h1>
-      <p class="sum">${esc(p.summary)}</p>
+      <p class="sum">${esc(p.summary)}</p>${p.notice ? `<p class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg><span>${esc(p.notice)}</span></p>` : ""}
     </header>
     <dl class="facts">${Object.entries(p.facts).filter(([, v]) => DRAFT || !/^Add\b/.test(v)).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
     ${ASSETS[p.hero] ? `<div class="hero">${media(p.hero, p.title + " cover", true)}</div>` : ""}
