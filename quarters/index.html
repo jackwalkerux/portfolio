@@ -1866,7 +1866,8 @@ let portraitWidget = null, aboutTilt = null, pageTilts = [];
    hovering tilts it further toward the cursor, lifts it with a shadow, moves a glare with the card's angle and
    shifts the photo inside for depth; leaving eases it back. Same numbers as the home headshot. */
 class TiltCard {
-  constructor(el) {
+  constructor(el, opts = {}) {
+    this.flat = !!opts.flat; // flat: sit straight until hovered (no lean toward a far-off cursor)
     this.el = el; this.img = el.querySelector("img"); this.raf = 0; this.dead = false;
     this.P = { nx: 0, ny: 0, tx: 0, ty: 0, h: 0 }; this.hov = false; this.lx = 0; this.ly = 0;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -1881,7 +1882,7 @@ class TiltCard {
   kick() { if (!this.raf && !this.dead) this.raf = requestAnimationFrame(() => this.step()); }
   step() {
     this.raf = 0; const P = this.P, hov = this.hov;
-    const tx = hov ? Math.max(-1, Math.min(1, this.lx)) : P.tx, ty = hov ? Math.max(-1, Math.min(1, this.ly)) : P.ty;
+    const tx = hov ? Math.max(-1, Math.min(1, this.lx)) : this.flat ? 0 : P.tx, ty = hov ? Math.max(-1, Math.min(1, this.ly)) : this.flat ? 0 : P.ty;
     const dx = tx - P.nx, dy = ty - P.ny, dh = (hov ? 1 : 0) - P.h;
     if (Math.abs(dx) < .0005 && Math.abs(dy) < .0005 && Math.abs(dh) < .002) return; // settled: stop until the cursor moves
     const k = hov ? .14 : .035;
@@ -3696,7 +3697,7 @@ function render() {
   const apel = document.getElementById("about-photo");
   if (apel) aboutTilt = new TiltCard(apel);
   // pages marked tilt: every photo gets the About headshot's hover (tilt toward the pointer, lift, glare)
-  if (p && p.tilt) document.querySelectorAll("#app .cs-body figure .img").forEach(el => { el.classList.add("tiltcard"); pageTilts.push(new TiltCard(el)); });
+  if (p && p.tilt) document.querySelectorAll("#app .cs-body figure .img").forEach(el => { el.classList.add("tiltcard"); pageTilts.push(new TiltCard(el, { flat: true })); });
   initNameFx();
   if (p && p.proto) mountProto(p.proto);
   initBux();
