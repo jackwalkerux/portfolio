@@ -825,7 +825,7 @@ html { scrollbar-width: none; } html::-webkit-scrollbar, body::-webkit-scrollbar
 .xp-markbox canvas { position: absolute; opacity: 0; transition: opacity .12s ease; pointer-events: none; }
 .xp-markbox.on canvas { opacity: 1; }
 /* same type as the summary above it, with a lock in front */
-.card .card-note { color: var(--notice); }
+.card h2 .card-note { display: inline-block; color: var(--muted); font-size: .62em; font-weight: 400; letter-spacing: 0; vertical-align: .12em; margin-left: 4px; } /* inline-block: keeps the card hover underline/colour off it */
 .cs-head .sum-row { display: grid; grid-template-columns: repeat(2, minmax(0, 40ch)); gap: 56px; align-items: start; }
 .cs-head .sum-row .notice { margin-top: 0; }
 @media (max-width: 760px) { .cs-head .sum-row { grid-template-columns: 1fr; gap: 14px; } }
@@ -1167,7 +1167,7 @@ const FEATURED = [
         { quote: "Now picture every house like hers. Every rent paid on time. Every chore with a name on it. Every group chat back to being a group chat." } ] }
     ]},
   { id: "amazon-music", protected: "0d0fa5f5d36a2fc2c5d61338f6c5ba3c7dc2e6bda4a47f5b04cc807ba79d7d12", // password-gated (NDA); add ?draft before the # to see the "To add" notes
-    title: "Amazon Music", sub: "SCADpro", tilt: true, cardNote: "Under NDA, so the details stay private.", notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
+    title: "Amazon Music", sub: "SCADpro", tilt: true, cardNote: "Under NDA, Limited information", notice: "This project is under NDA, so I can't talk about it in depth. This page focuses on my role and process; product details and screens stay private.", summary: "New ways for young adults to discover, experience and engage with Amazon Music across the Amazon ecosystem.",
     meta: "SCADpro client project · Spring 2026", hero: "cover-amazon-music",
     facts: { Role: "UX Designer", Team: "SCADpro × Amazon Music", Timeline: "Mar to Jun 2026", Tools: "Figma" },
     sections: [
@@ -1982,8 +1982,8 @@ function card(p) {
   const tag = p.locked ? `div aria-disabled="true" title="Coming soon"` : `a href="${p.href || "#" + p.id}"`; // locked work can't be opened for now
   return `<${tag} class="card${p.highlight ? " hl" : ""}${p.locked ? " locked" : ""}${p.protected ? " protected" : ""}">
     <div class="shot${ASSETS[p.thumb || p.hero] ? "" : " ph"}">${ASSETS[p.thumb || p.hero] ? media(p.thumb || p.hero, "") : "<span>Cover coming soon</span>"}${p.locked || p.protected ? LOCK : ""}</div>
-    <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}</h2>
-    <p>${esc(p.summary)}${p.cardNote ? ` <span class="card-note">${esc(p.cardNote)}</span>` : ""}</p>
+    <h2>${esc(p.title)}${p.sub ? ` <span>${esc(p.sub)}</span>` : ""}${p.cardNote ? ` <small class="card-note">(${esc(p.cardNote)})</small>` : ""}</h2>
+    <p>${esc(p.summary)}</p>
     <span class="meta">${p.highlight ? '<span class="hl-tag">Highlighted Work</span> · ' : ""}${esc(p.meta)}</span>${p.id === "quarters" ? '<span class="card-penny" aria-hidden="true"><pre class="penny-spin" data-cols="22" data-hover></pre></span>' : CARD_LOGO[p.id] ? `<span class="card-penny" aria-hidden="true"><pre class="logo-spin" data-logo="${CARD_LOGO[p.id][0]}" data-cols="${CARD_LOGO[p.id][1]}"></pre></span>` : ""}
   </${p.locked ? "div" : "a"}>`;
 }
