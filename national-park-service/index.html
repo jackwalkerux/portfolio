@@ -615,7 +615,7 @@ figure .img.fit img { cursor: zoom-in; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .figs.evo figure:first-child img { filter: invert(1); } }
 @media (max-width: 760px) { .figs.evo { grid-template-columns: 1fr; gap: 32px; } .figs.evo figure:last-child { max-width: 200px; margin-inline: auto; } }
 /* team cut-out beside a portrait, bottoms aligned, no frames */
-.figs.team { grid-template-columns: minmax(0, 1fr) minmax(0, 210px); gap: 40px; align-items: end; max-width: 900px; margin-inline: auto; width: 100%; }
+.figs.team { grid-template-columns: minmax(0, 1fr) minmax(0, 260px); gap: 40px; align-items: end; max-width: 900px; margin-inline: auto; width: 100%; }
 .figs.team figure:first-child .img { background: transparent; border-radius: 0; overflow: visible; box-shadow: none; } /* a cut-out: no frame, no rectangular shadow */
 .figs.team figure:last-child .img { border-radius: 10px; }
 @media (max-width: 760px) { .figs.team { grid-template-columns: 1fr; gap: 24px; } .figs.team figure:last-child { max-width: 280px; } }
@@ -3696,7 +3696,7 @@ function render() {
   const apel = document.getElementById("about-photo");
   if (apel) aboutTilt = new TiltCard(apel);
   // pages marked tilt: every photo gets the About headshot's hover (tilt toward the pointer, lift, glare)
-  if (p && p.tilt) document.querySelectorAll("#app .hero, #app .cs-body figure .img").forEach(el => { el.classList.add("tiltcard"); pageTilts.push(new TiltCard(el)); });
+  if (p && p.tilt) document.querySelectorAll("#app .cs-body figure .img").forEach(el => { el.classList.add("tiltcard"); pageTilts.push(new TiltCard(el)); });
   initNameFx();
   if (p && p.proto) mountProto(p.proto);
   initBux();
